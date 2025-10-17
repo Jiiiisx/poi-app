@@ -1,0 +1,280 @@
+.table-section .section-header {
+    flex-wrap: wrap;
+}
+
+.table-filter-controls .view-toggle {
+    display: flex;
+    gap: 5px;
+    margin-left: auto; /* Push toggle to the right */
+}
+
+.btn-view-toggle {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-view-toggle.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.filter-buttons-group label {
+    margin-right: 10px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+#monitoringTable {
+    border-collapse: collapse;
+}
+
+#monitoringTable th, #monitoringTable td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+#monitoringTable th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+#monitoringTable tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#monitoringTable tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Responsive table */
+#monthlyMonitoringSection .table-scroll-container {
+    overflow-x: auto;
+}
+
+.payment-date-select {
+    width: 58px;
+    padding: 8px 12px;
+    border-radius: var(--radius-md, 6px);
+    border: 1px solid var(--border-color, #ccc);
+    background-color: var(--card-background, #fff);
+    font-size: 0.9em;
+    font-weight: 500;
+    color: var(--text-primary, #333);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.payment-date-select:hover {
+    border-color: var(--primary-color, #007bff);
+}
+
+.payment-date-select:focus {
+    outline: none;
+    border-color: var(--primary-color, #007bff);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.payment-date-select.value-over-20 {
+    background-color: var(--danger-light, #f8d7da);
+    color: var(--danger-dark, #721c24);
+    border-color: var(--danger-color, #f5c6cb);
+}
+
+.payment-date-select.value-under-20 {
+    background-color: var(--success-light, #d4edda);
+    color: var(--success-dark, #155724);
+    border-color: var(--success-color, #c3e6cb);
+}
+
+.payment-date-select.value-na {
+    background-color: var(--secondary-light, #e2e3e5);
+    color: var(--secondary-dark, #383d41);
+    border-color: var(--secondary-color, #d6d8db);
+}
+
+
+/* --- Merged from monthly-monitoring-cards.css --- */
+
+.monitoring-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+    align-items: stretch; /* Make cards in a row equal height */
+}
+
+.monitoring-card {
+    background-color: var(--card-background);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    justify-content: space-between; /* Distribute content vertically */
+}
+
+.monitoring-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.monitoring-card-title {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limit to 2 lines */
+    -webkit-box-orient: vertical;
+    height: 3.2em; /* Fixed height for 2 lines of text */
+}
+
+.monitoring-card-db-value {
+    font-size: 1.8em;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.db-value-green {
+    color: var(--success-color); /* Green */
+}
+
+.db-value-blue {
+    color: var(--info-color); /* Blue */
+}
+
+.db-value-red {
+    color: var(--danger-color); /* Red */
+}
+
+.monitoring-card-fup-progress {
+    width: 100%;
+    height: 8px;
+    background-color: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.monitoring-card-fup-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease-in-out;
+}
+
+.fup-bar-green {
+    background-color: var(--success-color);
+}
+
+.fup-bar-blue {
+    background-color: var(--info-color);
+}
+
+.fup-bar-red {
+    background-color: var(--danger-color);
+}
+
+.monitoring-card-fup-text {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+}
+
+.monitoring-card-billing-status {
+    font-size: 1em;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.monitoring-card-info {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .monitoring-cards-grid {
+        grid-template-columns: 1fr; /* Single column on small screens */
+    }
+}
+
+/* New Card Layout Styles */
+.monitoring-card {
+    gap: 0; /* Remove main gap, control spacing with sections */
+    justify-content: flex-start; /* Align content to top */
+}
+
+.card-section {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color, #eee);
+}
+
+.monitoring-card .card-section:first-child {
+    padding-top: 0;
+}
+
+.monitoring-card .card-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.card-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+.card-info-row:last-child {
+    margin-bottom: 0;
+}
+.card-info-row strong {
+    color: var(--text-primary);
+    font-weight: 600;
+    white-space: nowrap;
+    margin-right: 10px;
+}
+.card-info-row span {
+    text-align: right;
+}
+
+/* Specific section styling */
+.fup-section .card-info-row {
+    margin-bottom: 5px;
+}
+
+.billing-section {
+    padding-top: 15px;
+}
+
+/* Override for the WA button to fit in the row */
+.card-info-row .btn-whatsapp {
+    padding: 2px 8px;
+    font-size: 0.9em;
+}
+
+/* Override for the payment date select to fit */
+.card-info-row .payment-date-select {
+    padding: 4px 25px 4px 8px;
+    font-size: 1em;
+    max-width: 100px; /* Prevent it from being too wide */
+}

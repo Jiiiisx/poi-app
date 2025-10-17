@@ -1,0 +1,358 @@
+
+/* General Body Styles */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-secondary);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* Header & Navbar */
+.landing-header {
+    background-color: #ffffff; /* Solid white background */
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    transition: box-shadow 0.3s ease;
+}
+
+.landing-header.scrolled {
+    box-shadow: var(--shadow-md);
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-logo {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--primary-dark);
+    text-decoration: none;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: var(--primary-color);
+}
+
+.nav-cta .btn {
+    text-decoration: none;
+}
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../assets/Citylights-background.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: #ffffff;
+    padding: 10rem 0 8rem 0;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+}
+
+.hero-content {
+    max-width: 800px;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.hero-content p {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.btn {
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Section General Styling */
+.section {
+    padding: 6rem 0;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.section-title h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.section-title p {
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+    color: var(--text-secondary);
+}
+
+/* Features Section */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.feature-card {
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-xl);
+}
+
+.feature-card .icon {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    display: inline-block;
+}
+
+.feature-card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+/* How-To Section - Horizontal Flow */
+#panduan {
+    background-color: var(--bg-secondary);
+}
+
+.how-to-flow-container {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    padding: 2rem 0;
+}
+
+/* The connecting line */
+.how-to-flow-container::before {
+    content: '';
+    position: absolute;
+    top: 50px; /* Position it vertically centered with the step number */
+    left: 12%;
+    right: 12%;
+    height: 4px;
+    background-color: #e9ecef;
+    z-index: 1;
+}
+
+.flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 24%;
+    position: relative;
+    z-index: 2;
+}
+
+.flow-step .step-number {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: var(--bg-secondary);
+    border: 4px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    transition: all 0.4s ease;
+    margin-bottom: 1.5rem;
+}
+
+.flow-step .step-icon {
+    font-size: 2rem; /* Icon inside the number circle */
+    color: var(--primary-color);
+}
+
+.flow-step h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.flow-step p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Hover and Active states */
+.flow-step:hover .step-number {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+@media (max-width: 992px) {
+    .how-to-flow-container {
+        flex-direction: column;
+        gap: 3rem;
+    }
+    .how-to-flow-container::before {
+        left: 50px;
+        right: auto;
+        top: 5%;
+        bottom: 5%;
+        width: 4px;
+        height: auto;
+    }
+    .flow-step {
+        width: 100%;
+        flex-direction: row;
+        text-align: left;
+        align-items: flex-start;
+        gap: 2rem;
+    }
+    .flow-step .step-number {
+        width: 80px;
+        height: 80px;
+        font-size: 2rem;
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .how-to-flow-container::before {
+        left: 40px;
+    }
+}
+
+/* Footer */
+.landing-footer {
+    background-color: var(--bg-dark);
+    color: #e2e8f0;
+    padding: 4rem 0;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.footer-logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.footer-links a {
+    color: #e2e8f0;
+    text-decoration: none;
+    margin-left: 1.5rem;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--primary-color);
+}
+
+.footer-copyright {
+    text-align: center;
+    padding-top: 3rem;
+    border-top: 1px solid #4a5568;
+    margin-top: 3rem;
+    color: #a0aec0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none; /* Hide on mobile for simplicity, can be replaced with a burger menu */
+    }
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+    .how-to-step {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    .how-to-step:nth-child(even) .how-to-image {
+        order: 0;
+    }
+    .how-to-image {
+        height: 300px;
+        font-size: 6rem;
+    }
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    .footer-links a {
+        margin: 0 0.5rem;
+    }
+}

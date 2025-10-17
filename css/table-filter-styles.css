@@ -1,0 +1,121 @@
+/* Table Filter Controls Styles */
+.table-filter-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-buttons-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #f8f9fa;
+    color: #495057;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-filter:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+    transform: translateY(-1px);
+}
+
+.btn-filter.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 4px rgba(179, 71, 71, 0.3);
+}
+
+.btn-filter.btn-filter-school.active {
+    background: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.btn-filter.btn-filter-nonschool.active {
+    background: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.btn-filter i {
+    font-size: 12px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .table-filter-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-buttons-group {
+        justify-content: center;
+    }
+    
+    .btn-filter {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+}
+
+/* Visual indicators for filtered data */
+.table-row-filtered {
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.table-row-filtered:hover {
+    opacity: 1;
+}
+
+/* Search Bar Styles */
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-grow: 1; /* Allow search bar to take available space */
+}
+
+.search-container .fa-search {
+  position: absolute;
+  left: 15px;
+  color: #9e9e9e;
+  font-size: 14px;
+}
+
+#searchInput {
+  width: 100%;
+  padding: 9px 15px 9px 40px; /* Adjusted padding */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease;
+  background-color: #f8f9fa;
+}
+
+#searchInput:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(179, 71, 71, 0.1);
+  background-color: #fff;
+}
+
+#searchInput::placeholder {
+  color: #9e9e9e;
+  font-style: italic;
+}

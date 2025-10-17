@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <title>Point Of Interest - Dashboard Manajemen Sales</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/modern-design-system.css">
+    <link rel="stylesheet" href="css/landing-page.css">
+
+    <meta name="description" content="Platform terpusat untuk manajemen data calon pelanggan, pemantauan kinerja sales, dan sinkronisasi otomatis dengan Google Sheets.">
+    <meta name="google-site-verification" content="qnpRH9xhfD37zmmVaWbxUWHyfAs7DVt1aMDfI18qi_I" />
+    <style>
+        /* Add initial hidden state for GSAP */
+        .landing-header, .hero-content h1, .hero-content p, #hero-cta-btn, .feature-card, .flow-step, .section-title {
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="landing-header" id="landingHeader">
+        <div class="container navbar">
+            <a href="#" class="nav-logo">Point Of Interest</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#fitur">Fitur</a></li>
+                    <li><a href="#panduan">Panduan</a></li>
+                </ul>
+            </nav>
+            <div class="nav-cta">
+                <a href="/index.html" class="btn btn-primary">Login</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1>Pantau dan Kelola Titik Lokasi Anda dengan Mudah</h1>
+                <p>Platform terpusat untuk manajemen data calon pelanggan, pemantauan kinerja sales, dan sinkronisasi otomatis dengan Google Sheets.</p>
+                <a href="/index.html" class="btn btn-primary" id="hero-cta-btn">Buka Dashboard</a>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="fitur" class="section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Fitur Unggulan Platform</h2>
+                    <p>Semua yang Anda butuhkan untuk meningkatkan efisiensi dan produktivitas tim sales Anda dalam satu dasbor.</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="icon"><i class="fas fa-chart-line"></i></div>
+                        <h3>Dasbor Interaktif</h3>
+                        <p>Lihat statistik kunci performa sales dan ringkasan data pelanggan secara real-time.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon"><i class="fas fa-database"></i></div>
+                        <h3>Manajemen Data (CRUD)</h3>
+                        <p>Tambah, lihat, edit, dan hapus data pelanggan langsung dari antarmuka web yang intuitif.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon"><i class="fas fa-sync-alt"></i></div>
+                        <h3>Sinkronisasi Otomatis</h3>
+                        <p>Setiap perubahan data akan secara otomatis tersimpan dan tersinkronisasi dengan Google Sheets.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How-to Section -->
+        <section id="panduan" class="section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Cara Menggunakan Dasbor</h2>
+                    <p>Hanya dengan beberapa langkah mudah, Anda dapat langsung memanfaatkan semua fitur canggih kami.</p>
+                </div>
+                <div class="how-to-flow-container">
+                    <!-- Step 1 -->
+                    <div class="flow-step">
+                        <div class="step-number"><i class="step-icon fab fa-google"></i></div>
+                        <h3>Login dengan Akun Google</h3>
+                        <p>Akses dasbor dengan aman dan cepat menggunakan akun Google Anda.</p>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="flow-step">
+                        <div class="step-number"><i class="step-icon fas fa-users"></i></div>
+                        <h3>Pilih Tim & Sales</h3>
+                        <p>Navigasi ke tim sales Anda dan filter data berdasarkan masing-masing sales.</p>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="flow-step">
+                        <div class="step-number"><i class="step-icon fas fa-edit"></i></div>
+                        <h3>Kelola Data Pelanggan</h3>
+                        <p>Tambah, edit, atau hapus data pelanggan dengan mudah dan tersinkronisasi.</p>
+                    </div>
+                    <!-- Step 4 -->
+                    <div class="flow-step">
+                        <div class="step-number"><i class="step-icon fas fa-file-invoice-dollar"></i></div>
+                        <h3>Pantau Penagihan</h3>
+                        <p>Lihat status pembayaran bulanan pelanggan dengan filter yang mudah digunakan.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    Point Of Interest
+                </div>
+                <div class="footer-links">
+                    <a href="/privacy_policy.html">Privacy Policy</a>
+                    <a href="/terms_of_service.html">Terms of Service</a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                &copy; 2025 Point Of Interest. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // --- Initial Page Load Animation ---
+            const tl = gsap.timeline();
+
+            tl.from('.landing-header', { 
+                y: -100,
+                autoAlpha: 0,
+                duration: 0.8,
+                ease: 'power3.out'
+            })
+            .from('.hero-content h1', { 
+                y: 50,
+                autoAlpha: 0,
+                duration: 0.8, 
+                ease: 'power3.out' 
+            }, "-=0.5")
+            .from('.hero-content p', { 
+                y: 30,
+                autoAlpha: 0,
+                duration: 0.8, 
+                ease: 'power2.out' 
+            }, "-=0.6")
+            .from('#hero-cta-btn', { 
+                autoAlpha: 0,
+                scale: 0.8,
+                duration: 0.5, 
+                ease: 'back.out(1.7)' 
+            }, "-=0.5");
+
+            // --- Scroll-triggered Animations ---
+
+            // Section Titles
+            gsap.utils.toArray('.section-title').forEach(title => {
+                gsap.from(title, {
+                    y: 50,
+                    autoAlpha: 0,
+                    duration: 1,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: title,
+                        start: 'top 85%',
+                        toggleActions: 'play none none none'
+                    }
+                });
+            });
+
+            // Features Section Cards
+            gsap.from(".feature-card", {
+                y: 50,
+                autoAlpha: 0,
+                duration: 0.6,
+                ease: 'power3.out',
+                stagger: 0.2,
+                scrollTrigger: {
+                    trigger: ".features-grid",
+                    start: "top 80%",
+                    toggleActions: 'play none none none'
+                }
+            });
+
+            // How-to Section Flow
+            gsap.from(".flow-step", {
+                y: 60,
+                autoAlpha: 0,
+                duration: 0.7,
+                ease: 'power3.out',
+                stagger: 0.25,
+                scrollTrigger: {
+                    trigger: ".how-to-flow-container",
+                    start: "top 75%",
+                    toggleActions: 'play none none none'
+                }
+            });
+
+            // Navbar shadow on scroll (remains the same)
+            const header = document.getElementById('landingHeader');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

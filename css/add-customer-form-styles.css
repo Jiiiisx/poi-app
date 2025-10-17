@@ -1,0 +1,240 @@
+
+/* General Wizard Styling */
+.wizard-container {
+    display: flex;
+    gap: 40px;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+/* Progress Bar */
+.progress-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 220px;
+    position: relative;
+}
+
+.progress-bar::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 2px;
+    height: calc(100% - 40px);
+    background-color: #e0e0e0;
+    z-index: 1;
+}
+
+.progress-bar-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.progress-bar-item .step-number {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: #f0f2f5;
+    color: #a0a0a0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    border: 2px solid #e0e0e0;
+    transition: all 0.4s ease;
+    font-size: 1.1rem;
+}
+
+.progress-bar-item .step-name {
+    font-size: 1rem;
+    color: #a0a0a0;
+    font-weight: 500;
+    transition: all 0.4s ease;
+}
+
+/* Active and Completed States */
+.progress-bar-item.active .step-number {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(143, 58, 58, 0.3);
+}
+
+.progress-bar-item.active .step-name {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.progress-bar-item.completed .step-number {
+    background-color: #28a745; /* Green for completed */
+    border-color: #28a745;
+    color: #fff;
+}
+
+.progress-bar-item.completed .step-name {
+    color: #28a745;
+}
+
+.progress-bar-item.completed::after {
+    content: '\f00c'; /* Font Awesome check icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    color: #fff;
+    font-size: 1rem;
+}
+
+
+/* Form Steps */
+.form-steps {
+    flex: 1;
+}
+
+.form-step {
+    display: none;
+}
+
+.form-step.active {
+    display: block;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Form Group */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.form-group label i {
+    margin-right: 8px;
+    color: var(--primary-color);
+}
+
+.form-group input[type="text"],
+.form-group input[type="tel"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #333;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(143, 58, 58, 0.15);
+}
+
+.form-group .helper-text {
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 6px;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px; /* Add space between buttons */
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.form-actions .btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.form-actions .btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.form-actions .btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(143, 58, 58, 0.2);
+}
+
+.form-actions .btn-secondary {
+    background-color: #f0f2f5;
+    color: #333;
+    border: 1px solid #e0e0e0;
+}
+
+.form-actions .btn-secondary:hover {
+    background-color: #e0e0e0;
+    border-color: #ccc;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .wizard-container {
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .progress-bar {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .progress-bar::before {
+        display: none;
+    }
+
+    .progress-bar-item .step-name {
+        display: none;
+    }
+}

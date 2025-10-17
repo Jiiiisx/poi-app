@@ -1,0 +1,298 @@
+/* Hide the original table header permanently */
+#customerTable thead {
+    display: none;
+}
+
+/* Reset TR/TD to be simple block containers */
+#customerTable tr, #customerTable td {
+    display: block;
+    width: 100%;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    border: none !important;
+}
+#customerTable tr {
+    margin-bottom: 1rem;
+}
+
+/* The main card wrapper */
+.mobile-card-wrapper {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    height: 100%; /* For equal height cards in a grid */
+}
+
+/* Card Header (Title + Toggle Button) */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+.card-header-main {
+    flex-grow: 1;
+    min-width: 0; /* Prevent long text from pushing out the toggle button */
+}
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #343a40;
+    margin-bottom: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.card-toggle {
+    flex-shrink: 0;
+}
+
+/* Card Details (Expandable Area) */
+.card-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+}
+tr.details-expanded .card-details {
+    max-height: 500px;
+    padding-top: 1rem;
+    margin-top: 1rem;
+    border-top: 1px solid #f0f2f5;
+}
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #f0f2f5;
+}
+.detail-item:last-child {
+    border-bottom: none;
+}
+.detail-item strong {
+    font-weight: 500;
+    color: #6c757d;
+    margin-right: 10px;
+}
+.detail-item span {
+    text-align: right;
+}
+.card-actions-expanded {
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+/* Rotate the toggle icon when expanded */
+.btn-toggle-details i {
+    transition: transform 0.3s ease;
+}
+tr.details-expanded .btn-toggle-details i {
+    transform: rotate(180deg);
+}
+
+/* Style for the location button inside a card */
+.card-location-button .btn-shareloc {
+    background-color: var(--primary-color, #b34747);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px; /* Pill shape */
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.card-location-button .btn-shareloc:hover {
+    background-color: var(--primary-dark, #8f3a3a);
+}
+
+
+/* --- DESKTOP-SPECIFIC GRID LAYOUT --- */
+@media (min-width: 1024px) { /* Using 1024px as a breakpoint for 2+ columns */
+    #customerTable tbody {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); /* Create a responsive grid */
+        gap: 1.5rem;
+    }
+    #customerTable tr {
+        margin-bottom: 0; /* Remove margin as grid gap is used */
+    }
+}
+
+
+/* --- MOBILE-ONLY STYLES (Keep these inside the media query) --- */
+@media (max-width: 768px) {
+  /* --- Icon Font Fix --- */
+  .fas, .fa-solid, .fa {
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 900 !important;
+  }
+
+  /* --- Header Redesign --- */
+  .header {
+    position: relative; /* Needed for absolute positioning of the button */
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2rem 1rem 1.5rem 1rem; /* Adjust padding */
+    gap: 0.5rem;
+  }
+
+  .header .sidebar-toggle {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .header-left {
+    /* This contains the title and subtitle */
+    /* It will be centered by the parent's align-items: center */
+  }
+
+  .header-title h1 {
+    font-size: 1.5rem; /* Make title a bit bigger */
+  }
+
+  .header-subtitle {
+    font-size: 0.9rem;
+    margin-top: -5px; /* Bring subtitle closer to title */
+  }
+
+  .header-right {
+    /* This contains the user info */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1rem; /* Add space between title and user info */
+  }
+
+  #userProfileDisplayElement {
+      display: block !important; /* Make sure it's visible */
+  }
+
+  #userProfilePicture {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 0.5rem;
+  }
+
+  #header-welcome {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  #current-date {
+    font-size: 0.8rem;
+    opacity: 0.8;
+  }
+
+  /* --- Main Content & Stats --- */
+  .main-content {
+    padding: 1.25rem;
+  }
+
+  /* Hide only the desktop 'Add' button on mobile */
+  .table-filter-controls .btn-export {
+      display: none;
+  }
+
+  /* Style the filter button group for mobile */
+  .table-filter-controls .filter-buttons-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+  }
+
+  .table-filter-controls .btn-filter {
+      flex-grow: 1; /* Allow buttons to share space */
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      border-radius: 20px; /* Pill shape */
+      border: 1px solid var(--border-color, #e8d5d5);
+      background-color: #fff;
+      color: var(--text-secondary, #6b4c4c);
+      transition: all 0.2s ease;
+  }
+  
+  .table-filter-controls .btn-filter.active {
+      background-color: var(--primary-color, #b34747);
+      color: #fff;
+      border-color: var(--primary-color, #b34747);
+  }
+
+  /* --- Floating Action Button (FAB) --- */
+  .fabb {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    background-color: #ac2533;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 100;
+    border: none;
+    cursor: pointer;
+  }
+
+  /* --- Smaller Header Button --- */
+  .header .sidebar-toggle {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem; /* Make icon inside smaller */
+  }
+
+  /* --- Responsive Stat Cards --- */
+  .stat-card {
+      padding: 1rem; /* Reduce padding on mobile */
+      gap: 1rem;
+  }
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+  }
+  .stat-icon i {
+      font-size: 1.2rem;
+  }
+  .stat-number {
+      font-size: 1.75rem; /* Slightly smaller number font */
+  }
+}
+
+@media (min-width: 769px) {
+    #fab-add-customer {
+        display: none !important; /* Hide on desktop */
+    }
+}
+
+/* --- Desktop Card Image Styles --- */
+.card-image-container {
+    width: calc(100% + 2.5rem); /* Span full width of padded card */
+    aspect-ratio: 16 / 9;
+    background-color: #f0f2f5;
+    border-radius: 12px 12px 0 0;
+    margin: -1.25rem -1.25rem 1.25rem -1.25rem;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media (max-width: 1023px) {
+    .card-image-container {
+        display: none;
+    }
+}

@@ -1,0 +1,37 @@
+/* Custom Notification Styles */
+body #notification-bar {
+    position: fixed;
+    justify-content: center;
+    width: 200px;
+    top: -100px;
+    left: 100dvh;
+    color: white;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 1001;
+    font-size: 1em;
+    transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+}
+
+body #notification-bar.show {
+    top: 20px;
+    left: 100dvh;
+    opacity: 1;
+}
+
+body #notification-bar.success {
+    background-color: #2ecc71;
+}
+
+body #notification-bar.error {
+    background-color: #e74c3c;
+}
+
+body #notification-bar.warning {
+    background-color: #f1c40f;
+}
