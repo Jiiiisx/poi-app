@@ -28,6 +28,7 @@ const auth = new google.auth.GoogleAuth({
         private_key: serviceAccountKey.private_key.replace(/\\n/g, '\n'), // Ensure newlines are correctly formatted
     },
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    projectId: serviceAccountKey.project_id, // Explicitly set the project ID
 });
 
 async function getSheetsClient() {
