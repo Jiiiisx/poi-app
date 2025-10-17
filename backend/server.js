@@ -13,11 +13,20 @@ app.use(express.json());
 
 // Constants
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
-const KEY_FILE = path.join(__dirname, 'service-account-key.json');
+
+// Check for required environment variables
+if (!process.env.SERVICE_ACCOUNT_KEY) {
+    throw new Error('SERVICE_ACCOUNT_KEY environment variable is not set.');
+}
+
+const serviceAccountKey = JSON.parse(process.env.SERVICE_ACCOUNT_KEY);
 
 // Google Sheets Client Initialization
 const auth = new google.auth.GoogleAuth({
-    keyFile: KEY_FILE,
+    credentials: {
+        client_email: serviceAccountKey.client_email,
+        private_key: serviceAccountKey.private_key.replace(/\\n/g, '\n'), // Ensure newlines are correctly formatted
+    },
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
