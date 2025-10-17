@@ -10,22 +10,17 @@ class GoogleSheetsCRUD {
         const url = `http://localhost:3000/api/add-customer?t=${Date.now()}`;
         console.log("ATTEMPTING TO FETCH URL:", url); // New log
 
-        try {
-            const values = [
-                customerData.odp_terdekat || '',
-                customerData.nama || '',
-                customerData.alamat || '',
-                customerData.no_telepon || '',
-                customerData.nama_sales || '',
-                customerData.visit || 'Not Visited',
-                customerData.status || 'Pending',
-                customerData.keterangan_tambahan || ''
-            ];
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ values }),
-            });
+    try {
+        // Menggunakan URL relatif untuk endpoint API
+        const url = `/api/add-customer?t=${Date.now()}`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(customerData)
+        });
 
             if (!response.ok) {
                 const errorText = await response.text();

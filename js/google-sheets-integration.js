@@ -272,7 +272,7 @@ class GoogleSheetsIntegration {
         try {
             this.showLoading(true);
             console.log('Loading main data from backend...');
-            const response = await fetch('http://localhost:3000/api/customer-data');
+            const response = await fetch('/api/customer-data');
             
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -317,7 +317,7 @@ class GoogleSheetsIntegration {
         try {
             this.showLoading(true);
             console.log('🔄 Loading monitoring data from backend...');
-            const response = await fetch('http://localhost:3000/api/monitoring-data');
+            const response = await fetch('/api/monitoring-data');
 
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -410,7 +410,7 @@ class GoogleSheetsIntegration {
         try {
             this.showLoading(true);
             console.log('🔄 Loading government data from backend...');
-            const response = await fetch('http://localhost:3000/api/government-data');
+            const response = await fetch('/api/government-data');
 
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -527,7 +527,7 @@ class GoogleSheetsIntegration {
             const colLetter = this.columnIndexToLetter(colIndex);
             const range = `'REKAP PS AR KALIABANG'!${colLetter}${rowIndex}`;
 
-            const response = await fetch('http://localhost:3000/api/update-cell', {
+            const response = await fetch('/api/update-cell', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1905,7 +1905,7 @@ class GoogleSheetsIntegration {
                 document.getElementById('editKeteranganTambahan').value
             ];
 
-            const response = await fetch('http://localhost:3000/api/update-customer', {
+            const response = await fetch('/api/update-customer', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1952,7 +1952,7 @@ class GoogleSheetsIntegration {
                 `Apakah Anda yakin ingin menghapus data dengan NAMA: ${expectedNama}?`,
                 async () => {
                     try {
-                        const response = await fetch('http://localhost:3000/api/delete-row', {
+                        const response = await fetch('/api/delete-row', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
