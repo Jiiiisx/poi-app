@@ -1,0 +1,2 @@
+# Disable Cross-Origin-Opener-Policy (COOP)
+Header set Cross-Origin-Opener-Policy "same-origin-allow-popups"

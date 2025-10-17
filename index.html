@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+  <title>POINT OF INTEREST AR KLB</title>
+  <link rel="stylesheet" href="css/modern-design-system.css">
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/modal-styles.css" />
+  <link rel="stylesheet" href="css/add-customer-form-styles.css">
+  <link rel="stylesheet" href="css/login-design-optimized.css">
+  <link rel="stylesheet" href="css/loading-styles.css?v=1.1">
+  <link rel="stylesheet" href="css/table-filter-styles.css">
+  <link rel="stylesheet" href="css/wavy-lines-toggle.css">
+  <link rel="stylesheet" href="css/monthly-monitoring-styles.css">
+  <link rel="stylesheet" href="css/mobile-redesign.css">
+  <link rel="stylesheet" href="css/government-card-style.css">
+  <link rel="stylesheet" href="css/custom-notifications.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <meta name="google-site-verification" content="qnpRH9xhfD37zmmVaWbxUWHyfAs7DVt1aMDfI18qi_I" />
+  <style>
+    /* Tab Navigation Styles */
+    .tab-navigation {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 5px;
+      gap: 10px;
+    }
+    .tab-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      cursor: pointer;
+      background-color: var(--background-light, #f0f2f5);
+      border: 1px solid var(--border-color, #dee2e6);
+      border-radius: 50px; 
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      transition: all 0.3s ease;
+    }
+    .tab-link.active {
+      background-color: var(--primary-color);
+      color: var(--text-white, white);
+      border-color: var(--primary-color);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      transform: translateY(-2px); 
+    }
+    .tab-link:hover:not(.active) {
+      background-color: var(--border-color, #e9ecef);
+      color: var(--text-primary);
+      transform: translateY(-1px); 
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      padding: 20px 0;
+      gap: 5px;
+    }
+    .page-ellipsis {
+        display: flex;
+        align-items: flex-end;
+        padding: 0 5px;
+    }
+    .active-filter-chip {
+      background-color: #ff5e5e;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 0.9em;
+      margin-left: 15px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .btn-remove-filter {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.2em;
+      cursor: pointer;
+      padding: 0 5px;
+    }
+
+    #top-homepage-link {
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+        padding: 10px 15px;
+        border-radius: 50px;
+        background-color: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(5px);
+        transition: all 0.3s ease;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    #top-homepage-link:hover {
+        background-color: #ffffff;
+        color: var(--primary-dark);
+        transform: scale(1.05);
+        box-shadow: var(--shadow-md);
+    }
+
+    .sidebar .menu-list input[type="radio"] {
+        display: none;
+    }
+
+    .sidebar .menu-list label {
+        display: block;
+        padding: 10px 15px;
+        color: #fff;
+        cursor: pointer;
+        border-radius: var(--radius-md);
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .sidebar .menu-list input[type="radio"]:checked + label {
+        background-color: var(--primary-color);
+        color: var(--text-white);
+    }
+
+    .sidebar .menu-list label:hover {
+        background-color: var(--primary-dark);
+        color: var(--text-white);
+    }
+
+    /* Segmented control for team selection */
+    .team-selection {
+        display: flex;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: var(--radius-md);
+        padding: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .team-selection label {
+        flex: 1;
+        text-align: center;
+        padding: 8px 12px;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.9);
+        background-color: transparent !important; /* Override other label styles */
+    }
+    .team-selection input[type="radio"]:checked + label {
+        background-color: var(--primary-color) !important;
+        color: var(--text-white);
+        box-shadow: var(--shadow-sm);
+    }
+    .team-selection label:hover {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: var(--text-white);
+    }
+
+    /* Style the "Lapor Kendala" link to look like a regular menu item */
+    .support-button-li a {
+        display: contents; 
+        color: inherit;
+        text-decoration: none;
+    }
+
+  </style>
+
+
+</head>
+<body>
+    <div id="skeleton-loader" style="display: none;">
+        <div class="skeleton-sidebar">
+            <div class="skeleton-logo"></div>
+            <div class="skeleton-profile"></div>
+            <div class="skeleton-menu-section"></div>
+            <div class="skeleton-menu-section"></div>
+        </div>
+        <div class="skeleton-main-content">
+            <div class="skeleton-header"></div>
+            <div class="skeleton-stats-overview">
+                <div class="skeleton-stat-card"></div>
+                <div class="skeleton-stat-card"></div>
+                <div class="skeleton-stat-card"></div>
+                <div class="skeleton-stat-card"></div>
+            </div>
+            <div class="skeleton-table-section">
+                <div class="skeleton-section-header"></div>
+                <div class="skeleton-table-filter-controls">
+                    <div class="skeleton-search-input"></div>
+                    <div class="skeleton-filter-buttons"></div>
+                    <div class="skeleton-add-button"></div>
+                </div>
+                <div class="skeleton-table">
+                    <div class="skeleton-table-row header"></div>
+                    <div class="skeleton-table-row">
+                        <div class="skeleton-cell" style="width: 15%"></div>
+                        <div class="skeleton-cell" style="width: 20%"></div>
+                        <div class="skeleton-cell" style="width: 25%"></div>
+                        <div class="skeleton-cell" style="width: 15%"></div>
+                        <div class="skeleton-cell" style="width: 25%"></div>
+                    </div>
+                    <div class="skeleton-table-row">
+                        <div class="skeleton-cell" style="width: 15%"></div>
+                        <div class="skeleton-cell" style="width: 20%"></div>
+                        <div class="skeleton-cell" style="width: 25%"></div>
+                        <div class="skeleton-cell" style="width: 15%"></div>
+                        <div class="skeleton-cell" style="width: 25%"></div>
+                    </div>
+                    <div class="skeleton-table-row">
+                        <div class="skeleton-cell" style="width: 15%"></div>
+                        <div class="skeleton-cell" style="width: 20%"></div>
+                        <div class="skeleton-cell" style="width: 25%"></div>
+                        <div class="skeleton-cell" style="width: 15%"></div>
+                        <div class="skeleton-cell" style="width: 25%"></div>
+                    </div>
+                    <div class="skeleton-table-row">
+                        <div class="skeleton-cell" style="width: 15%"></div>
+                        <div class="skeleton-cell" style="width: 20%"></div>
+                        <div class="skeleton-cell" style="width: 25%"></div>
+                        <div class="skeleton-cell" style="width: 15%"></div>
+                        <div class="skeleton-cell" style="width: 25%"></div>
+                    </div>
+                    <div class="skeleton-table-row">
+                        <div class="skeleton-cell" style="width: 15%"></div>
+                        <div class="skeleton-cell" style="width: 20%"></div>
+                        <div class="skeleton-cell" style="width: 25%"></div>
+                        <div class="skeleton-cell" style="width: 15%"></div>
+                        <div class="skeleton-cell" style="width: 25%"></div>
+                    </div>
+                     <div class="skeleton-table-row">
+                        <div class="skeleton-cell" style="width: 15%"></div>
+                        <div class="skeleton-cell" style="width: 20%"></div>
+                        <div class="skeleton-cell" style="width: 25%"></div>
+                        <div class="skeleton-cell" style="width: 15%"></div>
+                        <div class="skeleton-cell" style="width: 25%"></div>
+                    </div>
+                </div>
+                <div class="skeleton-pagination"></div>
+            </div>
+        </div>
+    </div>
+
+  <!-- Login Container -->
+  <div class="sign-in">
+    <a href="/landing.html" id="top-homepage-link"><i class="fas fa-arrow-left"></i> Back to Homepage</a>
+    <div class="wavy-lines">
+      <svg id="login-wavy-lines" viewBox="0 0 1200 400" xmlns="http://www.w3.org/2000/svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;">
+      <path id="line1" />
+      <path id="line2" />
+      <path id="line3" />
+      <path id="line4" />
+      <path id="line5" />
+      <path id="line6" />
+      <path id="line7" />
+      <path id="line8" />
+      <path id="line9" />
+      <path id="line10" />
+      <path id="line11" />
+      <path id="line12" />
+      </svg>
+    </div>
+    <a href="/landing.html" id="top-homepage-link"><i class="fas fa-arrow-left"></i> Back to Homepage</a>
+  <div id="sign-in-container" class="login-container" style="position: relative;">
+    <div class="login-logo" style="position: relative; z-index: 1;">
+      <h1>Welcome To Point Of Interest</h1>
+      <p>Sign in with your Google account to continue</p>
+      <p class="login-help"><a href="#" id="login-tutorial-link"><i class="fas fa-question-circle"></i> Butuh bantuan login?</a></p>
+    </div>
+    <div class="login" style="position: relative; z-index: 1;">
+    <div class="login-form">
+      <div id="g_id_onload"
+           data-client_id="167078370634-de0ou8c3hikdba9pq6evimmfekbkk9o6.apps.googleusercontent.com"
+           data-callback="handleCredentialResponse"
+           data-auto_prompt="false">
+      </div>
+      
+    </div>
+    </div>
+    <div class="privacy">
+      <a href="privacy_policy.html">Privacy Policy</a>
+      <a href="terms_of_service.html">Terms of Service</a>
+    </div>
+  </div>
+  </div> 
+
+  <!-- Login Tutorial Modal -->
+  <div id="login-tutorial-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Tutorial Login</h2>
+        <span class="close-button" id="login-tutorial-close">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p>Jika Anda melihat layar "Google belum memverifikasi aplikasi ini", ikuti langkah-langkah berikut:</p>
+        <div class="tutorial-step">
+          <h4>Langkah 1: Klik "Lanjutan"</h4>
+          <img src="assets/Frame 2.png" alt="Tutorial Langkah 1" style="width: 100%; border: 1px solid #ddd; border-radius: 5px; margin-top: 10px;">
+        </div>
+        <div class="tutorial-step">
+          <h4>Langkah 2: Klik "Buka Point Of Interest (tidak aman)"</h4>
+          <img src="assets/Frame 1.png" alt="Tutorial Langkah 2" style="width: 100%; border: 1px solid #ddd; border-radius: 5px; margin-top: 10px;">
+          <h4>Langkah 3: Lanjutkan proses login seperti biasa</h4>
+        </div>
+        <div style="text-align: center; padding-top: 20px; border-top: 1px solid #eee; margin-top: 20px;">
+          <p style="margin-bottom: 15px;">Butuh bantuan lebih lanjut atau ingin melaporkan masalah?</p>
+          <a href="https://wa.me/6285353235675" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+            <i class="fab fa-whatsapp"></i> Lapor Kendala
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <!-- Main Content Container -->
+  <div id="main-content" style="display: none;">
+    <div id="notification-bar" class="notification-bar"></div>
+    <div id="errorDisplay"></div>
+    <div id="loadingIndicator" style="display: none;">
+      <div class="spinner"></div>
+      <p>Loading data...</p>
+    </div>
+    <div class="container">
+      <aside class="sidebar" id="sidebar">
+        <div class="logo">
+          <span>Point Of Interest</span>
+        </div>
+        
+        <div class="sidebar-menu">
+          <div class="menu-section">
+            <h3>Team</h3>
+            <div class="menu-list team-selection">
+                <input type="radio" id="teamTelda" name="team" value="telda" checked>
+                <label for="teamTelda">Team Telda</label>
+                <input type="radio" id="teamNonTelda" name="team" value="non-telda">
+                <label for="teamNonTelda">Team Non-Telda</label>
+            </div>
+          </div>
+          <div class="sales-account">
+          <div class="menu-section">
+            <h3>Sales Team</h3>
+            <div class="sales-list-container">
+              <div class="sales-header">
+                <i class="fas fa-user-tie"></i>
+                <span>Sales Team</span>
+              </div>
+              <ul class="sales-list">
+                <!-- Sales items will be populated dynamically -->
+              </ul>
+            </div>
+          </div>
+          
+          <div class="menu-section">
+            <h3>Account</h3>
+            <ul class="menu-list">
+              <li class="login-tutorial-trigger" style="cursor: pointer;">
+                <i class="fas fa-question-circle"></i>
+                <span>Tutorial Login</span>
+              </li>
+              <li id="sign-out-button" onclick="handleSignoutClick()" style="display: none;">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- New section for Non Telda Sales Team -->
+        <div class="non-telda-sales-account" style="display: none;">
+            <div class="menu-section">
+                <h3>Non Telda Sales Team</h3>
+                <div class="sales-list-container">
+                    <div class="sales-header">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Non Telda Sales Team</span>
+                    </div>
+                    <ul class="non-telda-sales-list">
+                        <!-- Non Telda Sales items will be populated dynamically -->
+                    </ul>
+                </div>
+            </div>
+            <div class="menu-section" style="margin-top: 20px;">
+              <h3>Account</h3>
+              <ul class="menu-list">
+                <li class="login-tutorial-trigger" style="cursor: pointer;">
+                  <i class="fas fa-question-circle"></i>
+                  <span>Tutorial Login</span>
+                </li>
+                <li id="sign-out-button-non-telda" onclick="handleSignoutClick()" style="cursor: pointer;">
+                  <i class="fas fa-sign-out-alt"></i>
+                  <span>Logout</span>
+                </li>
+              </ul>
+            </div>
+        </div>
+        </div>
+      </aside>
+      
+      <div class="sidebar-overlay" id="sidebarOverlay"></div>
+      
+      <main class="main-content">
+        <header class="header">
+          <div class="header-left">
+            <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="header-title">
+              <h1>Dashboard Monitoring</h1>
+            </div>
+            <p class="header-subtitle">Real-time tracking of sales performance</p>
+          </div>
+          <div class="header-right">
+            <div id="userProfileDisplayElement" style="display: none;">
+                <img id="userProfilePicture" src="" alt="User Profile Picture">
+                <span id="userProfileName" style="display: none;"></span>
+            </div>
+            <div id="header-welcome">Welcome back, <span id="user-name-placeholder">User</span>!</div>
+            <div id="current-date"></div>
+          </div>
+        </header>
+        
+        <section class="stats-overview">
+          <div class="stat-card primary">
+            <div class="stat-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+              <h3>Total Point Of Interest</h3>
+              <div class="stat-number" id="totalPoi">-</div>
+            </div>
+          </div>
+
+          <div class="stat-card primary">
+            <div class="stat-icon">
+              <i class="fas fa-school"></i>
+            </div>
+            <div class="stat-content">
+              <h3>Jumlah Sekolah</h3>
+              <div class="stat-number" id="totalSekolah">-</div>
+            </div>
+          </div>
+
+          <div class="stat-card secondary">
+            <div class="stat-icon">
+              <i class="fas fa-building"></i>
+            </div>
+            <div class="stat-content">
+              <h3>Jumlah Non-Sekolah</h3>
+              <div class="stat-number" id="totalNonSekolah">-</div>
+            </div>
+          </div>
+
+          <div class="stat-card secondary">
+            <div class="stat-icon">
+              <i class="fas fa-landmark"></i>
+            </div>
+            <div class="stat-content">
+              <h3>Jumlah Pemerintahan</h3>
+              <div class="stat-number" id="totalPemerintahan">-</div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+          <button class="tab-link active" data-tab="pelanggan"><i class="fas fa-list-ul"></i> Daftar Calon Pelanggan</button>
+          <button class="tab-link" data-tab="monitoring"><i class="fas fa-chart-line"></i> Monitoring & Kinerja</button>
+        </div>
+        
+        <!-- Add Customer Form Section -->
+        <section class="add-customer-section" id="add-customer-section" style="display: none;">
+          <div class="section-header">
+            <h3>
+              <i class="fas fa-user-plus"></i>
+              Tambah Calon Pelanggan Baru
+            </h3>
+            <button type="button" class="btn-close-form" id="closeFormBtn">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          
+          <form id="addCustomerForm" class="form-grid">
+            <div class="wizard-container">
+              <!-- Progress Bar -->
+              <ul class="progress-bar">
+                <li class="progress-bar-item active"><div class="step-number">1</div><div class="step-name">Pribadi</div></li>
+                <li class="progress-bar-item"><div class="step-number">2</div><div class="step-name">Lokasi</div></li>
+                <li class="progress-bar-item"><div class="step-number">3</div><div class="step-name">Sales</div></li>
+                <li class="progress-bar-item"><div class="step-number">4</div><div class="step-name">Tambahan</div></li>
+              </ul>
+
+              <div class="form-steps">
+                <!-- Step 1: Personal Information -->
+                <div class="form-step active">
+                  <h5 class="section-title"><i class="fas fa-user"></i> Informasi Pribadi</h5>
+                  <div class="form-group">
+                    <label for="customerName"><i class="fas fa-user"></i> Nama Lengkap *</label>
+                    <input type="text" id="customerName" name="nama" required placeholder="Masukkan nama lengkap calon pelanggan">
+                  </div>
+                  <div class="form-group">
+                    <label for="customerPhone"><i class="fas fa-phone"></i> No Telepon *</label>
+                    <input type="tel" id="customerPhone" name="no_telepon" required placeholder="Contoh: 081234567890" pattern="[0-9]{10,13}">
+                    <small class="helper-text">Format: 081234567890 (10-13 digit)</small>
+                  </div>
+                  <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelAddCustomer"><i class="fas fa-times"></i> Batal</button>
+                    <button type="button" class="btn btn-primary" data-next><i class="fas fa-arrow-right"></i> Berikutnya</button>
+                  </div>
+                </div>
+
+                <!-- Step 2: Address Information -->
+                <div class="form-step">
+                  <h5 class="section-title"><i class="fas fa-map-marker-alt"></i> Share Lokasi</h5>
+                  <div class="form-group">
+                    <label for="customerAddress"><i class="fas fa-home"></i> Alamat Lengkap *</label>
+                    <textarea id="customerAddress" name="alamat" rows="3" required placeholder="Masukkan alamat lengkap calon pelanggan"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="odpTerdekat"><i class="fas fa-network-wired"></i> ODP Terdekat *</label>
+                    <input type="text" id="odpTerdekat" name="odp_terdekat" placeholder="Contoh: ODP-001/ABC">
+                    <small class="helper-text">Masukkan kode ODP terdekat dari lokasi</small>
+                  </div>
+                  <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-previous><i class="fas fa-arrow-left"></i> Sebelumnya</button>
+                    <button type="button" class="btn btn-primary" data-next><i class="fas fa-arrow-right"></i> Berikutnya</button>
+                  </div>
+                </div>
+
+                <!-- Step 3: Sales Assignment -->
+                <div class="form-step">
+                  <h5 class="section-title"><i class="fas fa-user-tie"></i> Penugasan Sales</h5>
+                  <div class="form-group">
+                    <label for="assignedSales"><i class="fas fa-user-check"></i> Nama Sales *</label>
+                    <select id="assignedSales" name="nama_sales" required>
+                      <option value="">Pilih Sales</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="visitStatus"><i class="fas fa-calendar-check"></i> Status Visit</label>
+                    <select id="visitStatus" name="visit">
+                      <option value="">Pilih Status</option>
+                      <option value="Visited">Visited</option>
+                      <option value="Pending">Pending</option>
+                      <option value="Scheduled">Scheduled</option>
+                      <option value="Not Visited">Not Visited</option>
+                    </select>
+                  </div>
+                  <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-previous><i class="fas fa-arrow-left"></i> Sebelumnya</button>
+                    <button type="button" class="btn btn-primary" data-next><i class="fas fa-arrow-right"></i> Berikutnya</button>
+                  </div>
+                </div>
+
+                <!-- Step 4: Additional Information -->
+                <div class="form-step">
+                  <h5 class="section-title"><i class="fas fa-info-circle"></i> Informasi Tambahan</h5>
+                  <div class="form-group">
+                    <label for="customerStatus"><i class="fas fa-flag"></i> Status Calon Pelanggan</label>
+                    <select id="customerStatus" name="status">
+                      <option value="">Pilih Status</option>
+                      <option value="Baru">Baru</option>
+                      <option value="Follow Up">Follow Up</option>
+                      <option value="Survey">Survey</option>
+                      <option value="Diterima">Diterima</option>
+                      <option value="Tidak Diterima">Tidak Diterima</option>
+                      <option value="Pending">Pending</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="notes"><i class="fas fa-sticky-note"></i> Catatan / Keterangan</label>
+                    <textarea id="notes" name="keterangan" rows="3" placeholder="Catatan tambahan untuk calon pelanggan ini"></textarea>
+                  </div>
+                  <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-previous><i class="fas fa-arrow-left"></i> Sebelumnya</button>
+                    <button type="submit" class="btn btn-primary" id="saveCustomer"><i class="fas fa-save"></i> Simpan Calon Pelanggan</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </section>
+        
+        <section class="content-grid">
+          <div class="table-section">
+            <div class="section-header">
+              <h3>Daftar Calon Pelanggan</h3>
+              <div class="table-filter-controls">
+                <div class="search-container">
+                  <i class="fas fa-search"></i>
+                  <input type="text" id="searchInput" placeholder="Cari berdasarkan nama, alamat, no telepon, atau nama sales...">
+                </div>
+                <div class="filter-buttons-group">
+                  <button id="btnTableShowAll" class="btn-filter btn-filter-all" title="Tampilkan semua data">
+                    <i class="fas fa-list"></i> Semua
+                  </button>
+                  <button id="btnTableShowSchool" class="btn-filter btn-filter-school" title="Tampilkan hanya sekolah">
+                    <i class="fas fa-graduation-cap"></i> Sekolah
+                  </button>
+                  <button id="btnTableShowNonSchool" class="btn-filter btn-filter-nonschool" title="Tampilkan non-sekolah">
+                    <i class="fas fa-building"></i> Non-Sekolah
+                  </button>
+                  <button id="btnTableShowGoverment" class="btn-filter btn-filter-government" title="Tampilkan pemerintah">
+                    <i class="fas fa-landmark"></i> Pemerintahan
+                  </button>
+                </div>
+                <button id="toggle-customer-form" class="btn-export">
+                  <i class="fas fa-plus"></i>
+                  Add Calon Pelanggan Baru
+                </button>
+              </div>
+            </div>
+            
+            <div class="table-scroll-container">
+              <div class="table-scroll-top" id="tableScrollTop">
+                <div class="table-scroll-content" id="tableScrollContent"></div>
+              </div>
+              <div class="table-container" id="tableContainer" style="display: none;">
+                <table id="customerTable">
+                  <thead>
+                    <tr>
+                      <th>ODP TERDEKAT</th>
+                      <th>NAMA</th>
+                      <th>ALAMAT</th>
+                      <th>NO TELEPON</th>
+                      <th>NAMA SALES</th>
+                      <th>VISIT</th>
+                      <th>STATUS</th>
+                      <th>KETERANGAN TAMBAHAN</th>
+                      <th id="actionsHeader">ACTIONS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Customer rows will be populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+              <div id="cardContainer"></div>
+            </div>
+            <div id="paginationControls" class="pagination"></div>
+          </div>
+        </section>
+
+        <!-- Sales Performance Summary Section (for Non-Telda Sales) -->
+        <section class="sales-summary-section" id="salesSummarySection" style="display: none;">
+          <div class="section-header">
+            <h3>Ringkasan Kinerja Sales: <span id="summarySalesName"></span></h3>
+          </div>
+          <div class="summary-cards-grid">
+            <div class="summary-card">
+              <div class="summary-card-header">
+                <div class="summary-content">
+                  <h4>Total Pelanggan</h4>
+                  <p id="totalCustomersSummary">-</p>
+                </div>
+                <div class="summary-icon"><i class="fas fa-users"></i></div>
+              </div>
+              <div class="summary-graph"><canvas id="totalCustomersChart"></canvas></div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-card-header">
+                <div class="summary-content">
+                  <h4>Rata-rata Redaman Loss</h4>
+                  <p id="avgRedamanLossSummary">-</p>
+                </div>
+                <div class="summary-icon"><i class="fas fa-chart-line"></i></div>
+              </div>
+              <div class="summary-graph"><canvas id="avgRedamanLossChart"></canvas></div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-card-header">
+                <div class="summary-content">
+                  <h4>Status Billing (Bulan Ini)</h4>
+                  <p id="billingStatusSummary">-</p>
+                </div>
+                <div class="summary-icon"><i class="fas fa-money-bill-wave"></i></div>
+              </div>
+              <div class="summary-graph"><canvas id="billingStatusChart"></canvas></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Monthly Monitoring Table Section -->
+        <div class="table-section" id="monthlyMonitoringSection" style="display: none;">
+            <div class="section-header">
+              <h3>Monthly Billing Monitoring <span id="monitoringSalesName"></span></h3>
+              <div class="table-filter-controls">
+                <div class="search-container">
+                  <i class="fas fa-search"></i>
+                  <input type="text" id="monitoringSearchInput" placeholder="Cari pelanggan...">
+                </div>
+                <div class="filter-buttons-group">
+                    <label>Bulan:</label>
+                    <select id="monthFilter" onchange="googleSheetsIntegration.handleMonthFilterChange(event)"></select>
+                </div>
+                <div class="filter-buttons-group">
+                    <label>Status:</label>
+                    <button id="btnBillingAll" class="btn-filter active">All</button>
+                    <button id="btnBillingPaid" class="btn-filter">Paid</button>
+                    <button id="btnBillingUnpaid" class="btn-filter">Unpaid</button>
+                    <button id="btnBillingPraNPC" class="btn-filter">Pra NPC</button>
+                </div>
+                <div class="view-toggle">
+                  <button id="viewToggleCard" class="btn-view-toggle active" title="Tampilan Kartu"><i class="fas fa-th-large"></i></button>
+                  <button id="viewToggleTable" class="btn-view-toggle" title="Tampilan Tabel"><i class="fas fa-list"></i></button>
+                </div>
+              </div>
+            </div>
+            <div id="monitoringCardsContainer" class="monitoring-cards-grid">
+              <!-- Card view content goes here -->
+            </div>
+            <div id="monitoringTableContainer" class="table-scroll-container" style="display: none;">
+              <table id="monitoringTable">
+                <thead>
+                  <!-- Table headers go here -->
+                </thead>
+                <tbody>
+                  <!-- Table rows go here -->
+                </tbody>
+              </table>
+            </div>
+            <div id="monitoringPaginationControls" class="pagination"></div>
+        </div>
+      </main>
+    </div>
+    <button class="fabb" id="fab-add-customer">+</button>
+    <button class="fabb" id="fab-toggle-sidebar"><i class="fas fa-bars"></i></button>
+  </div>
+  <!-- Edit Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Data Calon Pelanggan</h2>
+      </div>
+      <div class="modal-body">
+        <form id="editForm">
+          <input type="hidden" id="editRowIndex" />
+            <div class="wizard-container">
+              <!-- Progress Bar -->
+              <ul class="progress-bar">
+                <li class="progress-bar-item active"><div class="step-number">1</div><div class="step-name">Pribadi</div></li>
+                <li class="progress-bar-item"><div class="step-number">2</div><div class="step-name">Lokasi</div></li>
+                <li class="progress-bar-item"><div class="step-number">3</div><div class="step-name">Sales</div></li>
+                <li class="progress-bar-item"><div class="step-number">4</div><div class="step-name">Tambahan</div></li>
+              </ul>
+
+              <div class="form-steps">
+                <!-- Step 1: Personal Information -->
+                <div class="form-step active">
+                  <h5 class="section-title"><i class="fas fa-user"></i> Informasi Pribadi</h5>
+                  <div class="form-group">
+                    <label for="editNama"><i class="fas fa-user"></i> Nama Lengkap *</label>
+                    <input type="text" id="editNama" name="nama" required placeholder="Masukkan nama lengkap calon pelanggan">
+                  </div>
+                  <div class="form-group">
+                    <label for="editTelepon"><i class="fas fa-phone"></i> No Telepon *</label>
+                    <input type="tel" id="editTelepon" name="no_telepon" required placeholder="Contoh: 081234567890" pattern="[0-9]{10,13}">
+                    <small class="helper-text">Format: 081234567890 (10-13 digit)</small>
+                  </div>
+                  <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="googleSheetsIntegration.closeEditModal()">Batal</button>
+                    <button type="button" class="btn btn-primary" data-next><i class="fas fa-arrow-right"></i> Berikutnya</button>
+                  </div>
+                </div>
+
+                <!-- Step 2: Address Information -->
+                <div class="form-step">
+                  <h5 class="section-title"><i class="fas fa-map-marker-alt"></i> Share Lokasi</h5>
+                  <div class="form-group">
+                    <label for="editAlamat"><i class="fas fa-home"></i> Alamat Lengkap *</label>
+                    <textarea id="editAlamat" name="alamat" rows="3" required placeholder="Masukkan alamat lengkap calon pelanggan"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="editOdp"><i class="fas fa-network-wired"></i> ODP Terdekat *</label>
+                    <input type="text" id="editOdp" name="odp_terdekat" placeholder="Contoh: ODP-001/ABC">
+                    <small class="helper-text">Masukkan kode ODP terdekat dari lokasi</small>
+                  </div>
+                  <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-previous><i class="fas fa-arrow-left"></i> Sebelumnya</button>
+                    <button type="button" class="btn btn-primary" data-next><i class="fas fa-arrow-right"></i> Berikutnya</button>
+                  </div>
+                </div>
+
+                <!-- Step 3: Sales Assignment -->
+                <div class="form-step">
+                  <h5 class="section-title"><i class="fas fa-user-tie"></i> Penugasan Sales</h5>
+                  <div class="form-group">
+                    <label for="editSales"><i class="fas fa-user-check"></i> Nama Sales *</label>
+                    <select id="editSales" name="nama_sales" required>
+                      <option value="">Pilih Sales</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="editVisit"><i class="fas fa-calendar-check"></i> Status Visit</label>
+                    <select id="editVisit" name="visit">
+                      <option value="">Pilih Status</option>
+                      <option value="Visited">Visited</option>
+                      <option value="Pending">Pending</option>
+                      <option value="Scheduled">Scheduled</option>
+                      <option value="Not Visited">Not Visited</option>
+                    </select>
+                  </div>
+                  <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-previous><i class="fas fa-arrow-left"></i> Sebelumnya</button>
+                    <button type="button" class="btn btn-primary" data-next><i class="fas fa-arrow-right"></i> Berikutnya</button>
+                  </div>
+                </div>
+
+                <!-- Step 4: Additional Information -->
+                <div class="form-step">
+                  <h5 class="section-title"><i class="fas fa-info-circle"></i> Informasi Tambahan</h5>
+                  <div class="form-group">
+                    <label for="editStatus"><i class="fas fa-flag"></i> Status Calon Pelanggan</label>
+                    <select id="editStatus" name="status">
+                      <option value="">Pilih Status</option>
+                      <option value="Baru">Baru</option>
+                      <option value="Follow Up">Follow Up</option>
+                      <option value="Survey">Survey</option>
+                      <option value="Diterima">Diterima</option>
+                      <option value="Tidak Diterima">Tidak Diterima</option>
+                      <option value="Pending">Pending</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="editKeteranganTambahan"><i class="fas fa-sticky-note"></i> Catatan / Keterangan</label>
+                    <textarea id="editKeteranganTambahan" name="keterangan_tambahan" rows="3" placeholder="Catatan tambahan untuk calon pelanggan ini"></textarea>
+                  </div>
+                  <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-previous><i class="fas fa-arrow-left"></i> Sebelumnya</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Perubahan</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Government Edit Modal -->
+  <div id="editGovernmentModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Data Pemerintahan</h2>
+      </div>
+      <div class="modal-body">
+        <form id="gov-edit-form">
+          <input type="hidden" id="gov-editRowIndex" />
+            <div class="wizard-container">
+              <!-- Progress Bar -->
+              <ul class="progress-bar">
+                <li class="progress-bar-item active"><div class="step-number">1</div><div class="step-name">Utama</div></li>
+                <li class="progress-bar-item"><div class="step-number">2</div><div class="step-name">Wilayah</div></li>
+                <li class="progress-bar-item"><div class="step-number">3</div><div class="step-name">Lainnya</div></li>
+              </ul>
+
+              <div class="form-steps">
+                <!-- Step 1: Main Information -->
+                <div class="form-step active">
+                  <h5 class="section-title">Informasi Utama</h5>
+                  <div class="form-group">
+                    <label for="gov-editNamaKoperasi">Nama Koperasi</label>
+                    <input type="text" id="gov-editNamaKoperasi" name="nama_koperasi" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="gov-editAlamat">Alamat</label>
+                    <textarea id="gov-editAlamat" name="alamat" rows="3" required></textarea>
+                  </div>
+                  <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="googleSheetsIntegration.closeGovernmentEditModal()">Batal</button>
+                    <button type="button" class="btn btn-primary" data-next>Berikutnya</button>
+                  </div>
+                </div>
+
+                <!-- Step 2: Region Information -->
+                <div class="form-step">
+                  <h5 class="section-title">Informasi Wilayah</h5>
+                  <div class="form-group">
+                    <label for="gov-editKabupatenKota">Kabupaten/Kota</label>
+                    <input type="text" id="gov-editKabupatenKota" name="kabupaten_kota" />
+                  </div>
+                  <div class="form-group">
+                    <label for="gov-editKecamatan">Kecamatan</label>
+                    <input type="text" id="gov-editKecamatan" name="kecamatan" />
+                  </div>
+                  <div class="form-group">
+                    <label for="gov-editDesa">Desa</label>
+                    <input type="text" id="gov-editDesa" name="desa" />
+                  </div>
+                  <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-previous>Sebelumnya</button>
+                    <button type="button" class="btn btn-primary" data-next>Berikutnya</button>
+                  </div>
+                </div>
+
+                <!-- Step 3: Other Information -->
+                <div class="form-step">
+                  <h5 class="section-title">Informasi Lainnya</h5>
+                  <div class="form-group">
+                    <label for="gov-editLatitude">Latitude</label>
+                    <input type="text" id="gov-editLatitude" name="latitude" />
+                  </div>
+                  <div class="form-group">
+                    <label for="gov-editLongitude">Longitude</label>
+                    <input type="text" id="gov-editLongitude" name="longitude" />
+                  </div>
+                  <div class="form-group">
+                    <label for="gov-editSales">Nama Sales</label>
+                    <input type="text" id="gov-editSales" name="sales" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="gov-editKeterangan">Keterangan</label>
+                    <textarea id="gov-editKeterangan" name="keterangan" rows="2"></textarea>
+                  </div>
+                  <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-previous>Sebelumnya</button>
+                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- View History Modal -->
+  <div id="viewHistoryModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <h2>Riwayat Kunjungan Lokasi</h2>
+      </div>
+      <div class="modal-body">
+        <div id="historyLoading" style="text-align: center; padding: 20px;">
+          <div class="spinner"></div>
+          <p>Memuat data riwayat...</p>
+        </div>
+        <div id="historyContent" style="display: none;">
+          <h4 id="historyLocationId" style="margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;"></h4>
+          <div class="table-scroll-container">
+            <table id="historyTable" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th>User Email</th>
+                  <th>Waktu</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody">
+                <!-- History data will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div id="historyError" style="display: none; text-align: center; padding: 20px; color: #dc3545;">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>Gagal memuat riwayat</p>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="closeViewHistoryModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  
+
+    <!-- Enhanced Modal -->
+  <div id="enhancedModal" class="enhanced-modal">
+    <div class="enhanced-modal-content">
+      <div class="enhanced-modal-header">
+        <h2 id="enhancedModalTitle"></h2>
+      </div>
+      <div class="enhanced-modal-body">
+        <p id="enhancedModalMessage"></p>
+      </div>
+      <div class="enhanced-modal-footer">
+        <button id="enhancedModalConfirm" class="enhanced-modal-button enhanced-modal-button-confirm">Yes</button>
+        <button id="enhancedModalCancel" class="enhanced-modal-button enhanced-modal-button-cancel">No</button>
+        <button id="enhancedModalClose" class="enhanced-modal-button enhanced-modal-button-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Load GSAP Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <!-- Load Custom GSAP Animations -->
+    <script src="js/gsap-animations.js?v=1.1"></script>
+
+    <!-- Load Config First -->
+    <script src="js/config.js"></script>
+    
+    
+    <!-- Load Core Data Logic -->
+    <script src="js/google-sheets-crud.js"></script>
+    <script src="js/google-sheets-integration.js"></script>
+
+    <!-- Load UI Modules & Helpers -->
+    <script src="js/school-data-filter.js"></script>
+    <script src="js/sidebar-manager.js"></script>
+    <script src="js/table-scrollbar-sync.js"></script>
+    <script src="js/notification-handler.js"></script>
+    <script src="js/modal-handler.js"></script>
+    <script src="js/wizard-form.js"></script>
+    <script src="js/edit-wizard-form.js"></script>
+
+    <!-- Load Custom UI Logic -->
+    <script src="js/custom-dropdown.js"></script>
+
+    <!-- Load Main Script Last (as it depends on the above) -->
+    <script src="js/summary-charts.js"></script>
+    <script src="js/script.js?v=1.1"></script>
+
+    <!-- The GSI client is still needed for Sign-In, but the GAPI client is not -->
+    <script src="https://accounts.google.com/gsi/client" async defer onload="initializeGsi()"></script>
+</body>
+</html>
