@@ -7,20 +7,30 @@ class GoogleSheetsCRUD {
 
     // CREATE - Menambah data baru via backend
     async addCustomer(customerData) {
-        const url = `http://localhost:3000/api/add-customer?t=${Date.now()}`;
-        console.log("ATTEMPTING TO FETCH URL:", url); // New log
+        try {
+            const url = `/api/add-customer?t=${Date.now()}`;
 
-    try {
-        // Menggunakan URL relatif untuk endpoint API
-        const url = `/api/add-customer?t=${Date.now()}`;
+            // The backend expects an object with a 'values' property which is an array.
+            const requestBody = {
+                values: [
+                    customerData.odp_terdekat,
+                    customerData.nama,
+                    customerData.alamat,
+                    customerData.no_telepon,
+                    customerData.nama_sales,
+                    customerData.visit,
+                    customerData.status,
+                    customerData.keterangan_tambahan
+                ]
+            };
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(customerData)
-        });
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
 
             if (!response.ok) {
                 const errorText = await response.text();
