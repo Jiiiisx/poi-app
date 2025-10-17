@@ -231,7 +231,5 @@ app.get('/', (req, res) => {
     res.send('Backend server is running. Ready to serve data to the POI application.');
 });
 
-// Start server
-app.listen(port, () => {
-    console.log(`Backend server listening at http://localhost:${port}`);
-});
+// Export the app for Vercel
+module.exports = app;
