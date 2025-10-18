@@ -1905,6 +1905,14 @@ class GoogleSheetsIntegration {
                 document.getElementById('editKeteranganTambahan').value
             ];
 
+            const response = await fetch('/api/update-customer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ rowIndex, values, userEmail: window.currentUserEmail }),
+            });
+
             if (!response.ok) {
                 if (response.status === 400) {
                     const errorData = await response.json();
@@ -1958,7 +1966,8 @@ class GoogleSheetsIntegration {
                             },
                             body: JSON.stringify({ 
                                 rowIndex: originalIndex, 
-                                sheetName: 'REKAP CALON PELANGGAN BY SPARTA'
+                                sheetName: 'REKAP CALON PELANGGAN BY SPARTA',
+                                userEmail: window.currentUserEmail
                             }),
                         });
 

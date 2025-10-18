@@ -12,6 +12,7 @@ class GoogleSheetsCRUD {
 
             // The backend expects an object with a 'values' property which is an array.
             const requestBody = {
+                userEmail: window.currentUserEmail, // Added for audit trail
                 values: [
                     customerData.odp_terdekat,
                     customerData.nama,

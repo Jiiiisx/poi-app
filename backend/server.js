@@ -36,6 +36,28 @@ async function getSheetsClient() {
     return google.sheets({ version: 'v4', auth: authClient });
 }
 
+// --- Audit Trail Logger ---
+async function logActivity(userEmail, action, details) {
+    try {
+        const sheets = await getSheetsClient();
+        const timestamp = new Date().toISOString();
+        const logSheetName = "'Log Aktivitas'!A:D"; 
+
+        await sheets.spreadsheets.values.append({
+            spreadsheetId: SPREADSHEET_ID,
+            range: logSheetName,
+            valueInputOption: 'USER_ENTERED',
+            resource: {
+                values: [[timestamp, userEmail || 'N/A', action, JSON.stringify(details)]],
+            },
+        });
+    } catch (error) {
+        console.error('CRITICAL: Failed to log activity:', error);
+        // We don't re-throw the error, as logging failure should not break the main operation.
+    }
+}
+
+
 // --- API Endpoints ---
 
 // 1. Get Customer Data
@@ -139,21 +161,14 @@ app.post('/api/update-cell', async (req, res) => {
 
 const { body, validationResult } = require('express-validator');
 
-// ... (rest of the existing code) ...
-
 // Define the validation chain
 const customerValidationRules = [
-    // ODP Terdekat (Optional, but sanitize if present)
+    body('userEmail').isEmail().withMessage('User email is required for logging.'),
     body('values.0').trim().escape(),
-    // Nama (Required)
     body('values.1').notEmpty({ ignore_whitespace: true }).withMessage('Nama tidak boleh kosong.').trim().escape(),
-    // Alamat (Required)
     body('values.2').notEmpty({ ignore_whitespace: true }).withMessage('Alamat tidak boleh kosong.').trim().escape(),
-    // No Telepon (Required, must be a valid Indonesian mobile number)
     body('values.3').isMobilePhone('id-ID').withMessage('Format nomor telepon tidak valid.'),
-    // Nama Sales (Required)
     body('values.4').notEmpty({ ignore_whitespace: true }).withMessage('Nama Sales tidak boleh kosong.').trim().escape(),
-    // Visit, Status, Keterangan (Optional, but sanitize if present)
     body('values.5').optional({ checkFalsy: true }).trim().escape(),
     body('values.6').optional({ checkFalsy: true }).trim().escape(),
     body('values.7').optional({ checkFalsy: true }).trim().escape(),
@@ -166,7 +181,7 @@ app.post('/api/add-customer', customerValidationRules, async (req, res) => {
         return res.status(400).json({ message: 'Data tidak valid.', errors: errors.array() });
     }
 
-    const { values } = req.body;
+    const { values, userEmail } = req.body;
 
     try {
         const sheets = await getSheetsClient();
@@ -178,6 +193,9 @@ app.post('/api/add-customer', customerValidationRules, async (req, res) => {
                 values: [values],
             },
         });
+
+        // Log the activity
+        logActivity(userEmail, 'ADD_CUSTOMER', { values });
 
         res.json(response.data);
     } catch (error) {
@@ -193,7 +211,7 @@ app.post('/api/update-customer', customerValidationRules, async (req, res) => {
         return res.status(400).json({ message: 'Data tidak valid.', errors: errors.array() });
     }
 
-    const { rowIndex, values } = req.body;
+    const { rowIndex, values, userEmail } = req.body;
 
     if (rowIndex === undefined) {
         return res.status(400).json({ message: 'Missing "rowIndex" in request body' });
@@ -212,6 +230,9 @@ app.post('/api/update-customer', customerValidationRules, async (req, res) => {
             },
         });
 
+        // Log the activity
+        logActivity(userEmail, 'UPDATE_CUSTOMER', { rowIndex, values });
+
         res.json(response.data);
     } catch (error) {
         console.error('Error updating customer:', error);
@@ -221,7 +242,7 @@ app.post('/api/update-customer', customerValidationRules, async (req, res) => {
 
 // 7. Delete a row
 app.post('/api/delete-row', async (req, res) => {
-    const { rowIndex, sheetName } = req.body;
+    const { rowIndex, sheetName, userEmail } = req.body;
 
     if (rowIndex === undefined || !sheetName) {
         return res.status(400).json({ message: 'Missing "rowIndex" or "sheetName" in request body' });
@@ -230,7 +251,6 @@ app.post('/api/delete-row', async (req, res) => {
     try {
         const sheets = await getSheetsClient();
 
-        // First, get the sheetId from the sheetName
         const spreadsheetInfo = await sheets.spreadsheets.get({ spreadsheetId: SPREADSHEET_ID });
         const sheet = spreadsheetInfo.data.sheets.find(s => s.properties.title === sheetName);
 
@@ -239,7 +259,6 @@ app.post('/api/delete-row', async (req, res) => {
         }
         const sheetId = sheet.properties.sheetId;
 
-        // Now, create and send the delete request
         const response = await sheets.spreadsheets.batchUpdate({
             spreadsheetId: SPREADSHEET_ID,
             resource: {
@@ -248,13 +267,16 @@ app.post('/api/delete-row', async (req, res) => {
                         range: {
                             sheetId: sheetId,
                             dimension: 'ROWS',
-                            startIndex: parseInt(rowIndex) + 1, // +1 because sheet is 0-indexed, but header is row 1
+                            startIndex: parseInt(rowIndex) + 1, 
                             endIndex: parseInt(rowIndex) + 2
                         }
                     }
                 }]
             }
         });
+
+        // Log the activity
+        logActivity(userEmail, 'DELETE_ROW', { rowIndex, sheetName });
 
         res.json(response.data);
     } catch (error) {
