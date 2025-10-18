@@ -1905,17 +1905,16 @@ class GoogleSheetsIntegration {
                 document.getElementById('editKeteranganTambahan').value
             ];
 
-            const response = await fetch('/api/update-customer', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ rowIndex, values }),
-            });
-
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || `HTTP ${response.status}`);
+                if (response.status === 400) {
+                    const errorData = await response.json();
+                    const errorMessages = errorData.errors.map(err => `<li>${err.msg}</li>`).join('');
+                    ModalHandler.show('Oops! Data Tidak Valid', `Harap perbaiki kesalahan berikut:<ul>${errorMessages}</ul>`, 'error');
+                } else {
+                    const errorText = await response.text();
+                    ModalHandler.show('Server Error', `Terjadi kesalahan pada server: ${errorText}`, 'error');
+                }
+                throw new Error(`Server returned ${response.status}`);
             }
 
             this.showMessage('Data berhasil diperbarui!', 'success');

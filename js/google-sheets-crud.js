@@ -33,9 +33,15 @@ class GoogleSheetsCRUD {
             });
 
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error("FETCH FAILED, RAW RESPONSE:", errorText);
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                if (response.status === 400) {
+                    const errorData = await response.json();
+                    const errorMessages = errorData.errors.map(err => `<li>${err.msg}</li>`).join('');
+                    ModalHandler.show('Oops! Data Tidak Valid', `Harap perbaiki kesalahan berikut:<ul>${errorMessages}</ul>`, 'error');
+                } else {
+                    const errorText = await response.text();
+                    ModalHandler.show('Server Error', `Terjadi kesalahan pada server: ${errorText}`, 'error');
+                }
+                throw new Error(`Server returned ${response.status}`);
             }
 
             const result = await response.json();

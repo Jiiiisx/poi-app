@@ -137,13 +137,36 @@ app.post('/api/update-cell', async (req, res) => {
     }
 });
 
-// 5. Add a new customer (Append Row)
-app.post('/api/add-customer', async (req, res) => {
-    const { values } = req.body;
+const { body, validationResult } = require('express-validator');
 
-    if (!values || !Array.isArray(values)) {
-        return res.status(400).json({ message: 'Missing or invalid "values" in request body' });
+// ... (rest of the existing code) ...
+
+// Define the validation chain
+const customerValidationRules = [
+    // ODP Terdekat (Optional, but sanitize if present)
+    body('values.0').trim().escape(),
+    // Nama (Required)
+    body('values.1').notEmpty({ ignore_whitespace: true }).withMessage('Nama tidak boleh kosong.').trim().escape(),
+    // Alamat (Required)
+    body('values.2').notEmpty({ ignore_whitespace: true }).withMessage('Alamat tidak boleh kosong.').trim().escape(),
+    // No Telepon (Required, must be a valid Indonesian mobile number)
+    body('values.3').isMobilePhone('id-ID').withMessage('Format nomor telepon tidak valid.'),
+    // Nama Sales (Required)
+    body('values.4').notEmpty({ ignore_whitespace: true }).withMessage('Nama Sales tidak boleh kosong.').trim().escape(),
+    // Visit, Status, Keterangan (Optional, but sanitize if present)
+    body('values.5').optional({ checkFalsy: true }).trim().escape(),
+    body('values.6').optional({ checkFalsy: true }).trim().escape(),
+    body('values.7').optional({ checkFalsy: true }).trim().escape(),
+];
+
+// 5. Add a new customer (Append Row)
+app.post('/api/add-customer', customerValidationRules, async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ message: 'Data tidak valid.', errors: errors.array() });
     }
+
+    const { values } = req.body;
 
     try {
         const sheets = await getSheetsClient();
@@ -164,11 +187,16 @@ app.post('/api/add-customer', async (req, res) => {
 });
 
 // 6. Update an existing customer
-app.post('/api/update-customer', async (req, res) => {
+app.post('/api/update-customer', customerValidationRules, async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ message: 'Data tidak valid.', errors: errors.array() });
+    }
+
     const { rowIndex, values } = req.body;
 
-    if (rowIndex === undefined || !values || !Array.isArray(values)) {
-        return res.status(400).json({ message: 'Missing or invalid "rowIndex" or "values" in request body' });
+    if (rowIndex === undefined) {
+        return res.status(400).json({ message: 'Missing "rowIndex" in request body' });
     }
 
     try {

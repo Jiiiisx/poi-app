@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const currentStepFields = steps[stepIndex].querySelectorAll('[required]');
         let isValid = true;
         currentStepFields.forEach(field => {
-            if (!field.value.trim()) {
+            if (!field.checkValidity()) { // checkValidity() is more robust, checks pattern, required, etc.
                 isValid = false;
                 field.classList.add('is-invalid');
             } else {
