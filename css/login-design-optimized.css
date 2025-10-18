@@ -150,8 +150,9 @@ body.login-page::before {
 
 /* Google Sign-in Button Container */
 .login-form {
+  display: flex;
+  justify-content: center;
   text-align: center;
-  justify-items: center;
 }
 
 .google-signin-container {
