@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Tutorial</title>
+    <style>
+        .tutorial-content {
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            line-height: 1.6;
+        }
+        .tutorial-content h3 {
+            font-size: 1.5em;
+            color: #333;
+            border-bottom: 2px solid #f0f2f5;
+            padding-bottom: 10px;
+            margin-top: 20px;
+        }
+        .tutorial-content h4 {
+            font-size: 1.2em;
+            color: #555;
+            margin-top: 20px;
+        }
+        .tutorial-content p {
+            margin-bottom: 15px;
+        }
+        .tutorial-content ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        .tutorial-content code {
+            background-color: #f0f2f5;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .tutorial-content .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        .tutorial-content .badge-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .tutorial-content .badge-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .tutorial-content .badge-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        .tutorial-content .badge-secondary {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+    </style>
+</head>
+<body>
+    <div class="tutorial-content">
+        <h3>Selamat Datang di Tutorial Dashboard Point of Interest!</h3>
+        <p>Dashboard ini dirancang untuk membantu Anda mengelola dan memantau data calon pelanggan (Point of Interest) secara efisien.</p>
+
+        <h4>1. Login</h4>
+        <p>Untuk mengakses dashboard, Anda harus login menggunakan akun Google Anda. Cukup klik tombol "Sign in with Google" dan pilih akun Anda.</p>
+
+        <h4>2. Tampilan Utama (Team Telda)</h4>
+        <p>Setelah login, Anda akan melihat tampilan utama "Team Telda".</p>
+        <ul>
+            <li><b>Ringkasan Statistik:</b> Di bagian atas, Anda akan melihat ringkasan jumlah total Point of Interest (POI), serta jumlah POI yang dikategorikan sebagai Sekolah, Non-Sekolah, dan Pemerintahan.</li>
+            <li><b>Daftar Calon Pelanggan:</b> Ini adalah tabel utama yang menampilkan semua data calon pelanggan. Anda dapat mencari data menggunakan kolom pencarian di atas tabel.</li>
+            <li><b>Filter Data:</b> Anda dapat memfilter data berdasarkan kategori:
+                <ul>
+                    <li><code>Semua</code>: Menampilkan semua data.</li>
+                    <li><code>Sekolah</code>: Menampilkan data POI sekolah.</li>
+                    <li><code>Non-Sekolah</code>: Menampilkan data POI selain sekolah.</li>
+                    <li><code>Pemerintahan</code>: Menampilkan data POI pemerintahan.</li>
+                </ul>
+            </li>
+            <li><b>Menambah Data:</b> Klik tombol <code>Add Calon Pelanggan Baru</code> untuk membuka form dan menambahkan data pelanggan baru.</li>
+            <li><b>Mengubah & Menghapus Data:</b> Di setiap baris data, terdapat tombol "Actions" untuk mengubah (edit) atau menghapus data.</li>
+        </ul>
+
+        <h4>3. Tampilan Monitoring (Team Non-Telda)</h4>
+        <p>Anda dapat beralih ke tampilan "Team Non-Telda" untuk memantau kinerja sales dan pelanggan yang sudah ada.</p>
+        <ul>
+            <li><b>Pilih Sales:</b> Di sidebar kiri, pilih nama sales untuk melihat data pelanggan yang mereka tangani.</li>
+            <li><b>Monitoring Pelanggan:</b> Anda akan melihat daftar pelanggan beserta informasi penting seperti:
+                <ul>
+                    <li><b>Status Billing:</b> Status pembayaran tagihan bulanan (misalnya, <code>PAID</code>, <code>UNPAID</code>).</li>
+                    <li><b>Redaman Loss:</b> Tingkat redaman sinyal. Nilai di bawah -23 dB akan ditandai merah.</li>
+                    <li><b>FUP:</b> Penggunaan kuota internet (Fair Usage Policy).</li>
+                </ul>
+            </li>
+            <li><b>Ringkasan Kinerja:</b> Di bagian atas, Anda akan melihat ringkasan kinerja sales yang dipilih, termasuk total pelanggan dan rata-rata redaman.</li>
+        </ul>
+
+        <h4>4. Fitur Umum</h4>
+        <ul>
+            <li><b>Pencarian:</b> Gunakan kolom pencarian untuk menemukan data dengan cepat di setiap tampilan.</li>
+            <li><b>Logout:</b> Klik tombol "Logout" di sidebar untuk keluar dari dashboard.</li>
+        </ul>
+    </div>
+</body>
+</html>

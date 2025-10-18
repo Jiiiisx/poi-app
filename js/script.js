@@ -393,33 +393,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const schoolFilterBtn = document.getElementById('btnTableShowSchool');
     const nonSchoolFilterBtn = document.getElementById('btnTableShowNonSchool');
 
-    // Login Tutorial Modal Logic
-    const loginTutorialLink = document.getElementById('login-tutorial-link');
-    const loginTutorialModal = document.getElementById('login-tutorial-modal');
-    const loginTutorialClose = document.getElementById('login-tutorial-close');
+    // Dashboard Tutorial Modal Logic
+    const dashboardTutorialLink = document.getElementById('dashboard-tutorial-link');
+    const dashboardTutorialModal = document.getElementById('dashboard-tutorial-modal');
+    const dashboardTutorialClose = document.getElementById('dashboard-tutorial-close');
 
-    const loginTutorialSidebarLinks = document.querySelectorAll('.login-tutorial-trigger');
+    const dashboardTutorialSidebarLinks = document.querySelectorAll('.dashboard-tutorial-trigger');
 
-    if (loginTutorialLink && loginTutorialModal && loginTutorialClose) {
-        loginTutorialLink.addEventListener('click', (e) => {
+    if (dashboardTutorialLink && dashboardTutorialModal && dashboardTutorialClose) {
+        dashboardTutorialLink.addEventListener('click', (e) => {
             e.preventDefault();
-            loginTutorialModal.style.display = 'block';
+            dashboardTutorialModal.style.display = 'block';
         });
 
-        loginTutorialSidebarLinks.forEach(link => {
+        dashboardTutorialSidebarLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                loginTutorialModal.style.display = 'block';
+                dashboardTutorialModal.style.display = 'block';
             });
         });
 
-        loginTutorialClose.addEventListener('click', () => {
-            loginTutorialModal.style.display = 'none';
+        dashboardTutorialClose.addEventListener('click', () => {
+            dashboardTutorialModal.style.display = 'none';
         });
 
         window.addEventListener('click', (e) => {
-            if (e.target == loginTutorialModal) {
-                loginTutorialModal.style.display = 'none';
+            if (e.target == dashboardTutorialModal) {
+                dashboardTutorialModal.style.display = 'none';
             }
         });
     }

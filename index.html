@@ -268,7 +268,7 @@
     <div class="login-logo" style="position: relative; z-index: 1;">
       <h1>Welcome To Point Of Interest</h1>
       <p>Sign in with your Google account to continue</p>
-      <p class="login-help"><a href="#" id="login-tutorial-link"><i class="fas fa-question-circle"></i> Butuh bantuan login?</a></p>
+      <p class="login-help"><a href="#" id="dashboard-tutorial-link"><i class="fas fa-question-circle"></i> Butuh bantuan?</a></p>
     </div>
     <div class="login" style="position: relative; z-index: 1;">
     <div class="login-form">
@@ -287,30 +287,15 @@
   </div>
   </div> 
 
-  <!-- Login Tutorial Modal -->
-  <div id="login-tutorial-modal" class="modal" style="display: none;">
-    <div class="modal-content">
+  <!-- Dashboard Tutorial Modal -->
+  <div id="dashboard-tutorial-modal" class="modal" style="display: none;">
+    <div class="modal-content" style="width: 80%; max-width: 900px;">
       <div class="modal-header">
-        <h2>Tutorial Login</h2>
-        <span class="close-button" id="login-tutorial-close">&times;</span>
+        <h2>Tutorial Dashboard</h2>
+        <span class="close-button" id="dashboard-tutorial-close">&times;</span>
       </div>
-      <div class="modal-body">
-        <p>Jika Anda melihat layar "Google belum memverifikasi aplikasi ini", ikuti langkah-langkah berikut:</p>
-        <div class="tutorial-step">
-          <h4>Langkah 1: Klik "Lanjutan"</h4>
-          <img src="assets/Frame 2.png" alt="Tutorial Langkah 1" style="width: 100%; border: 1px solid #ddd; border-radius: 5px; margin-top: 10px;">
-        </div>
-        <div class="tutorial-step">
-          <h4>Langkah 2: Klik "Buka Point Of Interest (tidak aman)"</h4>
-          <img src="assets/Frame 1.png" alt="Tutorial Langkah 2" style="width: 100%; border: 1px solid #ddd; border-radius: 5px; margin-top: 10px;">
-          <h4>Langkah 3: Lanjutkan proses login seperti biasa</h4>
-        </div>
-        <div style="text-align: center; padding-top: 20px; border-top: 1px solid #eee; margin-top: 20px;">
-          <p style="margin-bottom: 15px;">Butuh bantuan lebih lanjut atau ingin melaporkan masalah?</p>
-          <a href="https://wa.me/6285353235675" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
-            <i class="fab fa-whatsapp"></i> Lapor Kendala
-          </a>
-        </div>
+      <div class="modal-body" style="padding: 0;">
+        <iframe src="tutorial.html" style="width: 100%; height: 70vh; border: none;"></iframe>
       </div>
     </div>
   </div>
@@ -358,9 +343,9 @@
           <div class="menu-section">
             <h3>Account</h3>
             <ul class="menu-list">
-              <li class="login-tutorial-trigger" style="cursor: pointer;">
+              <li class="dashboard-tutorial-trigger" style="cursor: pointer;">
                 <i class="fas fa-question-circle"></i>
-                <span>Tutorial Login</span>
+                <span>Tutorial</span>
               </li>
               <li id="sign-out-button" onclick="handleSignoutClick()" style="display: none;">
                 <i class="fas fa-sign-out-alt"></i>
@@ -387,11 +372,10 @@
             <div class="menu-section" style="margin-top: 20px;">
               <h3>Account</h3>
               <ul class="menu-list">
-                <li class="login-tutorial-trigger" style="cursor: pointer;">
-                  <i class="fas fa-question-circle"></i>
-                  <span>Tutorial Login</span>
-                </li>
-                <li id="sign-out-button-non-telda" onclick="handleSignoutClick()" style="cursor: pointer;">
+                              <li class="dashboard-tutorial-trigger" style="cursor: pointer;">
+                                <i class="fas fa-question-circle"></i>
+                                <span>Tutorial</span>
+                              </li>                <li id="sign-out-button-non-telda" onclick="handleSignoutClick()" style="cursor: pointer;">
                   <i class="fas fa-sign-out-alt"></i>
                   <span>Logout</span>
                 </li>
