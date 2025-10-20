@@ -5,13 +5,10 @@
       "src": "backend/server.js",
       "use": "@vercel/node",
       "config": { "maxDuration": 60 }
-    },
-    { "src": "*.html", "use": "@vercel/static" },
-    { "src": "assets/**", "use": "@vercel/static" },
-    { "src": "css/**", "use": "@vercel/static" },
-    { "src": "js/**", "use": "@vercel/static" }
+    }
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/backend/server.js" }
-  ]
+  ],
+  "regions": ["sfo1"]
 }
