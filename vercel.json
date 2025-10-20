@@ -1,20 +1,6 @@
 {
   "version": 2,
-  "builds": [
-    { "src": "backend/server.js", "use": "@vercel/node" }
-  ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "backend/server.js" },
-    { "src": "/assets/(.*)", "dest": "/assets/$1" },
-    { "src": "/css/(.*)", "dest": "/css/$1" },
-    { "src": "/js/(.*)", "dest": "/js/$1" },
-    { "src": "/favicon.ico", "dest": "/favicon.ico" },
-    { "src": "/google7078d36fd2f9b55a.html", "dest": "/google7078d36fd2f9b55a.html" },
-    { "src": "/landing.html", "dest": "/landing.html" },
-    { "src": "/privacy_policy.html", "dest": "/privacy_policy.html" },
-    { "src": "/terms_of_service.html", "dest": "/terms_of_service.html" },
-    { "src": "/tutorial.html", "dest": "/tutorial.html" },
-    { "src": "/index.html", "dest": "/index.html" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    { "src": "/api/(.*)", "dest": "/api/server.js" }
   ]
 }
