@@ -97,7 +97,18 @@ app.get('/api/government-data', async (req, res) => {
 });
 
 // 3. Get Monitoring Data (Batch Get)
+const monitoringDataCache = {
+    timestamp: 0,
+    data: null,
+};
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
 app.get('/api/monitoring-data', async (req, res) => {
+    const now = Date.now();
+    if (now - monitoringDataCache.timestamp < CACHE_DURATION && monitoringDataCache.data) {
+        return res.json(monitoringDataCache.data);
+    }
+
     // These ranges were previously in the frontend
     const salesDataRanges = [
         "'REKAP PS AR KALIABANG'!A1:W105",
@@ -125,6 +136,9 @@ app.get('/api/monitoring-data', async (req, res) => {
             spreadsheetId: SPREADSHEET_ID,
             ranges: salesDataRanges,
         });
+
+        monitoringDataCache.timestamp = now;
+        monitoringDataCache.data = response.data;
 
         res.json(response.data);
     } catch (error) {
