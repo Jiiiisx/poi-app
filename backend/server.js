@@ -19,7 +19,13 @@ if (!process.env.SERVICE_ACCOUNT_KEY) {
     throw new Error('SERVICE_ACCOUNT_KEY environment variable is not set.');
 }
 
-const serviceAccountKey = JSON.parse(process.env.SERVICE_ACCOUNT_KEY);
+let serviceAccountKey;
+try {
+    serviceAccountKey = JSON.parse(process.env.SERVICE_ACCOUNT_KEY);
+} catch (error) {
+    console.error('CRITICAL: Failed to parse SERVICE_ACCOUNT_KEY. Ensure it is a valid JSON string.', error);
+    throw new Error('SERVICE_ACCOUNT_KEY is not a valid JSON. Please check your Vercel environment variables.');
+}
 
 // Google Sheets Client Initialization
 const auth = new google.auth.GoogleAuth({
