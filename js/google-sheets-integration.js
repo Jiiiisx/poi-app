@@ -215,6 +215,11 @@ class GoogleSheetsIntegration {
             btnBillingPraNPC.addEventListener('click', () => this.setBillingFilter('pra npc'));
         }
 
+        const btnBillingCT0 = document.getElementById('btnBillingCT0');
+        if (btnBillingCT0) {
+            btnBillingCT0.addEventListener('click', () => this.setBillingFilter('ct0'));
+        }
+
         const monitoringSearchInput = document.getElementById('monitoringSearchInput');
         if (monitoringSearchInput) {
             monitoringSearchInput.addEventListener('input', (e) => {
@@ -729,6 +734,26 @@ class GoogleSheetsIntegration {
             });
         }
 
+        if (this.currentBillingFilter === 'ct0') {
+            const now = new Date();
+            const sortedBillingHeaders = billingHeaders
+                .filter(header => this._parseHeaderDate(header) <= now)
+                .sort((a, b) => this._parseHeaderDate(a) - this._parseHeaderDate(b));
+
+            const lastThreeMonthsHeaders = sortedBillingHeaders.slice(-3);
+
+            if (lastThreeMonthsHeaders.length < 3) {
+                return [];
+            }
+
+            return data.filter(item => {
+                const isUnpaidLastMonth = (item[lastThreeMonthsHeaders[2]] || '').toLowerCase() === 'unpaid';
+                const isUnpaidTwoMonthsAgo = (item[lastThreeMonthsHeaders[1]] || '').toLowerCase() === 'unpaid';
+                const isUnpaidThreeMonthsAgo = (item[lastThreeMonthsHeaders[0]] || '').toLowerCase() === 'unpaid';
+                return isUnpaidLastMonth && isUnpaidTwoMonthsAgo && isUnpaidThreeMonthsAgo;
+            });
+        }
+
         if (this.selectedBillingMonth === 'all') {
             if (this.currentBillingFilter !== 'all') {
                 return data.filter(item => {
@@ -1097,12 +1122,14 @@ class GoogleSheetsIntegration {
         this.monitoringCurrentPage = 1;
         this.renderMonitoringView();
 
-        ['All', 'Paid', 'Unpaid', 'PraNPC'].forEach(f => {
+        ['All', 'Paid', 'Unpaid', 'PraNPC', 'CT0'].forEach(f => {
             const btn = document.getElementById(`btnBilling${f}`);
             if (btn) {
                 let filterName = f.toLowerCase();
                 if (f === 'PraNPC') {
                     filterName = 'pra npc';
+                } else if (f === 'CT0') {
+                    filterName = 'ct0';
                 }
                 if (filterName === filter) {
                     btn.classList.add('active');
