@@ -109,6 +109,12 @@ const namedRangesCache = {
 };
 const NAMED_RANGES_CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
 
+const monitoringDataCache = {
+    timestamp: 0,
+    data: null,
+};
+const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
+
 async function getNamedRangesMap() {
     const now = Date.now();
     if (now - namedRangesCache.timestamp < NAMED_RANGES_CACHE_DURATION && namedRangesCache.data) {
