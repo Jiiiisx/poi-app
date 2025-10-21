@@ -327,7 +327,7 @@ class GoogleSheetsIntegration {
             
             const namedRanges = Object.values(this.salesDataRanges).filter(range => range !== '');
 
-            const response = await fetch('/api/monitoring-data', {
+            const response = await fetch('/api/fetch-monitoring', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
