@@ -740,17 +740,23 @@ class GoogleSheetsIntegration {
                 .filter(header => this._parseHeaderDate(header) <= now)
                 .sort((a, b) => this._parseHeaderDate(a) - this._parseHeaderDate(b));
 
-            const lastThreeMonthsHeaders = sortedBillingHeaders.slice(-3);
-
-            if (lastThreeMonthsHeaders.length < 3) {
+            if (sortedBillingHeaders.length < 2) {
                 return [];
             }
 
             return data.filter(item => {
-                const isUnpaidLastMonth = (item[lastThreeMonthsHeaders[2]] || '').toLowerCase() === 'unpaid';
-                const isUnpaidTwoMonthsAgo = (item[lastThreeMonthsHeaders[1]] || '').toLowerCase() === 'unpaid';
-                const isUnpaidThreeMonthsAgo = (item[lastThreeMonthsHeaders[0]] || '').toLowerCase() === 'unpaid';
-                return isUnpaidLastMonth && isUnpaidTwoMonthsAgo && isUnpaidThreeMonthsAgo;
+                for (let i = 0; i <= sortedBillingHeaders.length - 2; i++) {
+                    const header1 = sortedBillingHeaders[i];
+                    const header2 = sortedBillingHeaders[i+1];
+
+                    const isUnpaid1 = (item[header1] || '').toLowerCase() === 'unpaid';
+                    const isUnpaid2 = (item[header2] || '').toLowerCase() === 'unpaid';
+
+                    if (isUnpaid1 && isUnpaid2) {
+                        return true;
+                    }
+                }
+                return false;
             });
         }
 
