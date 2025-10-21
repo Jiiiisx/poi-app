@@ -137,7 +137,7 @@ async function getNamedRangesMap() {
     }
 }
 
-app.get('/api/monitoring-data', async (req, res) => {
+app.post('/api/monitoring-data', async (req, res) => {
     const now = Date.now();
     if (now - monitoringDataCache.timestamp < CACHE_DURATION && monitoringDataCache.data) {
         return res.json(monitoringDataCache.data);
