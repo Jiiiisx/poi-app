@@ -143,23 +143,22 @@ async function getNamedRangesMap() {
     }
 }
 
-app.get('/api/monitoring-data', async (req, res) => {
+app.post('/api/monitoring-data', async (req, res) => {
     const now = Date.now();
-    // Caching is more complex with query params, disable for this test
-    // if (now - monitoringDataCache.timestamp < CACHE_DURATION && monitoringDataCache.data) {
-    //     return res.json(monitoringDataCache.data);
-    // }
+    if (now - monitoringDataCache.timestamp < CACHE_DURATION && monitoringDataCache.data) {
+        return res.json(monitoringDataCache.data);
+    }
 
     try {
         const sheets = await getSheetsClient();
         const namedRangesMap = await getNamedRangesMap();
 
-        // Read ranges from query string instead of body
-        const rangesQuery = req.query.ranges;
-        if (!rangesQuery) {
-            return res.status(400).json({ message: 'Missing ranges in request query string.' });
+        // The frontend now sends a list of named ranges in the request body
+        const namedRangesFromFrontend = req.body.ranges; // Assuming frontend sends { ranges: ['AndiData', 'AprilData', ...] }
+        if (!namedRangesFromFrontend || !Array.isArray(namedRangesFromFrontend)) {
+            return res.status(400).json({ message: 'Missing or invalid ranges in request body.' });
         }
-        const namedRangesFromFrontend = rangesQuery.split(',');
+
 
         const a1Notations = namedRangesFromFrontend.map(namedRangeName => {
             const a1 = namedRangesMap[namedRangeName];
