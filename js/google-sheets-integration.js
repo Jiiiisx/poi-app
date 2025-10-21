@@ -328,7 +328,6 @@ class GoogleSheetsIntegration {
             const namedRanges = Object.values(this.salesDataRanges).filter(range => range !== '');
 
             const rangesString = namedRanges.join(',');
-            console.log('DEBUG: Sending ranges:', rangesString);
             const response = await fetch(`/api/fetch-monitoring?ranges=${rangesString}`);
 
             if (!response.ok) {
