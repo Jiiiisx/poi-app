@@ -3,15 +3,19 @@ const { getSheetsClient, SPREADSHEET_ID, getNamedRangesMap } = require('./google
 // Note: Vercel automatically parses JSON bodies, so we don't need express.json middleware.
 
 export default async function handler(req, res) {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ message: 'Only POST requests are allowed' });
+    if (req.method !== 'GET') {
+        return res.status(405).json({ message: 'Only GET requests are allowed' });
     }
 
     try {
         const sheets = await getSheetsClient();
         const namedRangesMap = await getNamedRangesMap();
 
-        const namedRangesFromFrontend = req.body.ranges;
+        const rangesQuery = req.query.ranges;
+        if (!rangesQuery) {
+            return res.status(400).json({ message: 'Missing ranges in request query string.' });
+        }
+        const namedRangesFromFrontend = rangesQuery.split(',');
         if (!namedRangesFromFrontend || !Array.isArray(namedRangesFromFrontend)) {
             return res.status(400).json({ message: 'Missing or invalid ranges in request body.' });
         }
