@@ -103,11 +103,39 @@ app.get('/api/government-data', async (req, res) => {
 });
 
 // 3. Get Monitoring Data (Batch Get)
-const monitoringDataCache = {
+const namedRangesCache = {
     timestamp: 0,
     data: null,
 };
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const NAMED_RANGES_CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
+
+async function getNamedRangesMap() {
+    const now = Date.now();
+    if (now - namedRangesCache.timestamp < NAMED_RANGES_CACHE_DURATION && namedRangesCache.data) {
+        return namedRangesCache.data;
+    }
+
+    try {
+        const sheets = await getSheetsClient();
+        const response = await sheets.spreadsheets.get({
+            spreadsheetId: SPREADSHEET_ID,
+            fields: 'namedRanges(name,range)'
+        });
+
+        const namedRangesMap = {};
+        if (response.data.namedRanges) {
+            response.data.namedRanges.forEach(nr => {
+                namedRangesMap[nr.name] = nr.range.a1Notation;
+            });
+        }
+        namedRangesCache.timestamp = now;
+        namedRangesCache.data = namedRangesMap;
+        return namedRangesMap;
+    } catch (error) {
+        console.error('Error fetching named ranges:', error);
+        throw new Error('Failed to fetch named ranges.');
+    }
+}
 
 app.get('/api/monitoring-data', async (req, res) => {
     const now = Date.now();
@@ -115,32 +143,32 @@ app.get('/api/monitoring-data', async (req, res) => {
         return res.json(monitoringDataCache.data);
     }
 
-    // These ranges were previously in the frontend
-    const salesDataRanges = [
-        "'REKAP PS AR KALIABANG'!A1:W105",
-        "'REKAP PS AR KALIABANG'!Y1:AT105",
-        "'REKAP PS AR KALIABANG'!AV1:BR105",
-        "'REKAP PS AR KALIABANG'!BT1:CK105",
-        "'REKAP PS AR KALIABANG'!CM1:DI105",
-        "'REKAP PS AR KALIABANG'!DK1:EG105",
-        "'REKAP PS AR KALIABANG'!EI1:FE105",
-        "'REKAP PS AR KALIABANG'!FF1:GA105",
-        "'REKAP PS AR KALIABANG'!GC1:GT105",
-        "'REKAP PS AR KALIABANG'!GV1:HI105",
-        "'REKAP PS AR KALIABANG'!A111:W205",
-        "'REKAP PS AR KALIABANG'!Y111:AT205",
-        "'REKAP PS AR KALIABANG'!AV111:BJ205",
-        "'REKAP PS AR KALIABANG'!BL111:CA205",
-        "'REKAP PS AR KALIABANG'!CC111:CP205",
-        "'REKAP PS AR KALIABANG'!CR111:DN205",
-        "'REKAP PS AR KALIABANG'!DP111:EC205",
-    ];
-
     try {
         const sheets = await getSheetsClient();
+        const namedRangesMap = await getNamedRangesMap();
+
+        // The frontend now sends a list of named ranges in the request body
+        const namedRangesFromFrontend = req.body.ranges; // Assuming frontend sends { ranges: ['AndiData', 'AprilData', ...] }
+        if (!namedRangesFromFrontend || !Array.isArray(namedRangesFromFrontend)) {
+            return res.status(400).json({ message: 'Missing or invalid ranges in request body.' });
+        }
+
+        const a1Notations = namedRangesFromFrontend.map(namedRangeName => {
+            const a1 = namedRangesMap[namedRangeName];
+            if (!a1) {
+                console.warn(`Named range "${namedRangeName}" not found.`);
+                return null; // Or throw an error, depending on desired behavior
+            }
+            return a1;
+        }).filter(a1 => a1 !== null);
+
+        if (a1Notations.length === 0) {
+            return res.status(404).json({ message: 'No valid named ranges found or resolved.' });
+        }
+
         const response = await sheets.spreadsheets.values.batchGet({
             spreadsheetId: SPREADSHEET_ID,
-            ranges: salesDataRanges,
+            ranges: a1Notations,
         });
 
         monitoringDataCache.timestamp = now;
