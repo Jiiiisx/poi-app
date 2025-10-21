@@ -21,6 +21,8 @@ class GoogleSheetsIntegration {
         this.filteredGovernmentData = []; 
         this.monitoringData = [];
         this.originalMonitoringData = [];
+        this.monitoringDataBySales = {};
+        this.monitoringDataHeadersBySales = {};
 
         this.isInitialized = false;
         this.retryCount = 0;
