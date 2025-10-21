@@ -56,6 +56,7 @@ async function getNamedRangesMap() {
 
         const namedRangesMap = {};
         if (response.data.namedRanges) {
+            console.log('Fetched named ranges:', JSON.stringify(response.data.namedRanges, null, 2));
             response.data.namedRanges.forEach(nr => {
                 namedRangesMap[nr.name] = nr.range.a1Notation;
             });
