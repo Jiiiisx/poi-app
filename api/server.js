@@ -14,12 +14,12 @@ app.use(express.json());
 // Constants
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
 
-// Check for required environment variables
-if (!process.env.SERVICE_ACCOUNT_KEY) {
-    throw new Error('SERVICE_ACCOUNT_KEY environment variable is not set.');
-}
 
 let serviceAccountKey;
+if (!process.env.SERVICE_ACCOUNT_KEY) {
+    throw new Error('SERVICE_ACCOUNT_KEY environment variable is not set. For local development, ensure it is set in your .env file. For Vercel, set it in your project settings.');
+}
+
 try {
     serviceAccountKey = JSON.parse(process.env.SERVICE_ACCOUNT_KEY);
 } catch (error) {
@@ -310,6 +310,7 @@ app.post('/api/delete-row', async (req, res) => {
 app.get('/', (req, res) => {
     res.send('Backend server is running. Ready to serve data to the POI application.');
 });
+
 
 // Export the app for Vercel
 module.exports = app;

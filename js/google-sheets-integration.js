@@ -71,25 +71,25 @@ class GoogleSheetsIntegration {
         this.monitoringSearchQuery = '';
 
         this.salesDataRanges = {
-            'Andi': "'REKAP PS AR KALIABANG'!A1:W105",
-            'April': "'REKAP PS AR KALIABANG'!Y1:AT105",
-            'Nandi': "'REKAP PS AR KALIABANG'!AV1:BR105",
-            'Octa': "'REKAP PS AR KALIABANG'!BT1:CK105",
-            'Yandi': "'REKAP PS AR KALIABANG'!CM1:DI105",
-            'Totong': "'REKAP PS AR KALIABANG'!DK1:EG105",
-            'Yusdhi': "'REKAP PS AR KALIABANG'!EI1:FE105",
-            'Nursyarif': "'REKAP PS AR KALIABANG'!FF1:GA105",
-            'Reynaldi': "'REKAP PS AR KALIABANG'!GC1:GT105",
-            'Andri': "'REKAP PS AR KALIABANG'!GV1:HI105",
-            'TRI SUSANTOHADI': "'REKAP PS AR KALIABANG'!A111:W205",
-            'DEDI KURNIAWAN': "'REKAP PS AR KALIABANG'!Y111:AT205",
-            'MUHAMMAD ARIFIN': "'REKAP PS AR KALIABANG'!AV111:BJ205",
-            'FAJAR SODIK': "'REKAP PS AR KALIABANG'!BL111:CA205",
-            'ICHRIMA': "'REKAP PS AR KALIABANG'!DP111:EC205",
-            'MUHAMAD  FERDI  RIDWAN': '',
-            'SUPRIHATIN': '',
-            'FINI FADILAH HANDAYANI': "'REKAP PS AR KALIABANG'!CR111:DN205",
-            'HINDUNTOMY WIJAYA': "'REKAP PS AR KALIABANG'!CC111:CP205"
+            'Andi': 'AndiData',
+            'April': 'AprilData',
+            'Nandi': 'NandiData',
+            'Octa': 'OctaData',
+            'Yandi': 'YandiData',
+            'Totong': 'TotongData',
+            'Yusdhi': 'YusdhiData',
+            'Nursyarif': 'NursyarifData',
+            'Reynaldi': 'ReynaldiData',
+            'Andri': 'AndriData',
+            'TRI SUSANTOHADI': 'TriSusantohadiData',
+            'DEDI KURNIAWAN': 'DediKurniawanData',
+            'MUHAMMAD ARIFIN': 'MuhammadArifinData',
+            'FAJAR SODIK': 'FajarSodikData',
+            'ICHRIMA': 'IchrimaData',
+            'MUHAMAD  FERDI  RIDWAN': 'MuhamadFerdiRidwanData',
+            'SUPRIHATIN': 'SuprihatinData',
+            'FINI FADILAH HANDAYANI': 'FiniFadilahHandayaniData',
+            'HINDUNTOMY WIJAYA': 'HinduntomyWijayaData'
         };
     }
 

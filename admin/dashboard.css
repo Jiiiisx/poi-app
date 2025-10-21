@@ -1,0 +1,270 @@
+/* Basic Reset & Root Variables */
+:root {
+    --primary-color: #4a69bd;
+    --secondary-color: #1e3799;
+    --background-color: #f4f7f6;
+    --sidebar-bg: #2c3e50;
+    --sidebar-text: #ecf0f1;
+    --sidebar-active: var(--primary-color);
+    --text-primary: #333;
+    --text-secondary: #666;
+    --border-color: #dfe4ea;
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif; /* Assuming Inter is available from the main app */
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-primary);
+}
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 250px;
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #34495e;
+}
+
+.sidebar-header h3 {
+    font-weight: 700;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 20px 0;
+}
+
+.sidebar-nav li a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 20px;
+    color: var(--sidebar-text);
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.sidebar-nav li a:hover {
+    background-color: #34495e;
+}
+
+.sidebar-nav li.active a {
+    background-color: var(--sidebar-active);
+    font-weight: 600;
+}
+
+/* Main Content Styles */
+.main-content {
+    flex-grow: 1;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-header {
+    margin-bottom: 30px;
+}
+
+.main-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.main-header p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.content-area {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+.content-area h2 {
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+/* Filter Controls */
+.filter-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.filter-controls input[type="text"] {
+    flex-grow: 1;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 0.9rem;
+    max-width: 300px; /* Limit search input width */
+}
+
+.filter-buttons .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.filter-buttons .btn:hover:not(.active) {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.filter-buttons .btn.active {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.filter-buttons .btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.filter-buttons .btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.filter-buttons .btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+#filterStats {
+    margin-left: auto;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+/* Table Styles */
+.customer-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    border-radius: 8px; /* Rounded corners for the table */
+    overflow: hidden; /* Ensures rounded corners are visible */
+    margin-top: 20px;
+    table-layout: fixed; /* Ensures columns respect defined widths */
+}
+
+.customer-table thead {
+    background-color: var(--primary-color); /* Use primary color for header */
+    color: var(--sidebar-text); /* White text for header */
+}
+
+.customer-table th, .customer-table td {
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    text-align: left;
+    white-space: normal; /* Allow text to wrap in cells */
+    word-wrap: break-word; /* Break long words */
+}
+
+.customer-table th {
+    font-weight: 600;
+    color: var(--sidebar-text); /* Ensure header text is white */
+}
+
+.customer-table tbody tr:nth-child(even) {
+    background-color: #f0f4f8; /* Lighter shade for even rows */
+}
+
+.customer-table tbody tr:hover {
+    background-color: #e2e6ea; /* Slightly darker hover effect */
+}
+
+.customer-table td a {
+    color: var(--primary-color); /* Link color */
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.customer-table td a:hover {
+    text-decoration: underline;
+}
+
+.error {
+    color: #dc3545;
+    font-weight: 500;
+}
+
+.table-responsive {
+    overflow-x: auto; /* Enable horizontal scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+.editable-cell-input {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    font-size: 0.9rem;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.pagination-controls button {
+    padding: 8px 15px;
+    border: 1px solid var(--primary-color);
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s, opacity 0.3s;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+    background-color: var(--secondary-color);
+}
+
+.pagination-controls button:disabled {
+    background-color: #cccccc;
+    border-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.pagination-controls span {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}

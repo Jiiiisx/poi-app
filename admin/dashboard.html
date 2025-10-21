@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internal Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>Admin Panel</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="#"><i class="fas fa-users"></i> Customers</a></li>
+                    <li><a href="#"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="main-header">
+                <h1>Welcome, Team!</h1>
+                <p>Customer data overview and management.</p>
+            </header>
+            <div class="content-area">
+                <h2>Customer List</h2>
+                <div class="filter-controls">
+                    <input type="text" id="searchInput" placeholder="Search customer data...">
+                    <div class="filter-buttons">
+                        <button id="btnTableShowAll" class="btn btn-primary active">All</button>
+                        <button id="btnTableShowSchool" class="btn btn-success">School</button>
+                        <button id="btnTableShowNonSchool" class="btn btn-secondary">Non-School</button>
+                    </div>
+                    <span id="filterStats"></span>
+                </div>
+                <div class="table-responsive">
+                    <div id="customer-table-container">
+                        <!-- Customer table will be loaded here by JavaScript -->
+                        <p>Loading customer data...</p>
+                    </div>
+                </div>
+                <div class="pagination-controls">
+                    <button id="prevPage" disabled>Previous</button>
+                    <span id="pageInfo">Page 1 of 1</span>
+                    <button id="nextPage" disabled>Next</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="dashboard.js"></script>
+</body>
+</html>
