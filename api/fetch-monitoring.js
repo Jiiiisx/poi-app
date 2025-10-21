@@ -29,6 +29,7 @@ export default async function handler(req, res) {
             return res.status(200).json({ valueRanges: [] });
         }
 
+        console.log('A1 Notations for batchGet:', a1Notations); // Added for debugging
         const response = await sheets.spreadsheets.values.batchGet({
             spreadsheetId: SPREADSHEET_ID,
             ranges: a1Notations,

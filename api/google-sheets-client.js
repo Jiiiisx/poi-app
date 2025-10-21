@@ -4,6 +4,7 @@ const { google } = require('googleapis');
 
 // Constants
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
+console.log('Backend SPREADSHEET_ID:', SPREADSHEET_ID);
 
 let serviceAccountKey;
 if (!process.env.SERVICE_ACCOUNT_KEY) {
