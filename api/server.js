@@ -67,7 +67,7 @@ async function logActivity(userEmail, action, details) {
 // --- API Endpoints ---
 
 // 1. Get Customer Data
-app.get('/api/customer-data', async (req, res) => {
+app.get('/customer-data', async (req, res) => {
     try {
         const sheets = await getSheetsClient();
         const range = "'REKAP CALON PELANGGAN BY SPARTA'!A1:J1000";
@@ -85,7 +85,7 @@ app.get('/api/customer-data', async (req, res) => {
 });
 
 // 2. Get Government Data
-app.get('/api/government-data', async (req, res) => {
+app.get('/government-data', async (req, res) => {
     try {
         const sheets = await getSheetsClient();
         const range = "'KDMP'!A1:I1000";
@@ -143,7 +143,7 @@ async function getNamedRangesMap() {
     }
 }
 
-app.post('/api/monitoring-data', async (req, res) => {
+app.post('/monitoring-data', async (req, res) => {
     const now = Date.now();
     if (now - monitoringDataCache.timestamp < CACHE_DURATION && monitoringDataCache.data) {
         return res.json(monitoringDataCache.data);
@@ -188,7 +188,7 @@ app.post('/api/monitoring-data', async (req, res) => {
 });
 
 // 4. Update a Cell
-app.post('/api/update-cell', async (req, res) => {
+app.post('/update-cell', async (req, res) => {
     const { range, value } = req.body;
 
     if (!range || value === undefined) {
@@ -229,7 +229,7 @@ const customerValidationRules = [
 ];
 
 // 5. Add a new customer (Append Row)
-app.post('/api/add-customer', customerValidationRules, async (req, res) => {
+app.post('/add-customer', customerValidationRules, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ message: 'Data tidak valid.', errors: errors.array() });
@@ -259,7 +259,7 @@ app.post('/api/add-customer', customerValidationRules, async (req, res) => {
 });
 
 // 6. Update an existing customer
-app.post('/api/update-customer', customerValidationRules, async (req, res) => {
+app.post('/update-customer', customerValidationRules, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ message: 'Data tidak valid.', errors: errors.array() });
@@ -295,7 +295,7 @@ app.post('/api/update-customer', customerValidationRules, async (req, res) => {
 });
 
 // 7. Delete a row
-app.post('/api/delete-row', async (req, res) => {
+app.post('/delete-row', async (req, res) => {
     const { rowIndex, sheetName, userEmail } = req.body;
 
     if (rowIndex === undefined || !sheetName) {
