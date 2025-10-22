@@ -1325,17 +1325,24 @@ class GoogleSheetsIntegration {
             const availableHeaders = this.monitoringDataHeadersBySales[normalizedSalesName] || [];
             
             const billingHeaders = availableHeaders.filter(h => h.toLowerCase().startsWith('billing'));
-            
-            const sortedBillingHeaders = [...billingHeaders].sort((a, b) => {
-                const dateA = this._parseHeaderDate(a);
-                const dateB = this._parseHeaderDate(b);
-                if (!dateA && !dateB) return 0;
-                if (!dateA) return 1; // Put invalid dates at the end
-                if (!dateB) return -1;
-                return dateB - dateA; // Descending sort
-            });
 
-            this.selectedBillingMonth = sortedBillingHeaders.length > 0 ? sortedBillingHeaders[0] : 'all';
+            const currentMonthColumn = this.getCurrentMonthColumnName();
+            const currentMonthHeader = billingHeaders.find(h => h.toUpperCase() === currentMonthColumn.toUpperCase());
+
+            if (currentMonthHeader) {
+                this.selectedBillingMonth = currentMonthHeader;
+            } else {
+                // Fallback: sort and pick the latest available month if current month is not in data
+                const sortedBillingHeaders = [...billingHeaders].sort((a, b) => {
+                    const dateA = this._parseHeaderDate(a);
+                    const dateB = this._parseHeaderDate(b);
+                    if (!dateA && !dateB) return 0;
+                    if (!dateA) return 1; // Put invalid dates at the end
+                    if (!dateB) return -1;
+                    return dateB - dateA; // Descending sort
+                });
+                this.selectedBillingMonth = sortedBillingHeaders.length > 0 ? sortedBillingHeaders[0] : 'all';
+            }
 
             this.populateMonthFilter(availableHeaders);
             this.monitoringCurrentPage = 1;
