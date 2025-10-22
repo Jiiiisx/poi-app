@@ -235,9 +235,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 td.dataset.row = start + rowIndex;
                 td.dataset.col = colIndex;
-                if (header && header.toLowerCase().startsWith('billing')) {
-                    td.contentEditable = true;
-                }
+                td.contentEditable = true;
                 tr.appendChild(td);
             });
             tbody.appendChild(tr);
