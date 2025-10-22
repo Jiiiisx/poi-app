@@ -144,10 +144,29 @@ document.addEventListener('DOMContentLoaded', function () {
             const tr = document.createElement('tr');
             rowData.forEach((cellData, colIndex) => {
                 const td = document.createElement('td');
-                td.textContent = cellData || '';
+                const header = headers[colIndex];
+
+                if (header && header.toLowerCase() === 'fup') {
+                    const fupData = cellData || '';
+                    if (fupData.includes('/')) {
+                        const [used, total] = fupData.replace(/GB/gi, '').split('/');
+                        const percentage = (parseFloat(used) / parseFloat(total)) * 100;
+                        td.innerHTML = `
+                            <div>${fupData}</div>
+                            <div class="fup-bar-container">
+                                <div class="fup-bar" style="width: ${percentage}%;"></div>
+                            </div>
+                        `;
+                    } else {
+                        td.textContent = fupData;
+                    }
+                } else {
+                    td.textContent = cellData || '';
+                }
+
                 td.dataset.row = start + rowIndex;
                 td.dataset.col = colIndex;
-                if (headers[colIndex] && headers[colIndex].toLowerCase().startsWith('billing')) {
+                if (header && header.toLowerCase().startsWith('billing')) {
                     td.contentEditable = true;
                 }
                 tr.appendChild(td);
