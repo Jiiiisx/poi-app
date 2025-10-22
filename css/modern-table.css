@@ -1,4 +1,9 @@
 /* Modern Table Styles */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 .customer-table {
     width: 100%;
     border-collapse: collapse;
@@ -7,8 +12,6 @@
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     border-radius: 8px;
-    overflow: hidden;
-    table-layout: fixed;
 }
 
 .customer-table thead tr {
