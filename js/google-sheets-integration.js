@@ -819,10 +819,17 @@ class GoogleSheetsIntegration {
             'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'mei': 4, 'jun': 5,
             'jul': 6, 'agu': 7, 'sep': 8, 'okt': 9, 'nov': 10, 'des': 11
         };
-        const parts = header.replace('Billing ', '').split(' ');
-        const month = monthMap[parts[0].toLowerCase()];
-        const year = parseInt(parts[1], 10) + 2000;
-        return new Date(year, month);
+        if (typeof header !== 'string') return null; // Handle non-string headers
+        const parts = header.replace(/billing/i, '').trim().split(' ');
+        if (parts.length < 2) return null; // Handle malformed headers
+
+        const monthName = parts[0].toLowerCase();
+        const month = monthMap[monthName];
+        const year = parseInt(parts[1], 10);
+
+        if (month === undefined || isNaN(year)) return null; // Handle invalid month/year
+
+        return new Date(year + 2000, month);
     }
 
     renderMonitoringAsCards() {
@@ -1316,8 +1323,17 @@ class GoogleSheetsIntegration {
             this.filteredMonitoringData = this.monitoringDataBySales[normalizedSalesName] || [];
 
             const availableHeaders = this.monitoringDataHeadersBySales[normalizedSalesName] || [];
+            
             const billingHeaders = availableHeaders.filter(h => h.toLowerCase().startsWith('billing'));
-            const sortedBillingHeaders = billingHeaders.sort((a, b) => this._parseHeaderDate(b) - this._parseHeaderDate(a));
+            
+            const sortedBillingHeaders = [...billingHeaders].sort((a, b) => {
+                const dateA = this._parseHeaderDate(a);
+                const dateB = this._parseHeaderDate(b);
+                if (!dateA && !dateB) return 0;
+                if (!dateA) return 1; // Put invalid dates at the end
+                if (!dateB) return -1;
+                return dateB - dateA; // Descending sort
+            });
 
             this.selectedBillingMonth = sortedBillingHeaders.length > 0 ? sortedBillingHeaders[0] : 'all';
 
