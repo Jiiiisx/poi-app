@@ -1311,10 +1311,10 @@ class GoogleSheetsIntegration {
             const availableHeaders = this.monitoringDataHeadersBySales[normalizedSalesName] || [];
             this.populateMonthFilter(availableHeaders);
 
-            const targetMonthColumn = this.getCurrentMonthColumnName();
-            const actualHeader = availableHeaders.find(h => h.toLowerCase() === targetMonthColumn.toLowerCase());
+            const billingHeaders = availableHeaders.filter(h => h.toLowerCase().startsWith('billing'));
+            const sortedBillingHeaders = billingHeaders.sort((a, b) => this._parseHeaderDate(b) - this._parseHeaderDate(a));
 
-            this.selectedBillingMonth = actualHeader ? actualHeader : 'all';
+            this.selectedBillingMonth = sortedBillingHeaders.length > 0 ? sortedBillingHeaders[0] : 'all';
             this.monitoringCurrentPage = 1;
             
             // Switch to the monitoring tab first
