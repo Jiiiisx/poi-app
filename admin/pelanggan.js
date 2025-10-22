@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const pageInfo = document.getElementById('pageInfo');
     const salesListElement = document.getElementById('sales-list');
     const selectedSalesElement = document.getElementById('selected-sales');
+    const salesPerformanceSummaryElement = document.getElementById('sales-performance-summary');
 
     async function loadMonitoringData() {
         try {
@@ -44,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
+            console.log('Raw monitoring data:', data);
             processMonitoringData(data);
             populateSalesList();
             filterBySales(selectedSales);
@@ -68,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 monitoringDataBySales[salesName] = rows;
             }
         });
+        console.log('Processed monitoring data:', monitoringDataBySales);
     }
 
     function populateSalesList() {
@@ -91,9 +94,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function filterBySales(salesName) {
         filteredData = monitoringDataBySales[salesName] || [];
+        console.log('Filtered data for', salesName, filteredData);
         currentPage = 1;
         renderBillingTable();
         updatePagination();
+        renderSalesSummary(salesName);
+    }
+
+    function renderSalesSummary(salesName) {
+        const salesData = monitoringDataBySales[salesName] || [];
+        const totalCustomers = salesData.length;
+
+        salesPerformanceSummaryElement.innerHTML = `
+            <div class="summary-card">
+                <p>Total Pelanggan</p>
+                <span>${totalCustomers}</span>
+            </div>
+        `;
     }
 
     function renderBillingTable() {
@@ -156,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const rowIndex = parseInt(td.dataset.row, 10) + 2; // +2 for header and 1-based index
         const colIndex = parseInt(td.dataset.col, 10);
         const colLetter = String.fromCharCode('A'.charCodeAt(0) + colIndex);
-        const sheetName = salesDataRanges[selectedSales].replace(/Data$/, ''); //e.g. AndiData -> Andi
+        const sheetName = 'REKAP PS AR KALIABANG';
         const range = `'${sheetName}'!${colLetter}${rowIndex}`;
 
         td.style.backgroundColor = '#fdffab';
