@@ -67,9 +67,7 @@
     font-weight: 600;
 }
 
-.customer-table {
-    table-layout: fixed;
-}
+
 
 .customer-table th:nth-child(1) { width: 10%; }
 .customer-table th:nth-child(2) { width: 15%; }

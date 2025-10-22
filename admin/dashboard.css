@@ -309,6 +309,7 @@ body {
 }
 
 .customer-table {
+    min-width: 1200px; /* Set a minimum width to ensure all columns are visible */
     width: 100%;
     border-collapse: collapse;
 }
