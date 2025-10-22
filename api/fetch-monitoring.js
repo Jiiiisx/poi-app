@@ -1,4 +1,4 @@
-const { getSheetsClient, SPREADSHEET_ID, getNamedRangesMap } = require('./google-sheets-client');
+const { getSheetsClient, SPREADSHEET_ID } = require('./google-sheets-client');
 
 export default async function handler(req, res) {
     if (req.method !== 'GET') {
@@ -7,32 +7,22 @@ export default async function handler(req, res) {
 
     try {
         const sheets = await getSheetsClient();
-        const namedRangesMap = await getNamedRangesMap();
-
+        
         const rangesQuery = req.query.ranges;
         if (!rangesQuery) {
             return res.status(400).json({ message: 'Missing ranges in request query string.' });
         }
         const namedRangesFromFrontend = rangesQuery.split(',');
 
-        const a1Notations = namedRangesFromFrontend.map(namedRangeName => {
-            const a1 = namedRangesMap[namedRangeName];
-            if (!a1) {
-                console.warn(`Named range "${namedRangeName}" not found.`);
-                return null;
-            }
-            return a1;
-        }).filter(a1 => a1 !== null);
-
-        if (a1Notations.length === 0) {
-            // Return 200 OK with empty data instead of 404, as the request was valid.
+        if (namedRangesFromFrontend.length === 0) {
             return res.status(200).json({ valueRanges: [] });
         }
 
-        console.log('A1 Notations for batchGet:', a1Notations); // Added for debugging
+        // Directly use the named ranges from the frontend in the batchGet call.
+        // The Google Sheets API can resolve named ranges by itself.
         const response = await sheets.spreadsheets.values.batchGet({
             spreadsheetId: SPREADSHEET_ID,
-            ranges: a1Notations,
+            ranges: namedRangesFromFrontend,
         });
 
         res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
@@ -40,6 +30,7 @@ export default async function handler(req, res) {
 
     } catch (error) {
         console.error('Error fetching monitoring data:', error);
+        // The error from Google's API might contain useful info if a named range is not found.
         res.status(500).json({ message: 'Failed to fetch monitoring data', error: error.message });
     }
 }
