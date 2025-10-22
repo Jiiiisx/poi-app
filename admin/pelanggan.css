@@ -67,8 +67,6 @@
     font-weight: 600;
 }
 
-
-
 .customer-table th:nth-child(1) { width: 10%; }
 .customer-table th:nth-child(2) { width: 15%; }
 .customer-table th:nth-child(3) { width: 10%; }
@@ -99,4 +97,44 @@
     vertical-align: middle !important;
     padding-top: 12px;
     padding-bottom: 12px;
+}
+
+.filter-controls {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 20px; /* Add some space below the filters */
+}
+
+.filter-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#month-filter {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+
+.status-filters {
+    display: flex;
+    gap: 5px;
+}
+
+.status-filters .btn {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.status-filters .btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
 }

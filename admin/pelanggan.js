@@ -36,6 +36,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const salesListElement = document.getElementById('sales-list');
     const selectedSalesElement = document.getElementById('selected-sales');
     const salesPerformanceSummaryElement = document.getElementById('sales-performance-summary');
+    const monthFilter = document.getElementById('month-filter');
+    const statusFilters = document.getElementById('status-filters');
+
+    let selectedMonthIndex = 'all';
+    let selectedStatus = 'all';
 
     async function loadMonitoringData() {
         try {
@@ -49,7 +54,8 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('Raw monitoring data:', data);
             processMonitoringData(data, requestedRanges);
             populateSalesList();
-            filterBySales(selectedSales);
+            // Initial load for the default sales person
+            filterBySales(selectedSales, true);
         } catch (error) {
             console.error('Error fetching monitoring data:', error);
             tableContainer.innerHTML = '<p>Error loading billing data. Please try again later.</p>';
@@ -85,8 +91,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 li.classList.add('active');
             }
             li.addEventListener('click', () => {
-                selectedSales = salesName;
-                selectedSalesElement.textContent = salesName;
                 filterBySales(salesName);
                 document.querySelectorAll('#sales-list li').forEach(item => item.classList.remove('active'));
                 li.classList.add('active');
@@ -95,13 +99,83 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function filterBySales(salesName) {
-        filteredData = monitoringDataBySales[salesName] || [];
-        console.log('Filtered data for', salesName, filteredData);
+    function populateMonthFilter() {
+        monthFilter.innerHTML = '<option value="all">All Months</option>';
+        const headers = monitoringDataHeadersBySales[selectedSales] || [];
+        headers.forEach((header, index) => {
+            if (header.toLowerCase().startsWith('billing')) {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = header;
+                monthFilter.appendChild(option);
+            }
+        });
+    }
+
+    function filterBySales(salesName, isInitialLoad = false) {
+        selectedSales = salesName;
+        selectedSalesElement.textContent = salesName;
+        
+        populateMonthFilter();
+        
+        if (!isInitialLoad) {
+            // Reset filters when changing sales, but not on initial load
+            searchInput.value = '';
+            monthFilter.value = 'all';
+            statusFilters.querySelector('.active').classList.remove('active');
+            statusFilters.querySelector('[data-status="all"]').classList.add('active');
+        }
+
+        selectedMonthIndex = monthFilter.value;
+        selectedStatus = statusFilters.querySelector('.active').dataset.status;
+
+        applyFilters();
+        renderSalesSummary(salesName);
+    }
+
+    function applyFilters() {
+        const searchTerm = searchInput.value.toLowerCase();
+        let data = monitoringDataBySales[selectedSales] || [];
+
+        // Search filter
+        if (searchTerm) {
+            data = data.filter(row =>
+                row.some(cell => cell && cell.toString().toLowerCase().includes(searchTerm))
+            );
+        }
+
+        // Month and Status filter
+        if (selectedMonthIndex !== 'all') {
+            const monthIndex = parseInt(selectedMonthIndex, 10);
+            data = data.filter(row => {
+                const cellValue = row[monthIndex];
+                if (selectedStatus === 'all') {
+                    return true; // Show all for the selected month
+                }
+                
+                const cellStatus = (cellValue || '').toLowerCase().trim();
+
+                if (selectedStatus === 'paid') {
+                    return cellStatus === 'paid';
+                }
+                if (selectedStatus === 'unpaid') {
+                    return cellStatus === 'unpaid';
+                }
+                if (selectedStatus === 'pra npc') {
+                    return cellStatus === 'pra npc';
+                }
+                if (selectedStatus === 'ct0') {
+                    return cellStatus === 'ct0';
+                }
+                // If status is something else, and not 'all', we don't have a match
+                return false;
+            });
+        }
+
+        filteredData = data;
         currentPage = 1;
         renderBillingTable();
         updatePagination();
-        renderSalesSummary(salesName);
     }
 
     function renderSalesSummary(salesName) {
@@ -122,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const paginatedData = filteredData.slice(start, end);
 
         if (paginatedData.length === 0) {
-            tableContainer.innerHTML = '<p>No billing data found.</p>';
+            tableContainer.innerHTML = '<p>No billing data found for the selected filters.</p>';
             return;
         }
 
@@ -187,6 +261,23 @@ document.addEventListener('DOMContentLoaded', function () {
         nextPageButton.disabled = currentPage === totalPages;
     }
 
+    // Event Listeners
+    searchInput.addEventListener('input', applyFilters);
+
+    monthFilter.addEventListener('change', (e) => {
+        selectedMonthIndex = e.target.value;
+        applyFilters();
+    });
+
+    statusFilters.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON') {
+            statusFilters.querySelector('.active').classList.remove('active');
+            e.target.classList.add('active');
+            selectedStatus = e.target.dataset.status;
+            applyFilters();
+        }
+    });
+
     tableContainer.addEventListener('blur', async (e) => {
         const td = e.target;
         if (td.tagName !== 'TD' || !td.contentEditable) return;
@@ -221,20 +312,6 @@ document.addEventListener('DOMContentLoaded', function () {
             td.style.backgroundColor = '#f8d7da';
         }
     }, true);
-
-    searchInput.addEventListener('input', () => {
-        const searchTerm = searchInput.value.toLowerCase();
-        let data = monitoringDataBySales[selectedSales] || [];
-        if (searchTerm) {
-            data = data.filter(row =>
-                row.some(cell => cell && cell.toString().toLowerCase().includes(searchTerm))
-            );
-        }
-        filteredData = data;
-        currentPage = 1;
-        renderBillingTable();
-        updatePagination();
-    });
 
     prevPageButton.addEventListener('click', () => {
         if (currentPage > 1) {
