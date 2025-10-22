@@ -137,38 +137,33 @@ document.addEventListener('DOMContentLoaded', function () {
         const searchTerm = searchInput.value.toLowerCase();
         let data = monitoringDataBySales[selectedSales] || [];
 
-        // Search filter
+        // Apply search filter first
         if (searchTerm) {
             data = data.filter(row =>
                 row.some(cell => cell && cell.toString().toLowerCase().includes(searchTerm))
             );
         }
 
-        // Month and Status filter
-        if (selectedMonthIndex !== 'all') {
-            const monthIndex = parseInt(selectedMonthIndex, 10);
+        // Apply month and status filters
+        const monthIndex = selectedMonthIndex !== 'all' ? parseInt(selectedMonthIndex, 10) : -1;
+        
+        if (selectedStatus !== 'all') {
             data = data.filter(row => {
-                const cellValue = row[monthIndex];
-                if (selectedStatus === 'all') {
-                    return true; // Show all for the selected month
+                if (monthIndex !== -1) {
+                    // A specific month is selected
+                    const cellStatus = (row[monthIndex] || '').toLowerCase().trim();
+                    return cellStatus === selectedStatus;
+                } else {
+                    // "All Months" is selected, check all billing columns
+                    const headers = monitoringDataHeadersBySales[selectedSales] || [];
+                    return headers.some((header, index) => {
+                        if (header.toLowerCase().startsWith('billing')) {
+                            const cellStatus = (row[index] || '').toLowerCase().trim();
+                            return cellStatus === selectedStatus;
+                        }
+                        return false;
+                    });
                 }
-                
-                const cellStatus = (cellValue || '').toLowerCase().trim();
-
-                if (selectedStatus === 'paid') {
-                    return cellStatus === 'paid';
-                }
-                if (selectedStatus === 'unpaid') {
-                    return cellStatus === 'unpaid';
-                }
-                if (selectedStatus === 'pra npc') {
-                    return cellStatus === 'pra npc';
-                }
-                if (selectedStatus === 'ct0') {
-                    return cellStatus === 'ct0';
-                }
-                // If status is something else, and not 'all', we don't have a match
-                return false;
             });
         }
 
