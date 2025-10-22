@@ -68,6 +68,27 @@ document.addEventListener('DOMContentLoaded', function () {
     const btnShowSchool = document.getElementById('btnTableShowSchool');
     const btnShowNonSchool = document.getElementById('btnTableShowNonSchool');
 
+    const schoolKeywords = [
+        'SEKOLAH', 'SCHOOL', 'SMA', 'SMK', 'SMP', 'SMPIT', 'SMIT', 'SDN', 'MI', 'MTS', 'MA', 'MAK',
+        'UNIVERSITAS', 'UNIV', 'INSTITUT', 'INST', 'POLITEKNIK', 'POLTEK', 'STIKES',
+        'STAI', 'IAKN', 'SD', 'TK', 'PAUD', 'KB', 'RA',
+        'PESANTREN', 'PONDOK PESANTREN', 'PONPES', 'MADRASAH',
+        'SEKOLAH DASAR', 'SEKOLAH MENENGAH', 'SEKOLAH TINGGI', 'AKADEMI',
+        'ISLAMIC', 'PENDIDIKAN', 'PELATIHAN', 'BIMBINGAN', 'KURSUS', 'LES', 'PUSAT BELAJAR',
+        'PLAYGROUP', 'KAMPUS', 'FAKULTAS', 'JURUSAN', 'PRODI', 'DIKLAT',
+        'TPQ', 'TPA', 'ASRAMA', 'BOARDING', 'SEMINAR', 'TRAINING',
+        'BIMBEL', 'BIMBINGAN BELAJAR', 'LKP', 'LEMBAGA KURSUS DAN PELATIHAN', 'PKBM', 'PUSAT KEGIATAN BELAJAR MASYARAKAT',
+        'PERGURUAN TINGGI', 'PTN', 'PTS', 'NEGERI', 'SWASTA', 'INTERNATIONAL', 'GLOBAL', 'NASIONAL',
+        'YAYASAN PENDIDIKAN', 'YAYASAN ISLAM', 'YAYASAN KRISTEN', 'YAYASAN KATOLIK', 'YAYASAN BUDDHA', 'YAYASAN HINDU',
+        'KEMENTERIAN PENDIDIKAN', 'DINAS PENDIDIKAN', 'KANTOR PENDIDIKAN', 'BALAI PENDIDIKAN',
+        'SEKOLAH TINGGI ILMU', 'SEKOLAH TINGGI AGAMA', 'SEKOLAH TINGGI KESEHATAN', 'SEKOLAH TINGGI EKONOMI',
+        'POLITEKNIK KESEHATAN', 'POLITEKNIK NEGERI', 'POLITEKNIK SWASTA',
+        'UNIVERSITAS TERBUKA', 'UT', 'UNIVERSITAS ISLAM', 'UNIVERSITAS KRISTEN', 'UNIVERSITAS KATOLIK',
+        'UNIVERSITAS BUDDHA', 'UNIVERSITAS HINDU', 'UNIVERSITAS NEGERI', 'UNIVERSITAS SWASTA', 'RAUDHATUL',
+        'INSTITUT AGAMA ISLAM', 'INSTITUT TEKNOLOGI', 'INSTITUT SENI', 'ROUDHOTUL', 'GLORIA 2', 'YAYASAN', 'SDIT', 'KINDERGROW', 'SLB', 'KELOMPOK BERMAIN', 'BERKLEE AZRA' ,
+        'EDUCATION', 'LEARNING', 'ACADEMI', 'FITSTEP', 'TAHFIDZ', 'DRIVING', 'THERESIA', 'BIMBA', 'ROBOTICS'
+    ];
+
     async function loadCustomerData() {
         try {
             const response = await fetch('/api/customer-data');
@@ -76,11 +97,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             const data = await response.json();
             allData = data.values.slice(1); // Remove header row
-
-            // Log unique status values
-            const uniqueStatuses = [...new Set(allData.map(row => row[6]))];
-            console.log('Unique Statuses:', uniqueStatuses);
-
             filteredData = allData;
             currentPage = 1;
             renderTable();
@@ -200,8 +216,6 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error('Error updating cell:', error);
             td.style.backgroundColor = '#f8d7da'; // Red background on error
-            // Optionally, revert the change in the UI
-            // td.textContent = allData[rowIndex - 2][colIndex];
         }
     }
 
@@ -209,24 +223,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updatePagination() {
         const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-        pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+        pageInfo.textContent = `Page ${currentPage} of ${totalPages || 1}`;
         prevPageButton.disabled = currentPage === 1;
         nextPageButton.disabled = currentPage === totalPages;
+    }
+
+    function isSchool(name) {
+        const lowerCaseName = name.toLowerCase();
+        return schoolKeywords.some(keyword => lowerCaseName.includes(keyword.toLowerCase()));
     }
 
     function filterData(searchTerm, filterType) {
         let data = allData;
 
         if (filterType === 'school') {
-            data = data.filter(row => row[6] && row[6].toLowerCase().includes('sekolah'));
+            data = data.filter(row => isSchool(row[1]));
         } else if (filterType === 'non-school') {
-            data = data.filter(row => !row[6] || !row[6].toLowerCase().includes('sekolah'));
+            data = data.filter(row => !isSchool(row[1]));
         }
 
         if (searchTerm) {
             const lowercasedSearchTerm = searchTerm.toLowerCase();
             data = data.filter(row =>
-                row.some(cell => cell && cell.toLowerCase().includes(lowercasedSearchTerm))
+                row.some(cell => cell && cell.toString().toLowerCase().includes(lowercasedSearchTerm))
             );
         }
 
