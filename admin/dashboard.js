@@ -229,6 +229,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function isSchool(name) {
+        if (!name) {
+            return false;
+        }
         const lowerCaseName = name.toLowerCase();
         return schoolKeywords.some(keyword => lowerCaseName.includes(keyword.toLowerCase()));
     }
