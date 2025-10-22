@@ -39,14 +39,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function loadMonitoringData() {
         try {
-            const ranges = Object.values(salesDataRanges).join(',');
+            const requestedRanges = Object.values(salesDataRanges);
+            const ranges = requestedRanges.join(',');
             const response = await fetch(`/api/fetch-monitoring?ranges=${ranges}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
             console.log('Raw monitoring data:', data);
-            processMonitoringData(data);
+            processMonitoringData(data, requestedRanges);
             populateSalesList();
             filterBySales(selectedSales);
         } catch (error) {
@@ -55,16 +56,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function processMonitoringData(data) {
+    function processMonitoringData(data, requestedRanges) {
         const rangeToSalesKey = {};
         for (const key in salesDataRanges) {
             rangeToSalesKey[salesDataRanges[key]] = key;
         }
 
-        data.valueRanges.forEach(valueRange => {
-            const rangeParts = valueRange.range.split('!');
-            const namedRange = rangeParts[1].replace(/'/g, "");
-            const salesName = rangeToSalesKey[namedRange];
+        data.valueRanges.forEach((valueRange, index) => {
+            const requestedRangeName = requestedRanges[index];
+            const salesName = rangeToSalesKey[requestedRangeName];
             if (salesName && valueRange.values && valueRange.values.length > 1) {
                 const headers = valueRange.values[0];
                 const rows = valueRange.values.slice(1);
