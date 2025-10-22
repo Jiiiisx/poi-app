@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let filteredData = [];
     let currentPage = 1;
     const rowsPerPage = 10;
+    const sheetName = 'REKAP CALON PELANGGAN BY SPARTA';
 
     const tableContainer = document.getElementById('customer-table-container');
     const searchInput = document.getElementById('searchInput');
@@ -109,11 +110,13 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         thead.appendChild(headerRow);
 
-        paginatedData.forEach(rowData => {
+        paginatedData.forEach((rowData, rowIndex) => {
             const tr = document.createElement('tr');
             for (let i = 0; i < headers.length; i++) {
                 const td = document.createElement('td');
                 const cellData = rowData[i] || '';
+                td.dataset.row = start + rowIndex;
+                td.dataset.col = i;
 
                 if (i === 2) { // Alamat column
                     const a = document.createElement('a');
@@ -134,6 +137,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                     statusBadge.textContent = cellData;
                     td.appendChild(statusBadge);
+                    td.contentEditable = true;
                 } else if (i === 8) { // Gambar column
                     const imageUrl = rowData[rowData.length - 1];
                     if (imageUrl) {
@@ -147,6 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 } else {
                     td.textContent = cellData;
+                    td.contentEditable = true;
                 }
                 tr.appendChild(td);
             }
@@ -158,6 +163,44 @@ document.addEventListener('DOMContentLoaded', function () {
         tableContainer.innerHTML = '';
         tableContainer.appendChild(table);
     }
+
+    async function handleCellUpdate(e) {
+        const td = e.target;
+        if (td.tagName !== 'TD' || !td.contentEditable) return;
+
+        const newValue = td.textContent;
+        const rowIndex = parseInt(td.dataset.row, 10) + 2; // +2 because sheets are 1-based and we have a header
+        const colIndex = parseInt(td.dataset.col, 10);
+        const colLetter = String.fromCharCode('A'.charCodeAt(0) + colIndex);
+        const range = `'${sheetName}'!${colLetter}${rowIndex}`;
+
+        td.style.backgroundColor = '#fdffab'; // Yellow background while saving
+
+        try {
+            const response = await fetch('/api/update-cell', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ range, value: newValue }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update sheet');
+            }
+
+            td.style.backgroundColor = '#d4edda'; // Green background on success
+            setTimeout(() => { td.style.backgroundColor = ''; }, 2000);
+
+        } catch (error) {
+            console.error('Error updating cell:', error);
+            td.style.backgroundColor = '#f8d7da'; // Red background on error
+            // Optionally, revert the change in the UI
+            // td.textContent = allData[rowIndex - 2][colIndex];
+        }
+    }
+
+    tableContainer.addEventListener('blur', handleCellUpdate, true);
 
     function updatePagination() {
         const totalPages = Math.ceil(filteredData.length / rowsPerPage);
