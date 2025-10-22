@@ -99,7 +99,7 @@ body {
 
 /* Main Content */
 .main-content {
-    margin-left: 260px; /* Same as sidebar width */
+    margin-left: 260px;
     flex-grow: 1;
     padding: 30px;
 }
