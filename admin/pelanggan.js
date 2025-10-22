@@ -62,7 +62,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         data.valueRanges.forEach(valueRange => {
-            const salesName = rangeToSalesKey[valueRange.range.split('!')[0]];
+            const rangeParts = valueRange.range.split('!');
+            const namedRange = rangeParts[1].replace(/'/g, "");
+            const salesName = rangeToSalesKey[namedRange];
             if (salesName && valueRange.values && valueRange.values.length > 1) {
                 const headers = valueRange.values[0];
                 const rows = valueRange.values.slice(1);
