@@ -314,7 +314,7 @@ class GoogleSheetsIntegration {
         const cachedData = this.getCachedData(cacheKey);
 
         if (cachedData) {
-            this.processMonitoringData(cachedData);
+            this.processMonitoringData(cachedData, Object.values(this.salesDataRanges).filter(range => range !== ''));
             if (this.loggedInSalesName) {
                 this.filterBySales(this.loggedInSalesName);
             }
@@ -342,7 +342,7 @@ class GoogleSheetsIntegration {
             }
 
             this.setCachedData(cacheKey, data);
-            this.processMonitoringData(data);
+            this.processMonitoringData(data, namedRanges);
 
             if (this.loggedInSalesName) {
                 this.filterBySales(this.loggedInSalesName);
@@ -356,21 +356,41 @@ class GoogleSheetsIntegration {
         }
     }
     
-    processMonitoringData(data) {
-        console.log(JSON.stringify(data, null, 2));
+    processMonitoringData(data, requestedRanges) {
         this.monitoringDataBySales = {};
         this.monitoringDataHeadersBySales = {};
 
-        data.valueRanges.forEach(valueRange => {
-            const fullRange = valueRange.range.replace(/'/g, "");
-            const salesName = Object.keys(this.salesDataRanges).find(key => this.salesDataRanges[key].replace(/\'/g, "") === fullRange);
+        if (!data.valueRanges || !requestedRanges) {
+            console.warn('processMonitoringData called with invalid data or ranges.');
+            return;
+        }
+
+        // Create a reverse map from named range to sales key
+        const rangeToSalesKey = {};
+        for (const key in this.salesDataRanges) {
+            rangeToSalesKey[this.salesDataRanges[key]] = key;
+        }
+
+        data.valueRanges.forEach((valueRange, index) => {
+            const requestedRangeName = requestedRanges[index];
+            const salesName = rangeToSalesKey[requestedRangeName];
+
+            if (!salesName) {
+                console.warn(`Could not find sales name for range: ${requestedRangeName} at index ${index}`);
+                return; // continue to next valueRange
+            }
             
-            if (salesName && valueRange.values && valueRange.values.length > 1) {
+            if (valueRange.values && valueRange.values.length > 1) {
                 const rawData = valueRange.values;
                 const headers = rawData[0].map(cell => cell.toString().trim());
 
-                const rangeAddress = fullRange.split('!')[1];
-                const startRow = parseInt(rangeAddress.match(/(\d+)/)[0]);
+                const rangeAddress = valueRange.range.split('!')[1];
+                const startRowMatch = rangeAddress ? rangeAddress.match(/(\d+)/) : null;
+                if (!startRowMatch) {
+                    console.error(`Could not parse start row from range: ${valueRange.range}`);
+                    return;
+                }
+                const startRow = parseInt(startRowMatch[0]);
                 
                 const nameIndex = headers.findIndex(h => h.toLowerCase() === 'nama pelanggan');
                 const noCustomerIndex = headers.findIndex(h => h.toLowerCase() === 'no customer');
