@@ -232,8 +232,15 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!name) {
             return false;
         }
-        const lowerCaseName = name.toLowerCase();
-        return schoolKeywords.some(keyword => lowerCaseName.includes(keyword.toLowerCase()));
+        const cleanedName = name.toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, " ").replace(/\s{2,}/g, " ");
+        if (cleanedName.includes('.com')) {
+            return false;
+        }
+        return schoolKeywords.some(keyword => {
+            const lowerCaseKeyword = keyword.toLowerCase();
+            const regex = new RegExp('\\b' + lowerCaseKeyword + '\\b', 'i');
+            return regex.test(cleanedName);
+        });
     }
 
     function filterData(searchTerm, filterType) {
