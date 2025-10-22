@@ -12,7 +12,6 @@
     <div class="dashboard-container">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <div class="logo">C</div>
                 <span>calonpelanggan</span>
             </div>
             <nav class="sidebar-nav">
@@ -59,34 +58,27 @@
                 <h2>Grafik Performa Sales Mingguan</h2>
                 <canvas id="salesChart"></canvas>
             </div>
-            <div class="table-container">
-                <h2>Daftar Calon Pelanggan Baru</h2>
+            <div class="table-container content-area">
+                <h2>Customer List</h2>
+                <div class="filter-controls">
+                    <input type="text" id="searchInput" placeholder="Search customer data...">
+                    <div class="filter-buttons">
+                        <button id="btnTableShowAll" class="btn btn-primary active">All</button>
+                        <button id="btnTableShowSchool" class="btn btn-success">School</button>
+                        <button id="btnTableShowNonSchool" class="btn btn-secondary">Non-School</button>
+                    </div>
+                    <span id="filterStats"></span>
+                </div>
                 <div class="table-responsive">
-                    <table class="customer-table">
-                        <thead>
-                            <tr>
-                                <th>Nama</th>
-                                <th>Email</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Jessica</td>
-                                <td>jessica@email.com</td>
-                                <td><span class="status status-baru">Baru</span></td>
-                                <td><a href="#" class="btn-detail">Lihat Detail</a></td>
-                            </tr>
-                            <tr>
-                                <td>Budi</td>
-                                <td>budi@email.com</td>
-                                <td><span class="status status-prospek">Prospek</span></td>
-                                <td><a href="#" class="btn-detail">Lihat Detail</a></td>
-                            </tr>
-                            <!-- More rows can be added here -->
-                        </tbody>
-                    </table>
+                    <div id="customer-table-container">
+                        <!-- Customer table will be loaded here by JavaScript -->
+                        <p>Loading customer data...</p>
+                    </div>
+                </div>
+                <div class="pagination-controls">
+                    <button id="prevPage" disabled>Previous</button>
+                    <span id="pageInfo">Page 1 of 1</span>
+                    <button id="nextPage" disabled>Next</button>
                 </div>
             </div>
         </main>

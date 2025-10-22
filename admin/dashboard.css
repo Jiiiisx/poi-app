@@ -159,6 +159,8 @@ body {
     border-radius: 8px;
     box-shadow: var(--shadow);
     margin-bottom: 30px;
+    position: relative;
+    height: 400px;
 }
 
 .chart-container h2 {
@@ -166,7 +168,7 @@ body {
     margin-bottom: 20px;
 }
 
-/* Table Container */
+/* Table Container & Filter/Pagination */
 .table-container {
     background-color: var(--card-bg);
     padding: 20px;
@@ -177,6 +179,82 @@ body {
 .table-container h2 {
     font-size: 1.2rem;
     margin-bottom: 20px;
+}
+
+.filter-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.filter-controls input[type="text"] {
+    flex-grow: 1;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 0.9rem;
+    max-width: 300px;
+}
+
+.filter-buttons .btn {
+    padding: 8px 16px;
+    border: 1px solid var(--primary-color);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    background-color: white;
+    color: var(--primary-color);
+}
+
+.filter-buttons .btn.active, .filter-buttons .btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+#filterStats {
+    margin-left: auto;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.pagination-controls button {
+    padding: 8px 15px;
+    border: 1px solid var(--primary-color);
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s, opacity 0.3s;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+    background-color: #b72a31; /* Darker red */
+}
+
+.pagination-controls button:disabled {
+    background-color: #cccccc;
+    border-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.pagination-controls span {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-primary);
 }
 
 .table-responsive {
