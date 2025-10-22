@@ -210,12 +210,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function filterData(searchTerm, filterType) {
+        console.log('Filtering with:', { searchTerm, filterType });
         let data = allData;
+        console.log('Original data:', data);
 
         if (filterType === 'school') {
             data = data.filter(row => row[6] && row[6].toLowerCase().includes('sekolah'));
+            console.log('After school filter:', data);
         } else if (filterType === 'non-school') {
             data = data.filter(row => !row[6] || !row[6].toLowerCase().includes('sekolah'));
+            console.log('After non-school filter:', data);
         }
 
         if (searchTerm) {
@@ -223,9 +227,11 @@ document.addEventListener('DOMContentLoaded', function () {
             data = data.filter(row =>
                 row.some(cell => cell && cell.toLowerCase().includes(lowercasedSearchTerm))
             );
+            console.log('After search filter:', data);
         }
 
         filteredData = data;
+        console.log('Final filtered data:', filteredData);
         currentPage = 1;
         renderTable();
         updatePagination();
