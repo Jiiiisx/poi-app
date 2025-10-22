@@ -96,8 +96,8 @@
 }
 
 /* Fix for inconsistent row heights */
-.customer-table tbody td {
-    vertical-align: middle;
+.customer-table > tbody > tr > td {
+    vertical-align: middle !important;
     padding-top: 12px;
     padding-bottom: 12px;
 }
