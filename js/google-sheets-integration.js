@@ -302,7 +302,7 @@ class GoogleSheetsIntegration {
 
             this.isInitialized = true;
         } catch (error) {
-            console.error('❌ Load main data error:', error);
+            console.error('Load main data error:', error);
             this.handleLoadError(error);
         } finally {
             this.showLoading(false);
@@ -323,7 +323,7 @@ class GoogleSheetsIntegration {
 
         try {
             this.showLoading(true);
-            console.log('🔄 Loading monitoring data from backend...');
+            console.log(' Loading monitoring data from backend...');
             
             const namedRanges = Object.values(this.salesDataRanges).filter(range => range !== '');
 
@@ -349,7 +349,7 @@ class GoogleSheetsIntegration {
             }
 
         } catch (error) {
-            console.error('❌ Load monitoring data error:', error);
+            console.error('Load monitoring data error:', error);
             this.showError('Gagal memuat data monitoring: ' + error.message);
         } finally {
             this.showLoading(false);
@@ -426,7 +426,7 @@ class GoogleSheetsIntegration {
             }
         });
 
-        console.log('✅ Processed monitoring data by sales:', Object.keys(this.monitoringDataBySales));
+        console.log('Processed monitoring data by sales:', Object.keys(this.monitoringDataBySales));
     }
 
     async loadGovernmentData() {
@@ -440,7 +440,7 @@ class GoogleSheetsIntegration {
 
         try {
             this.showLoading(true);
-            console.log('🔄 Loading government data from backend...');
+            console.log('Loading government data from backend...');
             const response = await fetch('/api/government-data');
 
             if (!response.ok) {
@@ -460,7 +460,7 @@ class GoogleSheetsIntegration {
             this.processGovernmentData(data.values);
 
         } catch (error) {
-            console.error('❌ Load government data error:', error);
+            console.error('Load government data error:', error);
             this.showError('Gagal memuat data pemerintah: ' + error.message);
             this.originalGovernmentData = [];
             this.governmentData = [];
@@ -486,7 +486,7 @@ class GoogleSheetsIntegration {
             };
         });
         this.governmentData = [...this.originalGovernmentData];
-        console.log('✅ Processed government data:', this.governmentData.length, 'rows');
+        console.log('Processed government data:', this.governmentData.length, 'rows');
     }
 
     processData(rawData) {
@@ -516,7 +516,7 @@ class GoogleSheetsIntegration {
             };
         }).filter(row => row.nama || row.no_telepon);
 
-        console.log('✅ Processed main data:', this.originalData.length, 'valid rows');
+        console.log('Processed main data:', this.originalData.length, 'valid rows');
         this.renderTable();
         this.updateSalesList();
         this.updateSalesDropdown();
@@ -535,7 +535,7 @@ class GoogleSheetsIntegration {
     async updateSheetCell(rowIndex, colHeader, newValue) {
         try {
             if (newValue === undefined || newValue === null) {
-                console.error('❌ updateSheetCell called with undefined or null newValue:', newValue);
+                console.error('updateSheetCell called with undefined or null newValue:', newValue);
                 this.showError('Gagal memperbarui status: nilai status tidak valid.');
                 return;
             }
@@ -543,14 +543,14 @@ class GoogleSheetsIntegration {
             const salesName = this.currentSalesFilter.toLowerCase();
             const headers = this.monitoringDataHeadersBySales[salesName];
             if (!headers) {
-                console.error(`❌ Headers for sales '${salesName}' not found.`);
+                console.error(`Headers for sales '${salesName}' not found.`);
                 this.showError('Gagal memperbarui: Headers tidak ditemukan.');
                 return;
             }
 
             const colIndex = headers.indexOf(colHeader);
             if (colIndex === -1) {
-                console.error(`❌ Header kolom '${colHeader}' tidak ditemukan.`);
+                console.error(`Header kolom '${colHeader}' tidak ditemukan.`);
                 this.showError(`Gagal memperbarui status: Header kolom '${colHeader}' tidak ditemukan.`);
                 return;
             }
@@ -582,7 +582,7 @@ class GoogleSheetsIntegration {
 
             this.showMessage('Data berhasil diperbarui!', 'success');
         } catch (error) {
-            console.error('❌ Update cell error:', error);
+            console.error('Update cell error:', error);
             this.showError('Gagal memperbarui data: ' + (error.message || 'Terjadi kesalahan.'));
         }
     }
@@ -741,6 +741,7 @@ class GoogleSheetsIntegration {
         const allHeaders = this.monitoringDataHeadersBySales[salesName] || [];
         const billingHeaders = allHeaders.filter(h => h.toLowerCase().startsWith('billing'));
 
+        // Special handling for 'pra npc' and 'ct0' which look across multiple months
         if (this.currentBillingFilter === 'pra npc') {
             const now = new Date();
             const sortedBillingHeaders = billingHeaders
@@ -786,25 +787,31 @@ class GoogleSheetsIntegration {
             });
         }
 
-        if (this.selectedBillingMonth === 'all') {
-            if (this.currentBillingFilter !== 'all') {
-                return data.filter(item => {
-                    return billingHeaders.some(header => {
-                        const billingStatus = (item[header] || 'n/a').toLowerCase();
-                        return billingStatus === this.currentBillingFilter;
-                    });
-                });
-            }
-        } else {
+        // For other filters ('paid', 'unpaid', 'all', etc.)
+        if (this.currentBillingFilter === 'all') {
+            return data; // No filtering needed if status is 'all'
+        }
+
+        // If a specific month is selected in the dropdown, use it.
+        if (this.selectedBillingMonth !== 'all') {
             const currentBillingColumn = this.selectedBillingMonth;
-            if (this.currentBillingFilter !== 'all') {
-                return data.filter(item => {
-                    const billingStatus = (item[currentBillingColumn] || 'n/a').toLowerCase();
+            return data.filter(item => {
+                const billingStatus = (item[currentBillingColumn] || 'n/a').toLowerCase();
+                return billingStatus === this.currentBillingFilter;
+            });
+        } else {
+            // If dropdown is 'All Months', use the current real-time month for filtering.
+            const currentMonthColumn = this.getCurrentMonthColumnName();
+            if (allHeaders.map(h => h.toUpperCase()).includes(currentMonthColumn.toUpperCase())) {
+                 return data.filter(item => {
+                    const billingStatus = (item[currentMonthColumn] || 'n/a').toLowerCase();
                     return billingStatus === this.currentBillingFilter;
                 });
+            } else {
+                // If the current month's column doesn't exist, show no data for the filter.
+                return [];
             }
         }
-        return data;
     }
 
     _parseHeaderDate(header) {
@@ -1765,7 +1772,7 @@ class GoogleSheetsIntegration {
                 }
             });
         } catch (error) {
-            console.error('❌ Update sales dropdown error:', error);
+            console.error('Update sales dropdown error:', error);
         }
     }
 
@@ -1908,13 +1915,13 @@ class GoogleSheetsIntegration {
     }
     
     handleLoadError(error) {
-        console.error('❌ Load error details:', error);
+        console.error('Load error details:', error);
         this.showError('Gagal memuat data: ' + error.message);
         this.loadFallbackData();
     }
 
     loadFallbackData() {
-        console.log('🔄 Loading fallback data for testing...');
+        console.log('Loading fallback data for testing...');
         const fallbackData = [
             ['ODP', 'NAMA', 'ALAMAT', 'NO TELEPON', 'NAMA SALES', 'VISIT', 'STATUS'],
             ['ODP-BDG-001', 'Budi Santoso', 'Jl. Merdeka No.1, Bandung', '081234567890', 'Nandi', 'Visited', 'Diterima'],
@@ -1988,7 +1995,7 @@ class GoogleSheetsIntegration {
             this.closeEditModal();
             this.refreshData(); // This function needs to be created
         } catch (error) {
-            console.error('❌ Update row error:', error);
+            console.error('Update row error:', error);
             this.showError('Gagal memperbarui data: ' + error.message);
         }
     }
@@ -2038,19 +2045,19 @@ class GoogleSheetsIntegration {
                         this.showMessage('Data berhasil dihapus!', 'success');
                         this.refreshData();
                     } catch (error) {
-                        console.error('❌ Delete row error:', error);
+                        console.error('Delete row error:', error);
                         this.showError('Gagal menghapus data: ' + error.message);
                     }
                 }
             );
         } catch (error) {
-            console.error('❌ Delete row error:', error);
+            console.error('Delete row error:', error);
             this.showError('Gagal menghapus data: ' + error.message);
         }
     }
 
     async refreshData() {
-        console.log('🔄 Refreshing data...');
+        console.log(' Refreshing data...');
         // Clear cache and re-load all data
         localStorage.removeItem('mainData');
         localStorage.removeItem('governmentData');
@@ -2140,7 +2147,7 @@ class GoogleSheetsIntegration {
             modal.style.display = 'block';
 
         } catch (error) {
-            console.error('❌ Error loading government view history:', error);
+            console.error('Error loading government view history:', error);
             this.showError('Gagal memuat riwayat pemerintah: ' + error.message);
         }
     }
@@ -2222,7 +2229,7 @@ class GoogleSheetsIntegration {
             modal.style.display = 'block';
 
         } catch (error) {
-            console.error('❌ Error loading view history:', error);
+            console.error('Error loading view history:', error);
             this.showError('Gagal memuat riwayat: ' + error.message);
         }
     }
@@ -2257,9 +2264,9 @@ class GoogleSheetsIntegration {
                 throw new Error(errorData.error.message || 'Failed to append view history');
             }
 
-            console.log('✅ Logged view history');
+            console.log(' Logged view history');
         } catch (error) {
-            console.error('❌ Error logging view history:', error);
+            console.error('Error logging view history:', error);
         }
     }
 
@@ -2269,7 +2276,7 @@ class GoogleSheetsIntegration {
             const sheet = sheetInfo.sheets.find(s => s.properties.title === sheetName);
             return sheet ? sheet.properties.sheetId : null;
         } catch (error) {
-            console.error('❌ Get sheet ID error:', error);
+            console.error('Get sheet ID error:', error);
             throw error;
         }
     }
@@ -2282,13 +2289,13 @@ class GoogleSheetsIntegration {
             });
             return response.result;
         } catch (error) {
-            console.error('❌ Get sheet ID error:', error);
+            console.error('Get sheet ID error:', error);
             throw error;
         }
     }
 
     async refreshData() {
-        console.log('🔄 Refreshing data...');
+        console.log('Refreshing data...');
         this.retryCount = 0;
         // Clear cache before refreshing
         localStorage.removeItem('mainData');
@@ -2305,7 +2312,7 @@ class GoogleSheetsIntegration {
 let googleSheetsIntegration;
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 DOM loaded, initializing Google Sheets Integration...');
+    console.log('DOM loaded, initializing Google Sheets Integration...');
     googleSheetsIntegration = new GoogleSheetsIntegration();
     window.googleSheetsIntegration = googleSheetsIntegration;
     const event = new CustomEvent('googleSheetsIntegrationReady');

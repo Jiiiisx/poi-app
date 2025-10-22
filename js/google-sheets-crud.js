@@ -46,12 +46,12 @@ class GoogleSheetsCRUD {
             }
 
             const result = await response.json();
-            console.log('✅ Customer added successfully:', result);
+            console.log('Customer added successfully:', result);
             NotificationHandler.show('Customer added successfully!', 'success');
             return result;
 
         } catch (error) {
-            console.error('❌ Add customer error:', error);
+            console.error('Add customer error:', error);
             ModalHandler.show('Error', `Failed to add data: ${error.message}`);
             throw new Error(`Gagal menambah data: ${error.message}`);
         }

@@ -79,7 +79,7 @@ function getUserEmailFromToken(token) {
         
         return payloadObj; 
     } catch (error) {
-        console.error('❌ Error decoding token:', error);
+        console.error('Error decoding token:', error);
         return null; 
     }
 }
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (manualSignInBtn) {
     manualSignInBtn.addEventListener('click', async () => {
       try {
-        console.log('🔄 Manual sign-in button clicked');
+        console.log('Manual sign-in button clicked');
         const authError = document.getElementById('authError');
         const authInfo = document.getElementById('authInfo');
         
@@ -105,14 +105,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         if (tokenClient) {
-          console.log('🔄 Requesting access token with manual consent...');
+          console.log('Requesting access token with manual consent...');
           
           // Set up callback for manual sign-in
           tokenClient.callback = (tokenResponse) => {
             if (tokenResponse && tokenResponse.access_token) {
               gapi.client.setToken(tokenResponse);
               currentAccessToken = tokenResponse.access_token;
-              console.log('✅ Manual sign-in successful');
+              console.log('Manual sign-in successful');
               
               // Update UI
               if (authInfo) {
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.googleSheetsIntegration.setup();
               }
             } else {
-              console.error('❌ Manual sign-in failed:', tokenResponse);
+              console.error('Manual sign-in failed:', tokenResponse);
               if (authError) {
                 authError.textContent = 'Sign-in gagal. Silakan coba lagi.';
                 authError.style.display = 'block';
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
           };
           
           tokenClient.error_callback = (error) => {
-            console.error('❌ Manual sign-in error:', error);
+            console.error('Manual sign-in error:', error);
             if (authError) {
               authError.textContent = 'Sign-in gagal: ' + (error.message || 'Unknown error');
               authError.style.display = 'block';
@@ -151,14 +151,14 @@ document.addEventListener('DOMContentLoaded', () => {
           
           tokenClient.requestAccessToken({});
         } else {
-          console.error('❌ Token client not initialized');
+          console.error('Token client not initialized');
           if (authError) {
             authError.textContent = 'Authentication service not ready. Please refresh the page.';
             authError.style.display = 'block';
           }
         }
       } catch (error) {
-        console.error('❌ Manual sign-in error:', error);
+        console.error('Manual sign-in error:', error);
         const authError = document.getElementById('authError');
         if (authError) {
           authError.textContent = 'Sign-in failed. Please try again.';
@@ -235,7 +235,7 @@ function updateSigninStatus(isSignedIn, userName = '', userPicture = '') {
       
       // Directly call setup and handle UI
       window.googleSheetsIntegration.setup().then(() => {
-        console.log('✅ Dashboard initialized successfully');
+        console.log('Dashboard initialized successfully');
         const elapsedTime = Date.now() - startTime;
         const timeToWait = Math.max(0, MIN_LOADING_TIME - elapsedTime);
 
@@ -249,7 +249,7 @@ function updateSigninStatus(isSignedIn, userName = '', userPicture = '') {
             }
         }, timeToWait);
       }).catch(error => {
-          console.error('❌ Dashboard display error:', error);
+          console.error('Dashboard display error:', error);
           if (skeletonLoader) {
               skeletonLoader.style.display = 'none';
           }
