@@ -67,7 +67,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const salesName = rangeToSalesKey[requestedRangeName];
             if (salesName && valueRange.values && valueRange.values.length > 1) {
                 const headers = valueRange.values[0];
-                const rows = valueRange.values.slice(1);
+                const nameIndex = headers.findIndex(h => h.toLowerCase() === 'nama pelanggan');
+                const rows = valueRange.values.slice(1).filter(row => row[nameIndex] && row[nameIndex].trim() !== '');
                 monitoringDataHeadersBySales[salesName] = headers;
                 monitoringDataBySales[salesName] = rows;
             }
