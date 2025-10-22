@@ -1,0 +1,86 @@
+/* Modern Table Styles */
+.customer-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.customer-table thead tr {
+    background-color: #f8f9fa;
+    color: #333;
+    text-align: left;
+    font-weight: bold;
+}
+
+.customer-table th, .customer-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.customer-table tbody tr:last-of-type td {
+    border-bottom: none;
+}
+
+.customer-table tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-sekolah {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-non-sekolah {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-default {
+    background-color: #e2e3e5;
+    color: #383d41;
+}
+
+/* Action Buttons */
+.action-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+}
+
+.btn-view-map {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-view-map:hover {
+    background-color: #0056b3;
+}
+
+.btn-view-image {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-view-image:hover {
+    background-color: #1e7e34;
+}

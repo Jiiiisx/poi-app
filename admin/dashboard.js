@@ -120,12 +120,26 @@ document.addEventListener('DOMContentLoaded', function () {
                     a.href = cellData;
                     a.textContent = 'View on Map';
                     a.target = '_blank';
+                    a.className = 'action-btn btn-view-map';
                     td.appendChild(a);
+                } else if (i === 6) { // Status column
+                    const statusBadge = document.createElement('span');
+                    statusBadge.className = 'status-badge';
+                    if (cellData.toLowerCase().includes('sekolah')) {
+                        statusBadge.classList.add('status-sekolah');
+                    } else if (cellData.toLowerCase().includes('non-sekolah')) {
+                        statusBadge.classList.add('status-non-sekolah');
+                    } else {
+                        statusBadge.classList.add('status-default');
+                    }
+                    statusBadge.textContent = cellData;
+                    td.appendChild(statusBadge);
                 } else if (i === 8) { // Gambar column
                     const imageUrl = rowData[rowData.length - 1];
                     if (imageUrl) {
                         const button = document.createElement('button');
                         button.textContent = 'View Image';
+                        button.className = 'action-btn btn-view-image';
                         button.onclick = () => {
                             window.open(imageUrl, '_blank');
                         };
