@@ -7,6 +7,7 @@
     <title>Billing Monitoring</title>
     <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="../css/modern-table.css">
+    <link rel="stylesheet" href="pelanggan.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
 </head>
 <body>
@@ -36,27 +37,31 @@
                     <span>Halo Andi</span> <i class="fas fa-chevron-down"></i>
                 </div>
             </header>
-            <div class="content-area">
-                <div id="sales-performance-summary"></div>
-                <div class="sales-list-container">
-                    <h3>Sales Team</h3>
-                    <ul id="sales-list"></ul>
+            <div class="content-area two-column-layout">
+                <div class="left-column">
+                    <div id="sales-performance-summary"></div>
+                    <div class="sales-list-container">
+                        <h3>Sales Team</h3>
+                        <ul id="sales-list"></ul>
+                    </div>
                 </div>
-                <div class="billing-monitoring-area">
-                    <div class="table-container">
-                        <h2>Billing Monitoring for <span id="selected-sales">All</span></h2>
-                        <div class="filter-controls">
-                            <input type="text" id="searchInput" placeholder="Search customer data...">
-                        </div>
-                        <div class="table-responsive">
-                            <div id="billing-table-container">
-                                <p>Loading billing data...</p>
+                <div class="right-column">
+                    <div class="billing-monitoring-area">
+                        <div class="table-container">
+                            <h2>Billing Monitoring for <span id="selected-sales">All</span></h2>
+                            <div class="filter-controls">
+                                <input type="text" id="searchInput" placeholder="Search customer data...">
                             </div>
-                        </div>
-                        <div class="pagination-controls">
-                            <button id="prevPage" disabled>Previous</button>
-                            <span id="pageInfo">Page 1 of 1</span>
-                            <button id="nextPage" disabled>Next</button>
+                            <div class="table-responsive">
+                                <div id="billing-table-container">
+                                    <p>Loading billing data...</p>
+                                </div>
+                            </div>
+                            <div class="pagination-controls">
+                                <button id="prevPage" disabled>Previous</button>
+                                <span id="pageInfo">Page 1 of 1</span>
+                                <button id="nextPage" disabled>Next</button>
+                            </div>
                         </div>
                     </div>
                 </div>
