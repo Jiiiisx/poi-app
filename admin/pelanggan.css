@@ -139,3 +139,57 @@
     color: white;
     border-color: var(--primary-color);
 }
+
+.copyable-cell {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.copyable-cell span {
+    flex-grow: 1;
+}
+
+.btn-copy {
+    background: transparent;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.btn-copy:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.custom-notification {
+    position: fixed;
+    top: 20px;
+    right: -300px; /* Start off-screen */
+    padding: 15px 20px;
+    border-radius: 8px;
+    background-color: #333;
+    color: white;
+    z-index: 1000;
+    transition: right 0.5s ease-in-out;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.custom-notification.show {
+    right: 20px; /* Slide in */
+}
+
+.custom-notification.success {
+    background-color: #4CAF50;
+}
+
+.custom-notification.error {
+    background-color: #f44336;
+}

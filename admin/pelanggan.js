@@ -251,6 +251,34 @@ document.addEventListener('DOMContentLoaded', function () {
         `;
     }
 
+    function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `custom-notification ${type}`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 500);
+        }, 3000);
+    }
+
+    function copyToClipboard(text) {
+        if (!text) return;
+        navigator.clipboard.writeText(text).then(() => {
+            showNotification('Copied to clipboard!');
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+            showNotification('Failed to copy', 'error');
+        });
+    }
+
     function renderBillingTable() {
         const start = (currentPage - 1) * rowsPerPage;
         const end = start + rowsPerPage;
@@ -268,34 +296,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const headerRow = document.createElement('tr');
         const headers = monitoringDataHeadersBySales[selectedSales] || [];
-        const monthIndex = selectedMonthIndex !== 'all' ? parseInt(selectedMonthIndex, 10) : -1;
-
-        // Store indices of visible columns to keep header and body in sync
-        const visibleColumnIndices = [];
-
-        headers.forEach((headerText, colIndex) => {
-            const isBillingColumn = headerText.toLowerCase().startsWith('billing');
-            // If a specific month is selected, hide other billing columns
-            if (monthIndex !== -1 && isBillingColumn && colIndex !== monthIndex) {
-                return; // Skip this header
-            }
-            visibleColumnIndices.push(colIndex);
+        headers.forEach(headerText => {
             const th = document.createElement('th');
             th.textContent = headerText;
             headerRow.appendChild(th);
         });
         thead.appendChild(headerRow);
 
+        const noInternetIndex = headers.findIndex(h => h.toLowerCase() === 'nomor internet');
+        const noCustomerIndex = headers.findIndex(h => h.toLowerCase() === 'no customer');
+
         paginatedData.forEach((rowData, rowIndex) => {
             const tr = document.createElement('tr');
-            // Iterate only over visible columns to build the cells
-            visibleColumnIndices.forEach(colIndex => {
-                const cellData = rowData[colIndex];
+            rowData.forEach((cellData, colIndex) => {
+                const td = document.createElement('td');
                 const header = headers[colIndex];
 
-                const td = document.createElement('td');
-
-                if (header && header.toLowerCase() === 'fup') {
+                if (colIndex === noInternetIndex || colIndex === noCustomerIndex) {
+                    td.classList.add('copyable-cell');
+                    td.innerHTML = `
+                        <span>${cellData || ''}</span>
+                        <button class="btn-copy" onclick="copyToClipboard('${cellData || ''}')" title="Copy">
+                            <i class="far fa-copy"></i>
+                        </button>
+                    `;
+                } else if (header && header.toLowerCase() === 'fup') {
                     const fupData = cellData || '';
                     if (fupData.includes('/')) {
                         const [used, total] = fupData.replace(/GB/gi, '').split('/');
@@ -314,8 +339,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 td.dataset.row = start + rowIndex;
-                td.dataset.col = colIndex; // Use original colIndex for editing
-                td.contentEditable = true;
+                td.dataset.col = colIndex;
+                
+                // Make cells non-editable if they have a copy button
+                if (colIndex !== noInternetIndex && colIndex !== noCustomerIndex) {
+                    td.contentEditable = true;
+                }
                 tr.appendChild(td);
             });
             tbody.appendChild(tr);

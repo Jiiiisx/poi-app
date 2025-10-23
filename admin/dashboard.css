@@ -102,6 +102,7 @@ body {
     margin-left: 260px;
     flex-grow: 1;
     padding: 30px;
+    overflow-x: hidden;
 }
 
 .main-header {

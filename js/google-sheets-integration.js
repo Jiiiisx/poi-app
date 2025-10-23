@@ -1067,11 +1067,21 @@ class GoogleSheetsIntegration {
 
             let rowHtml = `
                 <td>${this.escapeHtml(item['Nama Pelanggan'])}</td>
-                <td>${this.escapeHtml(item['No Internet'])}</td>
-                <td>
-                    <a href="https://wa.me/${this.formatWhatsappNumber(item['No Customer'])}" target="_blank" class="btn-whatsapp" title="Chat on WhatsApp">
-                        ${this.escapeHtml(item['No Customer'] || 'N/A')}
-                    </a>
+                <td class="copyable-cell">
+                    <span>${this.escapeHtml(item['No Internet'])}</span>
+                    <button class="btn-copy" onclick="googleSheetsIntegration.copyToClipboard('${this.escapeHtml(item['No Internet'] || '')}')" title="Copy">
+                        <i class="far fa-copy"></i>
+                    </button>
+                </td>
+                <td class="copyable-cell">
+                    <span>
+                        <a href="https://wa.me/${this.formatWhatsappNumber(item['No Customer'])}" target="_blank" class="btn-whatsapp" title="Chat on WhatsApp">
+                            ${this.escapeHtml(item['No Customer'] || 'N/A')}
+                        </a>
+                    </span>
+                    <button class="btn-copy" onclick="googleSheetsIntegration.copyToClipboard('${this.escapeHtml(item['No Customer'] || 'N/A')}')" title="Copy">
+                        <i class="far fa-copy"></i>
+                    </button>
                 </td>
                 <td>${this.escapeHtml(item['Redaman Loss'])}</td>
                 <td>${fupHtml}</td>
@@ -1094,6 +1104,16 @@ class GoogleSheetsIntegration {
         });
 
         this.renderMonitoringPaginationControls();
+    }
+
+    copyToClipboard(text) {
+        if (!text) return;
+        navigator.clipboard.writeText(text).then(() => {
+            this.showMessage('Copied to clipboard!', 'success');
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+            this.showMessage('Failed to copy', 'error');
+        });
     }
 
     renderMonitoringPaginationControls() {

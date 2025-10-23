@@ -83,6 +83,35 @@
     transition: background-color 0.3s ease;
 }
 
+.copyable-cell {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.copyable-cell span {
+    flex-grow: 1;
+}
+
+.btn-copy {
+    background: transparent;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.btn-copy:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
 .btn-view-map {
     background-color: #007bff;
     color: white;
