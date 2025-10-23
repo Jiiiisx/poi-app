@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // --- START: Chart Logic ---
+    // --- START: Data Fetching and Processing ---
     const salesDataRanges = {
         'Andi': 'AndiData', 'April': 'AprilData', 'Nandi': 'NandiData', 'Octa': 'OctaData',
         'Yandi': 'YandiData', 'Totong': 'TotongData', 'Yusdhi': 'YusdhiData', 'Nursyarif': 'NursyarifData',
@@ -14,26 +14,24 @@ document.addEventListener('DOMContentLoaded', function () {
             const requestedRanges = Object.values(salesDataRanges);
             const ranges = requestedRanges.join(',');
             const response = await fetch(`/api/fetch-monitoring?ranges=${ranges}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
             
+            const { uniqueCustomers, sortedBillingHeaders } = deDuplicateAndProcessData(data);
+
             // Process for chart
-            const unpaidData = processUnpaidDataForChart(data);
-            renderUnpaidTrendChart(unpaidData);
+            const unpaidChartData = processUnpaidForChart(uniqueCustomers, sortedBillingHeaders);
+            renderUnpaidTrendChart(unpaidChartData);
 
             // Process for stats cards
-            const stats = processBillingDataForCards(data);
+            const stats = processStatsForCards(uniqueCustomers, sortedBillingHeaders);
             updateStatsCards(stats);
 
         } catch (error) {
             console.error('Error fetching or processing monitoring data:', error);
             const ctx = document.getElementById('unpaidTrendChart').getContext('2d');
-            ctx.font = '16px Arial';
-            ctx.fillStyle = '#888';
-            ctx.textAlign = 'center';
-            ctx.fillText('Gagal memuat data grafik.', ctx.canvas.width / 2, ctx.canvas.height / 2);
+            ctx.font = '16px Arial'; ctx.fillStyle = '#888'; ctx.textAlign = 'center';
+            ctx.fillText('Gagal memuat data.', ctx.canvas.width / 2, ctx.canvas.height / 2);
         }
     }
 
@@ -52,48 +50,57 @@ document.addEventListener('DOMContentLoaded', function () {
         return new Date(year + 2000, month);
     }
 
-    function processUnpaidDataForChart(apiResponse) {
-        const unpaidCountsByMonth = {};
+    function deDuplicateAndProcessData(apiResponse) {
+        const customerMap = new Map();
         const allBillingHeaders = new Set();
-        const allRowsWithHeaders = [];
 
-        if (!apiResponse.valueRanges) return { labels: [], data: [] };
+        if (apiResponse.valueRanges) {
+            apiResponse.valueRanges.forEach(valueRange => {
+                if (valueRange.values && valueRange.values.length > 1) {
+                    const headers = valueRange.values[0];
+                    const nameIndex = headers.findIndex(h => h.toLowerCase() === 'nama pelanggan');
+                    const noInternetIndex = headers.findIndex(h => h.toLowerCase() === 'nomor internet');
+                    if (nameIndex === -1 || noInternetIndex === -1) return;
 
-        apiResponse.valueRanges.forEach(valueRange => {
-            if (valueRange.values && valueRange.values.length > 1) {
-                const headers = valueRange.values[0];
-                const rows = valueRange.values.slice(1);
-                rows.forEach(row => {
-                    if (row.some(cell => cell && cell.trim() !== '')) {
-                        allRowsWithHeaders.push({ headers, row });
-                    }
-                });
-                headers.forEach(h => {
-                    if (h.toLowerCase().startsWith('billing')) allBillingHeaders.add(h);
-                });
-            }
-        });
+                    headers.forEach(h => { if (h.toLowerCase().startsWith('billing')) allBillingHeaders.add(h); });
+
+                    valueRange.values.slice(1).forEach(row => {
+                        const customerId = row[noInternetIndex] || row[nameIndex];
+                        if (customerId && customerId.trim() !== '' && !customerMap.has(customerId)) {
+                            const customerData = {};
+                            headers.forEach((header, index) => { customerData[header] = (row[index] || '').trim(); });
+                            customerMap.set(customerId, customerData);
+                        }
+                    });
+                }
+            });
+        }
 
         const sortedBillingHeaders = [...allBillingHeaders].sort((a, b) => {
-            const dateA = _parseHeaderDate(a); const dateB = _parseHeaderDate(b);
+            const dateA = _parseHeaderDate(a), dateB = _parseHeaderDate(b);
             if (!dateA) return 1; if (!dateB) return -1;
             return dateA - dateB;
         });
 
-        sortedBillingHeaders.forEach(header => {
+        return { uniqueCustomers: customerMap, sortedBillingHeaders };
+    }
+
+    // --- END: Data Fetching and Processing ---
+
+    // --- START: Chart Logic ---
+    function processUnpaidForChart(uniqueCustomers, sortedBillingHeaders) {
+        const unpaidCounts = sortedBillingHeaders.map(header => {
             let count = 0;
-            allRowsWithHeaders.forEach(data => {
-                const headerIndex = data.headers.indexOf(header);
-                if (headerIndex !== -1 && (data.row[headerIndex] || '').toLowerCase().trim() === 'unpaid') {
+            for (const customer of uniqueCustomers.values()) {
+                if ((customer[header] || '').toLowerCase() === 'unpaid') {
                     count++;
                 }
-            });
-            unpaidCountsByMonth[header] = count;
+            }
+            return count;
         });
-
         return {
             labels: sortedBillingHeaders.map(h => h.replace('Billing ', '')),
-            data: sortedBillingHeaders.map(h => unpaidCountsByMonth[h])
+            data: unpaidCounts
         };
     }
 
@@ -110,42 +117,28 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- END: Chart Logic ---
 
     // --- START: Stats Card Logic ---
-    function processBillingDataForCards(data) {
-        const customerMap = new Map();
-        let currentMonthHeader = '';
+    function processStatsForCards(uniqueCustomers, sortedBillingHeaders) {
         const date = new Date();
         const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
-        const monthName = months[date.getMonth()];
-        const year = String(date.getFullYear()).slice(-2);
-        currentMonthHeader = `Billing ${monthName} ${year}`;
-
-        if (!currentMonthHeader) return { totalPelanggan: 0, paidThisMonth: 0, unpaidThisMonth: 0, closingRate: 0 };
-
-        data.valueRanges.forEach(valueRange => {
-            if (!valueRange.values || valueRange.values.length < 2) return;
-            const headers = valueRange.values[0];
-            const nameIndex = headers.findIndex(h => h.toLowerCase() === 'nama pelanggan');
-            const noInternetIndex = headers.findIndex(h => h.toLowerCase() === 'nomor internet');
-            const billingIndex = headers.findIndex(h => h.toLowerCase() === currentMonthHeader.toLowerCase());
-            if (nameIndex === -1 || noInternetIndex === -1) return;
-
-            valueRange.values.slice(1).forEach(row => {
-                const customerId = row[noInternetIndex] || row[nameIndex];
-                if (customerId && customerId.trim() !== '' && !customerMap.has(customerId)) {
-                    const status = billingIndex !== -1 ? (row[billingIndex] || '').toLowerCase().trim() : '';
-                    customerMap.set(customerId, { status: status });
-                }
-            });
-        });
+        const currentMonthShort = months[date.getMonth()];
+        const currentYearShort = String(date.getFullYear()).slice(-2);
+        
+        const currentMonthHeader = sortedBillingHeaders.find(h => 
+            h.includes(currentMonthShort) && h.includes(currentYearShort)
+        );
 
         let paidThisMonth = 0, unpaidThisMonth = 0;
-        for (const customer of customerMap.values()) {
-            if (customer.status === 'paid') paidThisMonth++;
-            else if (customer.status === 'unpaid') unpaidThisMonth++;
+        if (currentMonthHeader) {
+            for (const customer of uniqueCustomers.values()) {
+                const status = (customer[currentMonthHeader] || '').toLowerCase();
+                if (status === 'paid') paidThisMonth++;
+                else if (status === 'unpaid') unpaidThisMonth++;
+            }
         }
+
         const totalBilled = paidThisMonth + unpaidThisMonth;
         return {
-            totalPelanggan: customerMap.size,
+            totalPelanggan: uniqueCustomers.size,
             paidThisMonth, unpaidThisMonth,
             closingRate: totalBilled > 0 ? Math.round((paidThisMonth / totalBilled) * 100) : 0
         };
@@ -263,9 +256,7 @@ document.addEventListener('DOMContentLoaded', function () {
     Promise.all([
         loadAndProcessMonitoringData(),
         loadCustomerData()
-    ]).then(() => {
-        console.log('Dashboard loaded successfully.');
-    }).catch(error => {
+    ]).catch(error => {
         console.error('Dashboard failed to load:', error);
     });
     
