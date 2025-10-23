@@ -1068,19 +1068,17 @@ class GoogleSheetsIntegration {
             let rowHtml = `
                 <td>${this.escapeHtml(item['Nama Pelanggan'])}</td>
                 <td class="copyable-cell">
-                    <span>${this.escapeHtml(item['No Internet'])}</span>
+                    ${this.escapeHtml(item['No Internet'])}
                     <button class="btn-copy" onclick="googleSheetsIntegration.copyToClipboard('${this.escapeHtml(item['No Internet'] || '')}')" title="Copy">
                         <i class="fa-solid fa-copy"></i>
                     </button>
                 </td>
                 <td class="copyable-cell">
-                    <span>
-                        <a href="https://wa.me/${this.formatWhatsappNumber(item['No Customer'])}" target="_blank" class="btn-whatsapp" title="Chat on WhatsApp">
-                            ${this.escapeHtml(item['No Customer'] || 'N/A')}
-                        </a>
-                    </span>
+                    <a href="https://wa.me/${this.formatWhatsappNumber(item['No Customer'])}" target="_blank" class="btn-whatsapp" title="Chat on WhatsApp">
+                        ${this.escapeHtml(item['No Customer'] || 'N/A')}
+                    </a>
                     <button class="btn-copy" onclick="googleSheetsIntegration.copyToClipboard('${this.escapeHtml(item['No Customer'] || 'N/A')}')" title="Copy">
-                        <i class="far fa-copy"></i>
+                        <i class="fa-solid fa-copy"></i>
                     </button>
                 </td>
                 <td>${this.escapeHtml(item['Redaman Loss'])}</td>

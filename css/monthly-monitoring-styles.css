@@ -282,32 +282,24 @@
 /* Copy Button Styles */
 .copyable-cell {
     position: relative;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
+    padding-right: 30px !important; /* Add space for the button */
 }
 
-.copyable-cell span {
-    flex-grow: 1;
-}
-
-.btn-copy {
+.copyable-cell .btn-copy {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
     background: transparent !important; 
     border: none !important;
     color: #888;
     cursor: pointer;
     padding: 4px;
     border-radius: 4px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
     opacity: 0; /* Initially hidden */
     transition: opacity 0.2s ease-in-out;
 }
 
-/* Show button on hover of the cell */
 .copyable-cell:hover .btn-copy {
     opacity: 1;
 }

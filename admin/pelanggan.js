@@ -336,8 +336,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (colIndex === noInternetIndex || colIndex === noCustomerIndex) {
                     td.classList.add('copyable-cell');
+                    // Use data attributes instead of inline onclick
                     td.innerHTML = `
-                        <span>${cellData || ''}</span>
+                        ${cellData || ''}
                         <button class="btn-copy" data-copy-text="${cellData || ''}" title="Copy">
                             <i class="fa-solid fa-copy"></i>
                         </button>

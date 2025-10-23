@@ -310,4 +310,112 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     loadCustomerData();
+
+    const salesDataRanges = {
+        'Andi': 'AndiData',
+        'April': 'AprilData',
+        'Nandi': 'NandiData',
+        'Octa': 'OctaData',
+        'Yandi': 'YandiData',
+        'Totong': 'TotongData',
+        'Yusdhi': 'YusdhiData',
+        'Nursyarif': 'NursyarifData',
+        'Reynaldi': 'ReynaldiData',
+        'Andri': 'AndriData',
+        'Tri Susantohadi': 'TriSusantohadiData',
+        'Dedi Kurniawan': 'DediKurniawanData',
+        'Muhammad Arifin': 'MuhammadArifinData',
+        'Fajar Sodik': 'FajarSodikData',
+        'Ichrima': 'IchrimaData',
+        'Muhamad Ferdi Ridwan': 'MuhamadFerdiRidwanData',
+        'Suprihatin': 'SuprihatinData',
+        'Fini Fadilah Handayani': 'FiniFadilahHandayaniData',
+        'Hinduntomy Wijaya': 'HinduntomyWijayaData'
+    };
+
+    async function loadBillingData() {
+        try {
+            const requestedRanges = Object.values(salesDataRanges);
+            const ranges = requestedRanges.join(',');
+            const response = await fetch(`/api/fetch-monitoring?ranges=${ranges}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            processAndCalculateBillingData(data);
+        } catch (error) {
+            console.error('Error fetching billing data for stats cards:', error);
+        }
+    }
+
+    function processAndCalculateBillingData(data) {
+        const customerMap = new Map();
+        let currentMonthHeader = '';
+
+        if (data.valueRanges && data.valueRanges.length > 0 && data.valueRanges[0].values) {
+            const firstHeaders = data.valueRanges[0].values[0] || [];
+            const date = new Date();
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+            const monthName = months[date.getMonth()];
+            const year = date.getFullYear().toString().slice(-2);
+            currentMonthHeader = `Billing ${monthName} ${year}`;
+        }
+
+        if (!currentMonthHeader) {
+            console.error("Could not determine current month's billing column.");
+            return;
+        }
+
+        data.valueRanges.forEach(valueRange => {
+            if (!valueRange.values || valueRange.values.length < 2) return;
+
+            const headers = valueRange.values[0];
+            const nameIndex = headers.findIndex(h => h.toLowerCase() === 'nama pelanggan');
+            const noInternetIndex = headers.findIndex(h => h.toLowerCase() === 'nomor internet');
+            const billingIndex = headers.findIndex(h => h.toLowerCase() === currentMonthHeader.toLowerCase());
+
+            if (nameIndex === -1 || noInternetIndex === -1) return;
+
+            const rows = valueRange.values.slice(1);
+            rows.forEach(row => {
+                const customerId = row[noInternetIndex] || row[nameIndex];
+                if (customerId && customerId.trim() !== '' && !customerMap.has(customerId)) {
+                    const status = billingIndex !== -1 ? (row[billingIndex] || '').toLowerCase().trim() : '';
+                    customerMap.set(customerId, { status: status });
+                }
+            });
+        });
+
+        const totalPelanggan = customerMap.size;
+        let paidThisMonth = 0;
+        let unpaidThisMonth = 0;
+
+        for (const customer of customerMap.values()) {
+            if (customer.status === 'paid') {
+                paidThisMonth++;
+            } else if (customer.status === 'unpaid') {
+                unpaidThisMonth++;
+            }
+        }
+
+        const totalBilled = paidThisMonth + unpaidThisMonth;
+        const closingRate = totalBilled > 0 ? Math.round((paidThisMonth / totalBilled) * 100) : 0;
+
+        updateStatsCards({
+            totalPelanggan,
+            paidThisMonth,
+            unpaidThisMonth,
+            closingRate
+        });
+    }
+
+    function updateStatsCards(stats) {
+        const cards = document.querySelector('.stats-cards');
+        cards.children[0].querySelector('span').textContent = stats.totalPelanggan.toLocaleString('id-ID');
+        cards.children[1].querySelector('span').textContent = stats.paidThisMonth.toLocaleString('id-ID');
+        cards.children[2].querySelector('span').textContent = stats.unpaidThisMonth.toLocaleString('id-ID');
+        cards.children[3].querySelector('span').textContent = `${stats.closingRate}%`;
+    }
+
+    loadBillingData();
 });
