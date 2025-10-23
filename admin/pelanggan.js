@@ -150,19 +150,28 @@ document.addEventListener('DOMContentLoaded', function () {
         if (selectedStatus !== 'all') {
             data = data.filter(row => {
                 if (monthIndex !== -1) {
-                    // A specific month is selected
+                    // A specific month is selected from the dropdown
                     const cellStatus = (row[monthIndex] || '').toLowerCase().trim();
                     return cellStatus === selectedStatus;
                 } else {
-                    // "All Months" is selected, check all billing columns
+                    // "All Months" is selected, so filter based on the current calendar month.
+                    const date = new Date();
+                    // Indonesian month abbreviations
+                    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+                    const monthName = months[date.getMonth()];
+                    const year = date.getFullYear().toString().slice(-2);
+                    const currentMonthHeader = `Billing ${monthName} ${year}`;
+
                     const headers = monitoringDataHeadersBySales[selectedSales] || [];
-                    return headers.some((header, index) => {
-                        if (header.toLowerCase().startsWith('billing')) {
-                            const cellStatus = (row[index] || '').toLowerCase().trim();
-                            return cellStatus === selectedStatus;
-                        }
-                        return false;
-                    });
+                    const currentMonthColumnIndex = headers.findIndex(h => h.toLowerCase() === currentMonthHeader.toLowerCase());
+
+                    if (currentMonthColumnIndex !== -1) {
+                        const cellStatus = (row[currentMonthColumnIndex] || '').toLowerCase().trim();
+                        return cellStatus === selectedStatus;
+                    }
+
+                    // If current month's column doesn't exist in the data, the row won't match.
+                    return false;
                 }
             });
         }
