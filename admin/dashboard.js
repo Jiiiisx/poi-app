@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentPage = 1;
     const rowsPerPage = 10;
     let currentView = 'customer'; // 'customer' or 'government'
+    let governmentTableHeaders = [];
 
     const salesDataRanges = {
         'Andi': 'AndiData', 'April': 'AprilData', 'Nandi': 'NandiData', 'Octa': 'OctaData',
@@ -104,11 +105,12 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
         const originalHeaders = data.values[0];
-        const normalizedHeaders = originalHeaders.map(h => h.toLowerCase().replace(/ /g, '_'));
+        // Create and store the normalized headers
+        governmentTableHeaders = originalHeaders.map(h => h.toLowerCase().replace(/ /g, '_'));
 
         allGovernmentData = data.values.slice(1).map(row => {
             const rowAsObject = {};
-            normalizedHeaders.forEach((header, index) => {
+            governmentTableHeaders.forEach((header, index) => { // Use the global headers
                 rowAsObject[header] = row[index] || '';
             });
             return rowAsObject;
@@ -209,7 +211,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const thead = document.createElement('thead'), tbody = document.createElement('tbody');
         const headerRow = document.createElement('tr');
         
-        const headers = paginatedData.length > 0 ? Object.keys(paginatedData[0]) : [];
+        // Use the globally stored headers for consistency
+        const headers = governmentTableHeaders;
 
         headers.forEach(h => { const th = document.createElement('th'); th.textContent = h.replace(/_/g, ' ').toUpperCase(); headerRow.appendChild(th); });
         thead.appendChild(headerRow);
