@@ -320,6 +320,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 throw new Error('Failed to update sheet');
             }
 
+            // On success, update the local data model to prevent UI inconsistency before a refresh.
+            const filteredDataIndex = parseInt(td.dataset.row, 10);
+            const colIndex = parseInt(td.dataset.col, 10);
+            if (filteredData[filteredDataIndex]) {
+                filteredData[filteredDataIndex][colIndex] = newValue;
+            }
+
             td.style.backgroundColor = '#d4edda';
             setTimeout(() => { td.style.backgroundColor = ''; }, 2000);
 
