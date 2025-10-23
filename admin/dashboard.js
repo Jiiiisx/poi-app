@@ -209,7 +209,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const thead = document.createElement('thead'), tbody = document.createElement('tbody');
         const headerRow = document.createElement('tr');
         
-        // Get headers dynamically from the first data object
         const headers = paginatedData.length > 0 ? Object.keys(paginatedData[0]) : [];
 
         headers.forEach(h => { const th = document.createElement('th'); th.textContent = h.replace(/_/g, ' ').toUpperCase(); headerRow.appendChild(th); });
@@ -219,7 +218,17 @@ document.addEventListener('DOMContentLoaded', function () {
             const tr = document.createElement('tr');
             headers.forEach(header => {
                 const td = document.createElement('td');
-                td.textContent = item[header] || '';
+                const cellData = item[header] || '';
+
+                if (header === 'alamat' && typeof cellData === 'string' && cellData.startsWith('https://www.google.com/maps')) {
+                    const button = document.createElement('button');
+                    button.textContent = 'Buka di Google Maps';
+                    button.className = 'btn-maps';
+                    button.onclick = () => window.open(cellData, '_blank');
+                    td.appendChild(button);
+                } else {
+                    td.textContent = cellData;
+                }
                 tr.appendChild(td);
             });
             tbody.appendChild(tr);
