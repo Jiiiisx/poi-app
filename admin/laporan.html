@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../assets/favicon.ico" type="image/x-icon">
+    <title>Laporan Kinerja Sales</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/laporan.css">
+    <link rel="stylesheet" href="../css/modern-table.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span>Point Of Interest</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="pelanggan.html"><i class="fas fa-file-invoice-dollar"></i>Billing Monitoring</a></li>
+                    <li class="active"><a href="laporan.html"><i class="fas fa-chart-bar"></i> Laporan</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+        <main class="main-content">
+            <header class="main-header">
+                <h1>Laporan Kinerja Sales</h1>
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Halo Admin</span>
+                </div>
+            </header>
+
+            <div class="report-controls">
+                <div class="control-group">
+                    <label for="sales-filter">Pilih Sales:</label>
+                    <select id="sales-filter">
+                        <option value="all">Semua Sales</option>
+                        <!-- Sales names will be populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+
+            <div id="all-sales-view">
+                <div class="chart-container">
+                    <h2>Jumlah Akuisisi Pelanggan per Sales</h2>
+                    <canvas id="allSalesChart"></canvas>
+                </div>
+            </div>
+
+            <div id="single-sales-view" style="display: none;">
+                <div class="stats-cards">
+                    <div class="card">
+                        <div class="card-header"><p>Total Pelanggan</p></div>
+                        <span id="total-pelanggan-sales">-</span>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><p>Rata-rata Akuisisi / Bulan</p></div>
+                        <span id="avg-akuisisi-sales">-</span>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><p>Bulan Paling Produktif</p></div>
+                        <span id="best-month-sales">-</span>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h2>Tren Kinerja Sales (Bulan ke Bulan)</h2>
+                    <canvas id="singleSalesChart"></canvas>
+                </div>
+            </div>
+
+            <div class="table-container content-area">
+                <h2>Detail Akuisisi Pelanggan</h2>
+                <div id="sales-report-table-container">
+                    <p>Pilih sales untuk melihat detail...</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+    <script src="js/laporan.js"></script>
+</body>
+</html>
