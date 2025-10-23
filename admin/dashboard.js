@@ -207,12 +207,19 @@ document.addEventListener('DOMContentLoaded', function () {
         const searchTerm = searchInput.value.toLowerCase();
         const activeFilterBtn = document.querySelector('.filter-buttons .active');
         const filterType = activeFilterBtn ? activeFilterBtn.id.replace('btnTableShow', '').toLowerCase() : 'all';
+
         let data = allCustomerData;
-        if (filterType === 'school') data = data.filter(row => isSchool(row[1]));
-        else if (filterType === 'non-school') data = data.filter(row => !isSchool(row[1]));
-        if (searchTerm) {
-            data = data.filter(row => row.some(cell => cell && cell.toString().toLowerCase().includes(searchTerm)));
+
+        if (filterType === 'school') {
+            data = data.filter(row => isSchool(row['Nama Pelanggan']));
+        } else if (filterType === 'nonschool') {
+            data = data.filter(row => !isSchool(row['Nama Pelanggan']));
         }
+
+        if (searchTerm) {
+            data = data.filter(row => Object.values(row).some(cell => cell && cell.toString().toLowerCase().includes(searchTerm)));
+        }
+
         filteredCustomerData = data;
         renderCustomerTable();
     }
