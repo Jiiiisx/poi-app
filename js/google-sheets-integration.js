@@ -83,15 +83,15 @@ class GoogleSheetsIntegration {
             'Nursyarif': 'NursyarifData',
             'Reynaldi': 'ReynaldiData',
             'Andri': 'AndriData',
-            'TRI SUSANTOHADI': 'TriSusantohadiData',
-            'DEDI KURNIAWAN': 'DediKurniawanData',
-            'MUHAMMAD ARIFIN': 'MuhammadArifinData',
-            'FAJAR SODIK': 'FajarSodikData',
-            'ICHRIMA': 'IchrimaData',
-            'MUHAMAD  FERDI  RIDWAN': 'MuhamadFerdiRidwanData',
-            'SUPRIHATIN': 'SuprihatinData',
-            'FINI FADILAH HANDAYANI': 'FiniFadilahHandayaniData',
-            'HINDUNTOMY WIJAYA': 'HinduntomyWijayaData'
+            'Tri Susantohadi': 'TriSusantohadiData',
+            'Dedi Kurniawan': 'DediKurniawanData',
+            'Muhammad Arifin': 'MuhammadArifinData',
+            'Fajar Sodik': 'FajarSodikData',
+            'Ichrima': 'IchrimaData',
+            'Muhamad Ferdi Ridwan': 'MuhamadFerdiRidwanData',
+            'Suprihatin': 'SuprihatinData',
+            'Fini Fadilah Handayani': 'FiniFadilahHandayaniData',
+            'Hinduntomy Wijaya': 'HinduntomyWijayaData'
         };
     }
 
