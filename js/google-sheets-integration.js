@@ -321,38 +321,56 @@ class GoogleSheetsIntegration {
             return;
         }
 
-        try {
-            this.showLoading(true);
-            console.log(' Loading monitoring data from backend...');
-            
-            const namedRanges = Object.values(this.salesDataRanges).filter(range => range !== '');
+        const MAX_RETRIES = 3;
+        let attempt = 0;
+        while (attempt < MAX_RETRIES) {
+            try {
+                this.showLoading(true);
+                console.log(`(Attempt ${attempt + 1}) Loading monitoring data from backend...`);
+                
+                const namedRanges = Object.values(this.salesDataRanges).filter(range => range !== '');
+                const rangesString = namedRanges.join(',');
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
 
-            const rangesString = namedRanges.join(',');
-            const response = await fetch(`/api/fetch-monitoring?ranges=${rangesString}`);
+                const response = await fetch(`/api/fetch-monitoring?ranges=${rangesString}`, {
+                    signal: controller.signal
+                });
 
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                if (!data.valueRanges || data.valueRanges.length === 0) {
+                    console.warn('⚠️ No monitoring data found from backend');
+                    this.showWarning('Data monitoring tidak ditemukan');
+                    return;
+                }
+
+                this.setCachedData(cacheKey, data);
+                this.processMonitoringData(data, namedRanges);
+
+                if (this.loggedInSalesName) {
+                    this.filterBySales(this.loggedInSalesName);
+                }
+                
+                return; // Success, exit the loop
+
+            } catch (error) {
+                console.error(`Load monitoring data error (attempt ${attempt + 1}):`, error);
+                attempt++;
+                if (attempt >= MAX_RETRIES) {
+                    this.showError('Gagal memuat data monitoring setelah beberapa kali percobaan: ' + error.message);
+                } else {
+                    await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+                }
+            } finally {
+                this.showLoading(false);
             }
-            
-            const data = await response.json();
-            if (!data.valueRanges || data.valueRanges.length === 0) {
-                console.warn('⚠️ No monitoring data found from backend');
-                this.showWarning('Data monitoring tidak ditemukan');
-                return;
-            }
-
-            this.setCachedData(cacheKey, data);
-            this.processMonitoringData(data, namedRanges);
-
-            if (this.loggedInSalesName) {
-                this.filterBySales(this.loggedInSalesName);
-            }
-
-        } catch (error) {
-            console.error('Load monitoring data error:', error);
-            this.showError('Gagal memuat data monitoring: ' + error.message);
-        } finally {
-            this.showLoading(false);
         }
     }
     
@@ -817,17 +835,20 @@ class GoogleSheetsIntegration {
     _parseHeaderDate(header) {
         const monthMap = {
             'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'mei': 4, 'jun': 5,
-            'jul': 6, 'agu': 7, 'sep': 8, 'okt': 9, 'nov': 10, 'des': 11
+            'jul': 6, 'agu': 7, 'ags': 7, 'sep': 8, 'okt': 9, 'nov': 10, 'des': 11
         };
-        if (typeof header !== 'string') return null; // Handle non-string headers
+        if (typeof header !== 'string') return null;
         const parts = header.replace(/billing/i, '').trim().split(' ');
-        if (parts.length < 2) return null; // Handle malformed headers
+        if (parts.length < 2) return null;
 
-        const monthName = parts[0].toLowerCase();
+        const monthName = parts[0].toLowerCase().substring(0, 3);
         const month = monthMap[monthName];
         const year = parseInt(parts[1], 10);
 
-        if (month === undefined || isNaN(year)) return null; // Handle invalid month/year
+        if (month === undefined || isNaN(year)) {
+            console.warn(`Could not parse date from header: "${header}"`);
+            return null;
+        }
 
         return new Date(year + 2000, month);
     }
