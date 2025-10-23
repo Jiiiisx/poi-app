@@ -1070,7 +1070,7 @@ class GoogleSheetsIntegration {
                 <td class="copyable-cell">
                     <span>${this.escapeHtml(item['No Internet'])}</span>
                     <button class="btn-copy" onclick="googleSheetsIntegration.copyToClipboard('${this.escapeHtml(item['No Internet'] || '')}')" title="Copy">
-                        <i class="far fa-copy"></i>
+                        <i class="fa-solid fa-copy"></i>
                     </button>
                 </td>
                 <td class="copyable-cell">

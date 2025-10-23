@@ -314,10 +314,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (colIndex === noInternetIndex || colIndex === noCustomerIndex) {
                     td.classList.add('copyable-cell');
+                    // Use data attributes instead of inline onclick
                     td.innerHTML = `
                         <span>${cellData || ''}</span>
-                        <button class="btn-copy" onclick="copyToClipboard('${cellData || ''}')" title="Copy">
-                            <i class="far fa-copy"></i>
+                        <button class="btn-copy" data-copy-text="${cellData || ''}" title="Copy">
+                            <i class="fa-solid fa-copy"></i>
                         </button>
                     `;
                 } else if (header && header.toLowerCase() === 'fup') {
@@ -341,7 +342,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 td.dataset.row = start + rowIndex;
                 td.dataset.col = colIndex;
                 
-                // Make cells non-editable if they have a copy button
                 if (colIndex !== noInternetIndex && colIndex !== noCustomerIndex) {
                     td.contentEditable = true;
                 }
@@ -354,6 +354,13 @@ document.addEventListener('DOMContentLoaded', function () {
         table.appendChild(tbody);
         tableContainer.innerHTML = '';
         tableContainer.appendChild(table);
+
+        // Add event listeners to the new copy buttons
+        tableContainer.querySelectorAll('.btn-copy').forEach(button => {
+            button.addEventListener('click', () => {
+                copyToClipboard(button.dataset.copyText);
+            });
+        });
     }
 
     function updatePagination() {
