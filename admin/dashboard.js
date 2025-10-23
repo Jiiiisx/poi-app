@@ -142,11 +142,12 @@ document.addEventListener('DOMContentLoaded', function () {
         // Create and store the normalized headers
         governmentTableHeaders = originalHeaders.map(h => h.toLowerCase().replace(/ /g, '_'));
 
-        allGovernmentData = data.values.slice(1).map(row => {
+        allGovernmentData = data.values.slice(1).map((row, i) => {
             const rowAsObject = {};
-            governmentTableHeaders.forEach((header, index) => { // Use the global headers
+            governmentTableHeaders.forEach((header, index) => {
                 rowAsObject[header] = row[index] || '';
             });
+            rowAsObject.original_sheet_row = i + 2; // Add original row index
             return rowAsObject;
         });
     }
@@ -168,6 +169,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- END: Data Fetching and Processing ---
+
+    function columnIndexToLetter(index) {
+        let temp, letter = '';
+        while (index >= 0) {
+            temp = index % 26;
+            letter = String.fromCharCode(temp + 65) + letter;
+            index = Math.floor(index / 26) - 1;
+        }
+        return letter;
+    }
 
     // --- START: Rendering Logic ---
 
@@ -245,7 +256,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const thead = document.createElement('thead'), tbody = document.createElement('tbody');
         const headerRow = document.createElement('tr');
         
-        // Use the globally stored headers for consistency
         const headers = governmentTableHeaders;
 
         headers.forEach(h => { const th = document.createElement('th'); th.textContent = h.replace(/_/g, ' ').toUpperCase(); headerRow.appendChild(th); });
@@ -253,9 +263,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         paginatedData.forEach(item => {
             const tr = document.createElement('tr');
-            headers.forEach(header => {
+            headers.forEach((header, colIndex) => {
                 const td = document.createElement('td');
                 const cellData = item[header] || '';
+
+                // Add data attributes for editing
+                td.dataset.originalRow = item.original_sheet_row;
+                td.dataset.colIndex = colIndex;
+                td.dataset.header = header;
 
                 if (header === 'alamat' && typeof cellData === 'string' && cellData.startsWith('https://www.google.com/maps')) {
                     const button = document.createElement('button');
@@ -265,6 +280,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     td.appendChild(button);
                 } else {
                     td.textContent = cellData;
+                    td.contentEditable = true; // Make cell editable
                 }
                 tr.appendChild(td);
             });
@@ -369,6 +385,54 @@ document.addEventListener('DOMContentLoaded', function () {
             const totalPages = Math.ceil(data.length / rowsPerPage);
             if (currentPage < totalPages) { currentPage++; if(currentView === 'government') renderGovernmentTable(); else renderCustomerTable(); }
         });
+
+        // Add blur event listener for inline editing
+        tableContainer.addEventListener('blur', async (e) => {
+            if (currentView !== 'government' || e.target.tagName !== 'TD' || !e.target.isContentEditable) {
+                return;
+            }
+
+            const td = e.target;
+            const newValue = td.textContent;
+            const originalRow = td.dataset.originalRow;
+            const colIndex = parseInt(td.dataset.colIndex, 10);
+            const header = td.dataset.header;
+
+            const originalItem = allGovernmentData.find(item => item.original_sheet_row == originalRow);
+            const oldValue = originalItem ? originalItem[header] : '';
+
+            if (newValue === oldValue) {
+                return; // No change, do nothing
+            }
+
+            const colLetter = columnIndexToLetter(colIndex);
+            const range = `'KDMP'!${colLetter}${originalRow}`;
+
+            td.style.backgroundColor = '#fdffab'; // Yellow for saving
+
+            try {
+                const response = await fetch('/api/update-cell', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ range, value: newValue }),
+                });
+
+                if (!response.ok) throw new Error('Failed to update sheet');
+
+                if (originalItem) {
+                    originalItem[header] = newValue;
+                }
+
+                td.style.backgroundColor = '#d4edda'; // Green for success
+                setTimeout(() => { td.style.backgroundColor = ''; }, 2000);
+
+            } catch (error) {
+                console.error('Error updating cell:', error);
+                td.textContent = oldValue; // Revert on failure
+                td.style.backgroundColor = '#f8d7da'; // Red for error
+                setTimeout(() => { td.style.backgroundColor = ''; }, 2000);
+            }
+        }, true);
     }
     // --- END: Event Listeners ---
 
