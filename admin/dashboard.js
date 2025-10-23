@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
             tableContainer.innerHTML = '<p>No government data found.</p>';
             updatePagination(); return;
         }
-        const table = document.createElement('table'); table.className = 'customer-table';
+        const table = document.createElement('table'); table.className = 'customer-table government-table';
         const thead = document.createElement('thead'), tbody = document.createElement('tbody');
         const headerRow = document.createElement('tr');
         
