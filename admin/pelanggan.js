@@ -39,11 +39,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const monthFilter = document.getElementById('month-filter');
     const statusFilters = document.getElementById('status-filters');
 
-    let selectedMonthIndex = 'all';
+    let selectedMonth = 'all';
     let selectedStatus = 'all';
 
     async function loadMonitoringData() {
         try {
+            tableContainer.innerHTML = '<p>Loading billing data...</p>';
             const requestedRanges = Object.values(salesDataRanges);
             const ranges = requestedRanges.join(',');
             const response = await fetch(`/api/fetch-monitoring?ranges=${ranges}`);
@@ -51,10 +52,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            console.log('Raw monitoring data:', data);
             processMonitoringData(data, requestedRanges);
             populateSalesList();
-            // Initial load for the default sales person
             filterBySales(selectedSales, true);
         } catch (error) {
             console.error('Error fetching monitoring data:', error);
@@ -72,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const requestedRangeName = requestedRanges[index];
             const salesName = rangeToSalesKey[requestedRangeName];
             if (salesName && valueRange.values && valueRange.values.length > 1) {
-                const headers = valueRange.values[0];
+                const headers = valueRange.values[0].map(h => h.trim());
                 const nameIndex = headers.findIndex(h => h.toLowerCase() === 'nama pelanggan');
                 
                 const range = valueRange.range;
@@ -87,9 +86,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 valueRange.values.slice(1).forEach((row, i) => {
                     const nameCell = row[nameIndex];
                     if (nameCell && nameCell.trim() !== '') {
+                        const rowAsObject = {};
+                        headers.forEach((header, index) => {
+                            rowAsObject[header] = (row[index] || '').trim();
+                        });
                         rows.push({
-                            data: row,
-                            originalSheetRow: headerRow + 1 + i
+                            ...rowAsObject, 
+                            originalSheetRow: headerRow + 1 + i 
                         });
                     }
                 });
@@ -98,12 +101,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 monitoringDataBySales[salesName] = rows;
             }
         });
-        console.log('Processed monitoring data:', monitoringDataBySales);
     }
 
     function populateSalesList() {
         salesListElement.innerHTML = '';
-        for (const salesName in monitoringDataBySales) {
+        const salesNames = Object.keys(monitoringDataBySales).sort();
+        salesNames.forEach(salesName => {
             const li = document.createElement('li');
             li.textContent = salesName;
             if (salesName === selectedSales) {
@@ -115,19 +118,27 @@ document.addEventListener('DOMContentLoaded', function () {
                 li.classList.add('active');
             });
             salesListElement.appendChild(li);
-        }
+        });
     }
 
     function populateMonthFilter() {
         monthFilter.innerHTML = '<option value="all">All Months</option>';
         const headers = monitoringDataHeadersBySales[selectedSales] || [];
-        headers.forEach((header, index) => {
-            if (header.toLowerCase().startsWith('billing')) {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = header;
-                monthFilter.appendChild(option);
-            }
+        const billingHeaders = headers.filter(h => h.toLowerCase().startsWith('billing'));
+        
+        const sortedBillingHeaders = [...billingHeaders].sort((a, b) => {
+            const dateA = _parseHeaderDate(a);
+            const dateB = _parseHeaderDate(b);
+            if (!dateA) return 1;
+            if (!dateB) return -1;
+            return dateB - dateA; // Sort descending
+        });
+
+        sortedBillingHeaders.forEach(header => {
+            const option = document.createElement('option');
+            option.value = header;
+            option.textContent = header;
+            monthFilter.appendChild(option);
         });
     }
 
@@ -138,14 +149,13 @@ document.addEventListener('DOMContentLoaded', function () {
         populateMonthFilter();
         
         if (!isInitialLoad) {
-            // Reset filters when changing sales, but not on initial load
             searchInput.value = '';
             monthFilter.value = 'all';
             statusFilters.querySelector('.active').classList.remove('active');
             statusFilters.querySelector('[data-status="all"]').classList.add('active');
         }
 
-        selectedMonthIndex = monthFilter.value;
+        selectedMonth = monthFilter.value;
         selectedStatus = statusFilters.querySelector('.active').dataset.status;
 
         applyFilters();
@@ -155,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function _parseHeaderDate(header) {
         const monthMap = {
             'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'mei': 4, 'jun': 5,
-            'jul': 6, 'agu': 7, 'sep': 8, 'okt': 9, 'nov': 10, 'des': 11
+            'jul': 6, 'agu': 7, 'ags': 7, 'agt': 7, 'sep': 8, 'okt': 9, 'nov': 10, 'des': 11
         };
         if (typeof header !== 'string') return null;
         const parts = header.replace(/billing/i, '').trim().split(' ');
@@ -165,90 +175,91 @@ document.addEventListener('DOMContentLoaded', function () {
         const month = monthMap[monthName];
         const year = parseInt(parts[1], 10);
 
-        if (month === undefined || isNaN(year)) return null;
+        if (month === undefined || isNaN(year)) {
+            console.warn(`Could not parse date from header: "${header}"`);
+            return null;
+        }
 
         return new Date(year + 2000, month);
+    }
+
+    function getCurrentMonthColumnName() {
+        const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+        const d = new Date();
+        const month = months[d.getMonth()];
+        const year = String(d.getFullYear()).slice(-2);
+        return `Billing ${month} ${year}`;
     }
 
     function applyFilters() {
         const searchTerm = searchInput.value.toLowerCase();
         let data = monitoringDataBySales[selectedSales] || [];
 
-        // Apply search filter first
         if (searchTerm) {
-            data = data.filter(row =>
-                row.some(cell => cell && cell.toString().toLowerCase().includes(searchTerm))
+            data = data.filter(item =>
+                Object.values(item).some(val => val.toString().toLowerCase().includes(searchTerm))
             );
         }
 
-        // Apply month and status filters
-        const monthIndex = selectedMonthIndex !== 'all' ? parseInt(selectedMonthIndex, 10) : -1;
-        
         if (selectedStatus !== 'all') {
-            const headers = monitoringDataHeadersBySales[selectedSales] || [];
-            const billingHeaders = headers.map((h, i) => ({ name: h, index: i }))
-                                          .filter(h => h.name.toLowerCase().startsWith('billing'));
+            const allHeaders = monitoringDataHeadersBySales[selectedSales] || [];
+            const billingHeaders = allHeaders.filter(h => h.toLowerCase().startsWith('billing'));
 
             if (selectedStatus === 'pra npc') {
                 const now = new Date();
                 const sortedBillingHeaders = billingHeaders
-                    .filter(header => _parseHeaderDate(header.name) <= now)
-                    .sort((a, b) => _parseHeaderDate(a.name) - _parseHeaderDate(b.name));
-
+                    .filter(header => _parseHeaderDate(header) <= now)
+                    .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
                 const lastTwoMonthsHeaders = sortedBillingHeaders.slice(-2);
 
-                if (lastTwoMonthsHeaders.length < 2) {
-                    data = [];
-                } else {
-                    data = data.filter(row => {
-                        const isUnpaidLastMonth = (row[lastTwoMonthsHeaders[1].index] || '').toLowerCase().trim() === 'unpaid';
-                        const isUnpaidTwoMonthsAgo = (row[lastTwoMonthsHeaders[0].index] || '').toLowerCase().trim() === 'unpaid';
+                if (lastTwoMonthsHeaders.length >= 2) {
+                    data = data.filter(item => {
+                        const isUnpaidLastMonth = (item[lastTwoMonthsHeaders[1]] || '').toLowerCase() === 'unpaid';
+                        const isUnpaidTwoMonthsAgo = (item[lastTwoMonthsHeaders[0]] || '').toLowerCase() === 'unpaid';
                         return isUnpaidLastMonth && isUnpaidTwoMonthsAgo;
                     });
+                } else {
+                    data = [];
                 }
             } else if (selectedStatus === 'ct0') {
                 const now = new Date();
                 const sortedBillingHeaders = billingHeaders
-                    .filter(header => _parseHeaderDate(header.name) <= now)
-                    .sort((a, b) => _parseHeaderDate(a.name) - _parseHeaderDate(b.name));
-                
-                if (sortedBillingHeaders.length < 2) {
-                    data = [];
-                } else {
-                    data = data.filter(row => {
+                    .filter(header => _parseHeaderDate(header) <= now)
+                    .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
+
+                if (sortedBillingHeaders.length >= 2) {
+                    data = data.filter(item => {
                         for (let i = 0; i <= sortedBillingHeaders.length - 2; i++) {
                             const header1 = sortedBillingHeaders[i];
                             const header2 = sortedBillingHeaders[i + 1];
-                            const isUnpaid1 = (row[header1.index] || '').toLowerCase().trim() === 'unpaid';
-                            const isUnpaid2 = (row[header2.index] || '').toLowerCase().trim() === 'unpaid';
+                            const isUnpaid1 = (item[header1] || '').toLowerCase() === 'unpaid';
+                            const isUnpaid2 = (item[header2] || '').toLowerCase() === 'unpaid';
                             if (isUnpaid1 && isUnpaid2) {
                                 return true;
                             }
                         }
                         return false;
                     });
+                } else {
+                    data = [];
                 }
-            } else {
-                // Existing logic for paid, unpaid, etc.
-                data = data.filter(row => {
-                    if (monthIndex !== -1) {
-                        const cellStatus = (row[monthIndex] || '').toLowerCase().trim();
-                        return cellStatus === selectedStatus;
+            } else { // Handle 'paid', 'unpaid'
+                if (selectedMonth !== 'all') {
+                    data = data.filter(item => {
+                        const billingStatus = (item[selectedMonth] || 'n/a').toLowerCase();
+                        return billingStatus === selectedStatus;
+                    });
+                } else {
+                    const currentMonthColumn = getCurrentMonthColumnName();
+                    if (allHeaders.map(h => h.toUpperCase()).includes(currentMonthColumn.toUpperCase())) {
+                        data = data.filter(item => {
+                            const billingStatus = (item[currentMonthColumn] || 'n/a').toLowerCase();
+                            return billingStatus === selectedStatus;
+                        });
                     } else {
-                        const date = new Date();
-                        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
-                        const monthName = months[date.getMonth()];
-                        const year = date.getFullYear().toString().slice(-2);
-                        const currentMonthHeader = `Billing ${monthName} ${year}`;
-                        const currentMonthColumnIndex = headers.findIndex(h => h.toLowerCase() === currentMonthHeader.toLowerCase());
-
-                        if (currentMonthColumnIndex !== -1) {
-                            const cellStatus = (row[currentMonthColumnIndex] || '').toLowerCase().trim();
-                            return cellStatus === selectedStatus;
-                        }
-                        return false;
+                        data = [];
                     }
-                });
+                }
             }
         }
 
@@ -305,6 +316,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (paginatedData.length === 0) {
             tableContainer.innerHTML = '<p>No billing data found for the selected filters.</p>';
+            updatePagination();
             return;
         }
 
@@ -322,50 +334,42 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         thead.appendChild(headerRow);
 
-        const noInternetIndex = headers.findIndex(h => h.toLowerCase() === 'nomor internet');
-        const noCustomerIndex = headers.findIndex(h => h.toLowerCase() === 'no customer');
-
-        paginatedData.forEach((rowDataObj, rowIndex) => {
+        paginatedData.forEach((item, rowIndex) => {
             const tr = document.createElement('tr');
-            const rowData = rowDataObj.data;
-            const originalSheetRow = rowDataObj.originalSheetRow;
-
-            rowData.forEach((cellData, colIndex) => {
+            headers.forEach((header, colIndex) => {
                 const td = document.createElement('td');
-                const header = headers[colIndex];
-
-                if (colIndex === noInternetIndex || colIndex === noCustomerIndex) {
+                const cellData = item[header] || '';
+                
+                if (header.toLowerCase() === 'nomor internet' || header.toLowerCase() === 'no customer') {
                     td.classList.add('copyable-cell');
-                    // Use data attributes instead of inline onclick
                     td.innerHTML = `
-                        ${cellData || ''}
-                        <button class="btn-copy" data-copy-text="${cellData || ''}" title="Copy">
+                        ${cellData}
+                        <button class="btn-copy" data-copy-text="${cellData}" title="Copy">
                             <i class="fa-solid fa-copy"></i>
                         </button>
                     `;
-                } else if (header && header.toLowerCase() === 'fup') {
-                    const fupData = cellData || '';
-                    if (fupData.includes('/')) {
-                        const [used, total] = fupData.replace(/GB/gi, '').split('/');
+                } else if (header.toLowerCase() === 'fup') {
+                    if (cellData.includes('/')) {
+                        const [used, total] = cellData.replace(/GB/gi, '').split('/');
                         const percentage = (parseFloat(used) / parseFloat(total)) * 100;
                         td.innerHTML = `
-                            <div>${fupData}</div>
+                            <div>${cellData}</div>
                             <div class="fup-bar-container">
                                 <div class="fup-bar" style="width: ${percentage}%;"></div>
                             </div>
                         `;
                     } else {
-                        td.textContent = fupData;
+                        td.textContent = cellData;
                     }
                 } else {
-                    td.textContent = cellData || '';
+                    td.textContent = cellData;
                 }
 
                 td.dataset.row = start + rowIndex;
                 td.dataset.col = colIndex;
-                td.dataset.originalSheetRow = originalSheetRow;
+                td.dataset.originalSheetRow = item.originalSheetRow;
                 
-                if (colIndex !== noInternetIndex && colIndex !== noCustomerIndex) {
+                if (header.toLowerCase() !== 'nomor internet' && header.toLowerCase() !== 'no customer') {
                     td.contentEditable = true;
                 }
                 tr.appendChild(td);
@@ -378,7 +382,6 @@ document.addEventListener('DOMContentLoaded', function () {
         tableContainer.innerHTML = '';
         tableContainer.appendChild(table);
 
-        // Add event listeners to the new copy buttons
         tableContainer.querySelectorAll('.btn-copy').forEach(button => {
             button.addEventListener('click', () => {
                 copyToClipboard(button.dataset.copyText);
@@ -390,14 +393,14 @@ document.addEventListener('DOMContentLoaded', function () {
         const totalPages = Math.ceil(filteredData.length / rowsPerPage);
         pageInfo.textContent = `Page ${currentPage} of ${totalPages || 1}`;
         prevPageButton.disabled = currentPage === 1;
-        nextPageButton.disabled = currentPage === totalPages;
+        nextPageButton.disabled = currentPage === totalPages || totalPages === 0;
     }
 
     // Event Listeners
     searchInput.addEventListener('input', applyFilters);
 
     monthFilter.addEventListener('change', (e) => {
-        selectedMonthIndex = e.target.value;
+        selectedMonth = e.target.value;
         applyFilters();
     });
 
@@ -417,15 +420,17 @@ document.addEventListener('DOMContentLoaded', function () {
         const newValue = td.textContent;
         const originalSheetRow = td.dataset.originalSheetRow;
         const colIndex = parseInt(td.dataset.col, 10);
+        const headers = monitoringDataHeadersBySales[selectedSales] || [];
+        const header = headers[colIndex];
 
-        if (!originalSheetRow) {
-            console.error('Cannot update cell: originalSheetRow is missing.');
+        if (!originalSheetRow || !header) {
+            console.error('Cannot update cell: missing originalSheetRow or header.');
             showNotification('Error: Cannot update row. Please refresh.', 'error');
             return;
         }
 
         const colLetter = String.fromCharCode('A'.charCodeAt(0) + colIndex);
-        const sheetName = 'REKAP PS AR KALIABANG';
+        const sheetName = 'REKAP PS AR KALIABANG'; // This might need to be dynamic
         const range = `'${sheetName}'!${colLetter}${originalSheetRow}`;
 
         td.style.backgroundColor = '#fdffab';
@@ -439,20 +444,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 body: JSON.stringify({ range, value: newValue }),
             });
 
-            const filteredDataIndex = parseInt(td.dataset.row, 10);
-            const originalRowObject = filteredData[filteredDataIndex];
-
             if (!response.ok) {
-                // Revert UI on failure
-                if(originalRowObject) {
-                    td.textContent = originalRowObject.data[colIndex];
-                }
                 throw new Error('Failed to update sheet');
             }
-
-            // On success, update the local data model to prevent UI inconsistency before a refresh.
-            if (originalRowObject) {
-                originalRowObject.data[colIndex] = newValue;
+            
+            // Update local data model
+            const dataIndex = parseInt(td.dataset.row, 10);
+            if (filteredData[dataIndex]) {
+                filteredData[dataIndex][header] = newValue;
             }
 
             td.style.backgroundColor = '#d4edda';
@@ -460,6 +459,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         } catch (error) {
             console.error('Error updating cell:', error);
+            const dataIndex = parseInt(td.dataset.row, 10);
+            if (filteredData[dataIndex]) {
+                td.textContent = filteredData[dataIndex][header]; // Revert on failure
+            }
             td.style.backgroundColor = '#f8d7da';
             showNotification('Update failed. Please try again.', 'error');
         }
