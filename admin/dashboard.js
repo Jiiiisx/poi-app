@@ -29,6 +29,40 @@ document.addEventListener('DOMContentLoaded', function () {
     const btnShowNonSchool = document.getElementById('btnTableShowNonSchool');
     const btnShowGovernment = document.getElementById('btnTableShowGovernment');
 
+    // --- START: School Filter Logic (Restored) ---
+    const schoolKeywords = [
+        'SEKOLAH', 'SCHOOL', 'SMA', 'SMK', 'SMP', 'SMPIT', 'SMIT', 'SDN', 'MI', 'MTS', 'MA', 'MAK',
+        'UNIVERSITAS', 'UNIV', 'INSTITUT', 'INST', 'POLITEKNIK', 'POLTEK', 'STIKES',
+        'STAI', 'IAKN', 'SD', 'TK', 'PAUD', 'KB', 'RA',
+        'PESANTREN', 'PONDOK PESANTREN', 'PONPES', 'MADRASAH',
+        'SEKOLAH DASAR', 'SEKOLAH MENENGAH', 'SEKOLAH TINGGI', 'AKADEMI',
+        'ISLAMIC', 'PENDIDIKAN', 'PELATIHAN', 'BIMBINGAN', 'KURSUS', 'LES', 'PUSAT BELAJAR',
+        'PLAYGROUP', 'KAMPUS', 'FAKULTAS', 'JURUSAN', 'PRODI', 'DIKLAT',
+        'TPQ', 'TPA', 'ASRAMA', 'BOARDING', 'SEMINAR', 'TRAINING',
+        'BIMBEL', 'BIMBINGAN BELAJAR', 'LKP', 'LEMBAGA KURSUS DAN PELATIHAN', 'PKBM', 'PUSAT KEGIATAN BELAJAR MASYARAKAT',
+        'PERGURUAN TINGGI', 'PTN', 'PTS', 'NEGERI', 'SWASTA', 'INTERNATIONAL', 'GLOBAL', 'NASIONAL',
+        'YAYASAN PENDIDIKAN', 'YAYASAN ISLAM', 'YAYASAN KRISTEN', 'YAYASAN KATOLIK', 'YAYASAN BUDDHA', 'YAYASAN HINDU',
+        'KEMENTERIAN PENDIDIKAN', 'DINAS PENDIDIKAN', 'KANTOR PENDIDIKAN', 'BALAI PENDIDIKAN',
+        'SEKOLAH TINGGI ILMU', 'SEKOLAH TINGGI AGAMA', 'SEKOLAH TINGGI KESEHATAN', 'SEKOLAH TINGGI EKONOMI',
+        'POLITEKNIK KESEHATAN', 'POLITEKNIK NEGERI', 'POLITEKNIK SWASTA',
+        'UNIVERSITAS TERBUKA', 'UT', 'UNIVERSITAS ISLAM', 'UNIVERSITAS KRISTEN', 'UNIVERSITAS KATOLIK',
+        'UNIVERSITAS BUDDHA', 'UNIVERSITAS HINDU', 'UNIVERSITAS NEGERI', 'UNIVERSITAS SWASTA', 'RAUDHATUL',
+        'INSTITUT AGAMA ISLAM', 'INSTITUT TEKNOLOGI', 'INSTITUT SENI', 'ROUDHOTUL', 'GLORIA 2', 'YAYASAN', 'SDIT', 'KINDERGROW', 'SLB', 'KELOMPOK BERMAIN', 'BERKLEE AZRA' ,
+        'EDUCATION', 'LEARNING', 'ACADEMI', 'FITSTEP', 'TAHFIDZ', 'DRIVING', 'THERESIA', 'BIMBA', 'ROBOTICS'
+    ];
+
+    function isSchool(name) {
+        if (!name) return false;
+        const cleanedName = name.toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, " ").replace(/\s{2,}/g, " ");
+        if (cleanedName.includes('.com')) return false;
+        return schoolKeywords.some(keyword => {
+            const lowerCaseKeyword = keyword.toLowerCase();
+            const regex = new RegExp('\\b' + lowerCaseKeyword + '\\b', 'i');
+            return regex.test(cleanedName);
+        });
+    }
+    // --- END: School Filter Logic (Restored) ---
+
     // --- START: Data Fetching and Processing ---
 
     function _parseHeaderDate(header) {
@@ -151,8 +185,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const activeFilterBtn = document.querySelector('.filter-buttons .active');
         const filterType = activeFilterBtn ? activeFilterBtn.id.replace('btnTableShow', '').toLowerCase() : 'all';
         let data = allCustomerData;
-        if (filterType === 'school') data = data.filter(row => window.schoolDataFilter.isSchool(row[1]));
-        else if (filterType === 'non-school') data = data.filter(row => !window.schoolDataFilter.isSchool(row[1]));
+        if (filterType === 'school') data = data.filter(row => isSchool(row[1]));
+        else if (filterType === 'non-school') data = data.filter(row => !isSchool(row[1]));
         if (searchTerm) {
             data = data.filter(row => row.some(cell => cell && cell.toString().toLowerCase().includes(searchTerm)));
         }
