@@ -127,7 +127,19 @@ document.addEventListener('DOMContentLoaded', function () {
         const response = await fetch('/api/customer-data');
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        allCustomerData = data.values.slice(1);
+        if (!data.values || data.values.length < 1) {
+            allCustomerData = [];
+            return;
+        }
+        const headers = data.values[0];
+        allCustomerData = data.values.slice(1).map((row, i) => {
+            const rowAsObject = {};
+            headers.forEach((header, index) => {
+                rowAsObject[header] = row[index] || '';
+            });
+            rowAsObject.original_sheet_row = i + 2; // Add original row index
+            return rowAsObject;
+        });
     }
 
     async function loadGovernmentData() {
@@ -215,19 +227,43 @@ document.addEventListener('DOMContentLoaded', function () {
         const table = document.createElement('table'); table.className = 'customer-table';
         const thead = document.createElement('thead'), tbody = document.createElement('tbody');
         const headerRow = document.createElement('tr');
-        const headers = ['ODP Terdekat', 'Nama', 'Alamat', 'No. Telepon', 'Nama Sales', 'Visit', 'Status', 'Keterangan', 'Gambar'];
-        headers.forEach(h => { const th = document.createElement('th'); th.textContent = h; headerRow.appendChild(th); });
+        
+        const headers = filteredCustomerData.length > 0 ? Object.keys(filteredCustomerData[0]) : [];
+        const displayHeaders = headers.filter(h => h !== 'original_sheet_row');
+
+        displayHeaders.forEach(h => { const th = document.createElement('th'); th.textContent = h; headerRow.appendChild(th); });
         thead.appendChild(headerRow);
-        paginatedData.forEach((rowData) => {
+
+        paginatedData.forEach(item => {
             const tr = document.createElement('tr');
-            for (let i = 0; i < headers.length; i++) {
+            displayHeaders.forEach((header, colIndex) => {
                 const td = document.createElement('td');
-                const cellData = rowData[i] || '';
-                if (i === 2 && cellData.startsWith('http')) { const a = document.createElement('a'); a.href = cellData; a.textContent = 'View on Map'; a.target = '_blank'; a.className = 'action-btn btn-view-map'; td.appendChild(a); }
-                else if (i === 8) { const imageUrl = rowData[i]; if (imageUrl && imageUrl.startsWith('http')) { const btn = document.createElement('button'); btn.textContent = 'View Image'; btn.className = 'action-btn btn-view-image'; btn.onclick = () => window.open(imageUrl, '_blank'); td.appendChild(btn); } }
-                else { td.textContent = cellData; }
+                const cellData = item[header] || '';
+
+                td.dataset.originalRow = item.original_sheet_row;
+                td.dataset.colIndex = colIndex;
+                td.dataset.header = header;
+
+                if (header === 'Alamat' && typeof cellData === 'string' && cellData.startsWith('http')) {
+                    const button = document.createElement('button');
+                    button.textContent = 'View on Map';
+                    button.className = 'btn-maps';
+                    button.onclick = () => window.open(cellData, '_blank');
+                    td.appendChild(button);
+                } else if (header === 'Gambar') {
+                     if (cellData && cellData.startsWith('http')) {
+                        const btn = document.createElement('button');
+                        btn.textContent = 'View Image';
+                        btn.className = 'action-btn btn-view-image';
+                        btn.onclick = () => window.open(cellData, '_blank');
+                        td.appendChild(btn);
+                    }
+                } else {
+                    td.textContent = cellData;
+                    td.contentEditable = true;
+                }
                 tr.appendChild(td);
-            }
+            });
             tbody.appendChild(tr);
         });
         table.appendChild(thead); table.appendChild(tbody);
@@ -386,29 +422,39 @@ document.addEventListener('DOMContentLoaded', function () {
             if (currentPage < totalPages) { currentPage++; if(currentView === 'government') renderGovernmentTable(); else renderCustomerTable(); }
         });
 
-        // Add blur event listener for inline editing
+        // Unified blur event listener for inline editing
         tableContainer.addEventListener('blur', async (e) => {
-            if (currentView !== 'government' || e.target.tagName !== 'TD' || !e.target.isContentEditable) {
+            const td = e.target;
+            if (td.tagName !== 'TD' || !td.isContentEditable) {
                 return;
             }
 
-            const td = e.target;
             const newValue = td.textContent;
             const originalRow = td.dataset.originalRow;
             const colIndex = parseInt(td.dataset.colIndex, 10);
             const header = td.dataset.header;
 
-            const originalItem = allGovernmentData.find(item => item.original_sheet_row == originalRow);
+            let sourceData, sheetName;
+
+            if (currentView === 'government') {
+                sourceData = allGovernmentData;
+                sheetName = 'KDMP';
+            } else { // customer view
+                sourceData = allCustomerData;
+                sheetName = 'REKAP CALON PELANGGAN BY SPARTA';
+            }
+
+            const originalItem = sourceData.find(item => item.original_sheet_row == originalRow);
             const oldValue = originalItem ? originalItem[header] : '';
 
             if (newValue === oldValue) {
-                return; // No change, do nothing
+                return; // No change
             }
 
             const colLetter = columnIndexToLetter(colIndex);
-            const range = `'KDMP'!${colLetter}${originalRow}`;
+            const range = `'${sheetName}'!${colLetter}${originalRow}`;
 
-            td.style.backgroundColor = '#fdffab'; // Yellow for saving
+            td.style.backgroundColor = '#fdffab'; // Saving...
 
             try {
                 const response = await fetch('/api/update-cell', {
@@ -423,13 +469,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     originalItem[header] = newValue;
                 }
 
-                td.style.backgroundColor = '#d4edda'; // Green for success
+                td.style.backgroundColor = '#d4edda'; // Success
                 setTimeout(() => { td.style.backgroundColor = ''; }, 2000);
 
             } catch (error) {
                 console.error('Error updating cell:', error);
                 td.textContent = oldValue; // Revert on failure
-                td.style.backgroundColor = '#f8d7da'; // Red for error
+                td.style.backgroundColor = '#f8d7da'; // Error
                 setTimeout(() => { td.style.backgroundColor = ''; }, 2000);
             }
         }, true);
