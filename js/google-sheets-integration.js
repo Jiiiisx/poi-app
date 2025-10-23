@@ -985,7 +985,18 @@ class GoogleSheetsIntegration {
 
         const salesName = this.currentSalesFilter.toLowerCase();
         const allHeaders = this.monitoringDataHeadersBySales[salesName] || [];
-        const billingHeaders = allHeaders.filter(h => h.toLowerCase().startsWith('billing'));
+        
+        // Determine which billing headers to show
+        let visibleBillingHeaders = [];
+        if (this.selectedBillingMonth !== 'all') {
+            // If a specific month is selected, only show that one
+            if (allHeaders.includes(this.selectedBillingMonth)) {
+                visibleBillingHeaders.push(this.selectedBillingMonth);
+            }
+        } else {
+            // Otherwise, show all billing headers
+            visibleBillingHeaders = allHeaders.filter(h => h.toLowerCase().startsWith('billing'));
+        }
 
         this.monitoringTotalPages = Math.ceil(dataToRender.length / this.monitoringItemsPerPage);
         const startIndex = (this.monitoringCurrentPage - 1) * this.monitoringItemsPerPage;
@@ -996,7 +1007,7 @@ class GoogleSheetsIntegration {
         tbody.innerHTML = '';
 
         const staticHeaders = ['Nama Pelanggan', 'No Internet', 'No Customer', 'Redaman Loss', 'FUP', 'Histori Gangguan', 'Tanggal Pembayaran'];
-        const dynamicHeaders = [...staticHeaders, ...billingHeaders];
+        const dynamicHeaders = [...staticHeaders, ...visibleBillingHeaders]; // Use visible headers
         
         if (paginatedData.length === 0) {
             tbody.innerHTML = `<tr><td colspan="${dynamicHeaders.length}" style="text-align: center; padding: 40px;"><div class="no-data-placeholder">
@@ -1068,7 +1079,7 @@ class GoogleSheetsIntegration {
                 <td>${tanggalPembayaranHtml}</td>
             `;
 
-            billingHeaders.forEach(header => {
+            visibleBillingHeaders.forEach(header => {
                 const billingStatus = item[header] || 'N/A';
                 const billingStatusClass = this.getBillingStatusClass(billingStatus);
                 rowHtml += `<td><span class="${billingStatusClass}">${this.escapeHtml(billingStatus)}</span></td>`;
