@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
             ]);
             console.log('Dashboard loaded successfully.');
             // Initial render after all data is loaded
-            filterData();
+            render();
         } catch (error) {
             console.error('Dashboard failed to load:', error);
             tableContainer.innerHTML = '<p>Failed to load dashboard data. Please try again.</p>';
