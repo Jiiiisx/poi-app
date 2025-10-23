@@ -74,7 +74,26 @@ document.addEventListener('DOMContentLoaded', function () {
             if (salesName && valueRange.values && valueRange.values.length > 1) {
                 const headers = valueRange.values[0];
                 const nameIndex = headers.findIndex(h => h.toLowerCase() === 'nama pelanggan');
-                const rows = valueRange.values.slice(1).filter(row => row[nameIndex] && row[nameIndex].trim() !== '');
+                
+                const range = valueRange.range;
+                const startRowMatch = range.match(/(\d+)/);
+                if (!startRowMatch) {
+                    console.error('Could not parse start row from range:', range);
+                    return;
+                }
+                const headerRow = parseInt(startRowMatch[0], 10);
+
+                const rows = [];
+                valueRange.values.slice(1).forEach((row, i) => {
+                    const nameCell = row[nameIndex];
+                    if (nameCell && nameCell.trim() !== '') {
+                        rows.push({
+                            data: row,
+                            originalSheetRow: headerRow + 1 + i
+                        });
+                    }
+                });
+
                 monitoringDataHeadersBySales[salesName] = headers;
                 monitoringDataBySales[salesName] = rows;
             }
@@ -306,15 +325,17 @@ document.addEventListener('DOMContentLoaded', function () {
         const noInternetIndex = headers.findIndex(h => h.toLowerCase() === 'nomor internet');
         const noCustomerIndex = headers.findIndex(h => h.toLowerCase() === 'no customer');
 
-        paginatedData.forEach((rowData, rowIndex) => {
+        paginatedData.forEach((rowDataObj, rowIndex) => {
             const tr = document.createElement('tr');
+            const rowData = rowDataObj.data;
+            const originalSheetRow = rowDataObj.originalSheetRow;
+
             rowData.forEach((cellData, colIndex) => {
                 const td = document.createElement('td');
                 const header = headers[colIndex];
 
                 if (colIndex === noInternetIndex || colIndex === noCustomerIndex) {
                     td.classList.add('copyable-cell');
-                    // Use data attributes instead of inline onclick
                     td.innerHTML = `
                         <span>${cellData || ''}</span>
                         <button class="btn-copy" data-copy-text="${cellData || ''}" title="Copy">
@@ -341,6 +362,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 td.dataset.row = start + rowIndex;
                 td.dataset.col = colIndex;
+                td.dataset.originalSheetRow = originalSheetRow;
                 
                 if (colIndex !== noInternetIndex && colIndex !== noCustomerIndex) {
                     td.contentEditable = true;
@@ -392,11 +414,18 @@ document.addEventListener('DOMContentLoaded', function () {
         if (td.tagName !== 'TD' || !td.contentEditable) return;
 
         const newValue = td.textContent;
-        const rowIndex = parseInt(td.dataset.row, 10) + 2; // +2 for header and 1-based index
+        const originalSheetRow = td.dataset.originalSheetRow;
         const colIndex = parseInt(td.dataset.col, 10);
+
+        if (!originalSheetRow) {
+            console.error('Cannot update cell: originalSheetRow is missing.');
+            showNotification('Error: Cannot update row. Please refresh.', 'error');
+            return;
+        }
+
         const colLetter = String.fromCharCode('A'.charCodeAt(0) + colIndex);
         const sheetName = 'REKAP PS AR KALIABANG';
-        const range = `'${sheetName}'!${colLetter}${rowIndex}`;
+        const range = `'${sheetName}'!${colLetter}${originalSheetRow}`;
 
         td.style.backgroundColor = '#fdffab';
 
@@ -409,15 +438,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 body: JSON.stringify({ range, value: newValue }),
             });
 
+            const filteredDataIndex = parseInt(td.dataset.row, 10);
+            const originalRowObject = filteredData[filteredDataIndex];
+
             if (!response.ok) {
+                // Revert UI on failure
+                if(originalRowObject) {
+                    td.textContent = originalRowObject.data[colIndex];
+                }
                 throw new Error('Failed to update sheet');
             }
 
             // On success, update the local data model to prevent UI inconsistency before a refresh.
-            const filteredDataIndex = parseInt(td.dataset.row, 10);
-            const colIndex = parseInt(td.dataset.col, 10);
-            if (filteredData[filteredDataIndex]) {
-                filteredData[filteredDataIndex][colIndex] = newValue;
+            if (originalRowObject) {
+                originalRowObject.data[colIndex] = newValue;
             }
 
             td.style.backgroundColor = '#d4edda';
@@ -426,6 +460,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error('Error updating cell:', error);
             td.style.backgroundColor = '#f8d7da';
+            showNotification('Update failed. Please try again.', 'error');
         }
     }, true);
 
