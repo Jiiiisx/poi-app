@@ -133,6 +133,24 @@ document.addEventListener('DOMContentLoaded', function () {
         renderSalesSummary(salesName);
     }
 
+    function _parseHeaderDate(header) {
+        const monthMap = {
+            'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'mei': 4, 'jun': 5,
+            'jul': 6, 'agu': 7, 'sep': 8, 'okt': 9, 'nov': 10, 'des': 11
+        };
+        if (typeof header !== 'string') return null;
+        const parts = header.replace(/billing/i, '').trim().split(' ');
+        if (parts.length < 2) return null;
+
+        const monthName = parts[0].toLowerCase().substring(0, 3);
+        const month = monthMap[monthName];
+        const year = parseInt(parts[1], 10);
+
+        if (month === undefined || isNaN(year)) return null;
+
+        return new Date(year + 2000, month);
+    }
+
     function applyFilters() {
         const searchTerm = searchInput.value.toLowerCase();
         let data = monitoringDataBySales[selectedSales] || [];
@@ -148,32 +166,71 @@ document.addEventListener('DOMContentLoaded', function () {
         const monthIndex = selectedMonthIndex !== 'all' ? parseInt(selectedMonthIndex, 10) : -1;
         
         if (selectedStatus !== 'all') {
-            data = data.filter(row => {
-                if (monthIndex !== -1) {
-                    // A specific month is selected from the dropdown
-                    const cellStatus = (row[monthIndex] || '').toLowerCase().trim();
-                    return cellStatus === selectedStatus;
+            const headers = monitoringDataHeadersBySales[selectedSales] || [];
+            const billingHeaders = headers.map((h, i) => ({ name: h, index: i }))
+                                          .filter(h => h.name.toLowerCase().startsWith('billing'));
+
+            if (selectedStatus === 'pra npc') {
+                const now = new Date();
+                const sortedBillingHeaders = billingHeaders
+                    .filter(header => _parseHeaderDate(header.name) <= now)
+                    .sort((a, b) => _parseHeaderDate(a.name) - _parseHeaderDate(b.name));
+
+                const lastTwoMonthsHeaders = sortedBillingHeaders.slice(-2);
+
+                if (lastTwoMonthsHeaders.length < 2) {
+                    data = [];
                 } else {
-                    // "All Months" is selected, so filter based on the current calendar month.
-                    const date = new Date();
-                    // Indonesian month abbreviations
-                    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
-                    const monthName = months[date.getMonth()];
-                    const year = date.getFullYear().toString().slice(-2);
-                    const currentMonthHeader = `Billing ${monthName} ${year}`;
-
-                    const headers = monitoringDataHeadersBySales[selectedSales] || [];
-                    const currentMonthColumnIndex = headers.findIndex(h => h.toLowerCase() === currentMonthHeader.toLowerCase());
-
-                    if (currentMonthColumnIndex !== -1) {
-                        const cellStatus = (row[currentMonthColumnIndex] || '').toLowerCase().trim();
-                        return cellStatus === selectedStatus;
-                    }
-
-                    // If current month's column doesn't exist in the data, the row won't match.
-                    return false;
+                    data = data.filter(row => {
+                        const isUnpaidLastMonth = (row[lastTwoMonthsHeaders[1].index] || '').toLowerCase().trim() === 'unpaid';
+                        const isUnpaidTwoMonthsAgo = (row[lastTwoMonthsHeaders[0].index] || '').toLowerCase().trim() === 'unpaid';
+                        return isUnpaidLastMonth && isUnpaidTwoMonthsAgo;
+                    });
                 }
-            });
+            } else if (selectedStatus === 'ct0') {
+                const now = new Date();
+                const sortedBillingHeaders = billingHeaders
+                    .filter(header => _parseHeaderDate(header.name) <= now)
+                    .sort((a, b) => _parseHeaderDate(a.name) - _parseHeaderDate(b.name));
+                
+                if (sortedBillingHeaders.length < 2) {
+                    data = [];
+                } else {
+                    data = data.filter(row => {
+                        for (let i = 0; i <= sortedBillingHeaders.length - 2; i++) {
+                            const header1 = sortedBillingHeaders[i];
+                            const header2 = sortedBillingHeaders[i + 1];
+                            const isUnpaid1 = (row[header1.index] || '').toLowerCase().trim() === 'unpaid';
+                            const isUnpaid2 = (row[header2.index] || '').toLowerCase().trim() === 'unpaid';
+                            if (isUnpaid1 && isUnpaid2) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    });
+                }
+            } else {
+                // Existing logic for paid, unpaid, etc.
+                data = data.filter(row => {
+                    if (monthIndex !== -1) {
+                        const cellStatus = (row[monthIndex] || '').toLowerCase().trim();
+                        return cellStatus === selectedStatus;
+                    } else {
+                        const date = new Date();
+                        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+                        const monthName = months[date.getMonth()];
+                        const year = date.getFullYear().toString().slice(-2);
+                        const currentMonthHeader = `Billing ${monthName} ${year}`;
+                        const currentMonthColumnIndex = headers.findIndex(h => h.toLowerCase() === currentMonthHeader.toLowerCase());
+
+                        if (currentMonthColumnIndex !== -1) {
+                            const cellStatus = (row[currentMonthColumnIndex] || '').toLowerCase().trim();
+                            return cellStatus === selectedStatus;
+                        }
+                        return false;
+                    }
+                });
+            }
         }
 
         filteredData = data;
