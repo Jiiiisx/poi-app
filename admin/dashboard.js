@@ -211,9 +211,9 @@ document.addEventListener('DOMContentLoaded', function () {
         let data = allCustomerData;
 
         if (filterType === 'school') {
-            data = data.filter(row => isSchool(row['Nama Pelanggan']));
+            data = data.filter(row => isSchool(row['Nama Calon Pelanggan']));
         } else if (filterType === 'nonschool') {
-            data = data.filter(row => !isSchool(row['Nama Pelanggan']));
+            data = data.filter(row => !isSchool(row['Nama Calon Pelanggan']));
         }
 
         if (searchTerm) {
