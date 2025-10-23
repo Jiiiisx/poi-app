@@ -835,7 +835,7 @@ class GoogleSheetsIntegration {
     _parseHeaderDate(header) {
         const monthMap = {
             'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'mei': 4, 'jun': 5,
-            'jul': 6, 'agu': 7, 'ags': 7, 'sep': 8, 'okt': 9, 'nov': 10, 'des': 11
+            'jul': 6, 'agu': 7, 'ags': 7, 'agt': 7, 'sep': 8, 'okt': 9, 'nov': 10, 'des': 11
         };
         if (typeof header !== 'string') return null;
         const parts = header.replace(/billing/i, '').trim().split(' ');
