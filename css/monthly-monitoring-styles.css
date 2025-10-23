@@ -278,3 +278,41 @@
     font-size: 1em;
     max-width: 100px; /* Prevent it from being too wide */
 }
+
+/* Copy Button Styles */
+.copyable-cell {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.copyable-cell span {
+    flex-grow: 1;
+}
+
+.btn-copy {
+    background: transparent !important; 
+    border: none !important;
+    color: #888;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Show button on hover of the cell */
+.copyable-cell:hover .btn-copy {
+    opacity: 1;
+}
+
+.btn-copy:hover {
+    background-color: #e9ecef !important;
+    color: #333;
+}
