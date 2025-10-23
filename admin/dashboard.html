@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../assets/favicon.ico" type="image/x-icon">
+    <title>DASHBOARD INTERNAL</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="../css/modern-table.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span>Point Of Interest</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="pelanggan.html"><i class="fas fa-file-invoice-dollar"></i>Billing Monitoring</a></li>
+                    <li><a href="#"><i class="fas fa-chart-bar"></i> Laporan</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+        <main class="main-content">
+            <header class="main-header">
+                <h1>Dashboard</h1>
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Halo Admin</span>
+                </div>
+            </header>
+            <div class="stats-cards">
+                <div class="card card-total-pelanggan">
+                    <div class="card-header">
+                        <p>Total Pelanggan</p>
+                        <div class="card-icon"><i class="fas fa-arrow-up"></i></div>
+                    </div>
+                    <span>-</span>
+                    <div class="card-footer">
+                        <i class="fas fa-chart-line"></i> Increased from last month
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <p>Pelanggan Yang Sudah Bayar</p>
+                        <div class="card-icon"><i class="fas fa-arrow-up"></i></div>
+                    </div>
+                    <span>-</span>
+                    <div class="card-footer">
+                        <i class="fas fa-chart-line"></i> Increased from last month
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <p>Pelanggan Yang Belom Bayar</p>
+                        <div class="card-icon"><i class="fas fa-arrow-up"></i></div>
+                    </div>
+                    <span>-</span>
+                    <div class="card-footer">
+                        On Discuss
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <p>Closing Rate</p>
+                        <div class="card-icon"><i class="fas fa-arrow-up"></i></div>
+                    </div>
+                    <span>-</span>
+                    <div class="card-footer">
+                        On Discuss
+                    </div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <h2>Grafik Tren Pelanggan Menunggak</h2>
+                <canvas id="unpaidTrendChart"></canvas>
+            </div>
+            <div class="table-container content-area">
+                <h2>Calon Pelanggan List</h2>
+                <div class="filter-controls">
+                    <input type="text" id="searchInput" placeholder="Search customer data...">
+                    <div class="filter-buttons">
+                        <button id="btnTableShowAll" class="btn btn-primary active">All</button>
+                        <button id="btnTableShowSchool" class="btn btn-success">School</button>
+                        <button id="btnTableShowNonSchool" class="btn btn-secondary">Non-School</button>
+                        <button id="btnTableShowGovernment" class="btn btn-info">Pemerintahan</button>
+                    </div>
+                    <span id="filterStats"></span>
+                </div>
+                <div class="table-responsive">
+                    <div id="customer-table-container">
+                        <!-- Customer table will be loaded here by JavaScript -->
+                        <p>Loading customer data...</p>
+                    </div>
+                </div>
+                <div class="pagination-controls">
+                    <button id="prevPage" disabled>Previous</button>
+                    <span id="pageInfo">Page 1 of 1</span>
+                    <button id="nextPage" disabled>Next</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../js/google-sheets-crud.js"></script>
+    <script src="../js/school-data-filter.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>
