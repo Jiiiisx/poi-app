@@ -211,7 +211,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const headerRow = document.createElement('tr');
         const headers = monitoringDataHeadersBySales[selectedSales] || [];
-        headers.forEach(headerText => {
+        const monthIndex = selectedMonthIndex !== 'all' ? parseInt(selectedMonthIndex, 10) : -1;
+
+        // Store indices of visible columns to keep header and body in sync
+        const visibleColumnIndices = [];
+
+        headers.forEach((headerText, colIndex) => {
+            const isBillingColumn = headerText.toLowerCase().startsWith('billing');
+            // If a specific month is selected, hide other billing columns
+            if (monthIndex !== -1 && isBillingColumn && colIndex !== monthIndex) {
+                return; // Skip this header
+            }
+            visibleColumnIndices.push(colIndex);
             const th = document.createElement('th');
             th.textContent = headerText;
             headerRow.appendChild(th);
@@ -220,9 +231,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         paginatedData.forEach((rowData, rowIndex) => {
             const tr = document.createElement('tr');
-            rowData.forEach((cellData, colIndex) => {
-                const td = document.createElement('td');
+            // Iterate only over visible columns to build the cells
+            visibleColumnIndices.forEach(colIndex => {
+                const cellData = rowData[colIndex];
                 const header = headers[colIndex];
+
+                const td = document.createElement('td');
 
                 if (header && header.toLowerCase() === 'fup') {
                     const fupData = cellData || '';
@@ -243,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 td.dataset.row = start + rowIndex;
-                td.dataset.col = colIndex;
+                td.dataset.col = colIndex; // Use original colIndex for editing
                 td.contentEditable = true;
                 tr.appendChild(td);
             });
