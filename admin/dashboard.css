@@ -356,3 +356,50 @@ body {
 .btn-detail:hover {
     background-color: #b72a31;
 }
+
+/* Styles for the Government Data Table with higher specificity */
+#customer-table-container .government-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+#customer-table-container .government-table th,
+#customer-table-container .government-table td {
+    border: 1px solid #e0e0e0;
+    padding: 12px 15px;
+    word-wrap: break-word;
+    word-break: break-all;
+    vertical-align: top;
+    font-size: 0.9rem;
+}
+
+#customer-table-container .government-table th {
+    background-color: #f7f7f7;
+    font-weight: 600;
+    text-align: left;
+}
+
+/* Specific Column Widths */
+#customer-table-container .government-table th:nth-child(1) { width: 18%; } /* nama_koperasi */
+#customer-table-container .government-table th:nth-child(2) { width: 30%; } /* alamat */
+#customer-table-container .government-table th:nth-child(3) { width: 12%; } /* kabupaten_kota */
+#customer-table-container .government-table th:nth-child(4) { width: 12%; } /* kecamatan */
+#customer-table-container .government-table th:nth-child(8) { width: 8%; }  /* sales */
+
+/* Style for the Google Maps button in tables */
+#customer-table-container .btn-maps {
+    background-color: #4285F4;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+    text-align: center;
+}
+
+#customer-table-container .btn-maps:hover {
+    background-color: #357ae8;
+}
