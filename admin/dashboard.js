@@ -103,10 +103,12 @@ document.addEventListener('DOMContentLoaded', function () {
             allGovernmentData = [];
             return;
         }
-        const headers = data.values[0];
+        const originalHeaders = data.values[0];
+        const normalizedHeaders = originalHeaders.map(h => h.toLowerCase().replace(/ /g, '_'));
+
         allGovernmentData = data.values.slice(1).map(row => {
             const rowAsObject = {};
-            headers.forEach((header, index) => {
+            normalizedHeaders.forEach((header, index) => {
                 rowAsObject[header] = row[index] || '';
             });
             return rowAsObject;
@@ -206,9 +208,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const table = document.createElement('table'); table.className = 'customer-table';
         const thead = document.createElement('thead'), tbody = document.createElement('tbody');
         const headerRow = document.createElement('tr');
-        const headers = ['nama_koperasi', 'alamat', 'kabupaten_kota', 'kecamatan', 'desa', 'latitude', 'longitude', 'sales', 'keterangan'];
+        
+        // Get headers dynamically from the first data object
+        const headers = paginatedData.length > 0 ? Object.keys(paginatedData[0]) : [];
+
         headers.forEach(h => { const th = document.createElement('th'); th.textContent = h.replace(/_/g, ' ').toUpperCase(); headerRow.appendChild(th); });
         thead.appendChild(headerRow);
+
         paginatedData.forEach(item => {
             const tr = document.createElement('tr');
             headers.forEach(header => {

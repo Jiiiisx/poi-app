@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     while (attempt < MAX_RETRIES) {
         try {
             const sheets = await getSheetsClient();
-            const range = "'KDMP'!A1:I1000";
+            const range = "'KDMP'!A1:J1000";
 
             const response = await sheets.spreadsheets.values.get({
                 spreadsheetId: SPREADSHEET_ID,
