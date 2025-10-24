@@ -30,6 +30,8 @@
 
 /* Chart container styling from dashboard.css */
 .chart-container {
+    position: relative;
+    height: 600px;
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
