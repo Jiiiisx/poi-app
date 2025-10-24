@@ -55,10 +55,36 @@ document.addEventListener('DOMContentLoaded', function () {
                         return customerData;
                     });
 
-                    const visitIndex = headers.findIndex(h => h.toLowerCase() === 'visit');
+                    // --- New logic for acquisitionDate ---
+                    const billingColumns = headers.filter(h => h.toLowerCase().startsWith('billing'));
                     
+                    // Helper to parse month and year from "Billing [Month] [YY]"
+                    const parseBillingMonth = (billingHeader) => {
+                        const parts = billingHeader.split(' ');
+                        if (parts.length !== 3) return null;
+                        const monthName = parts[1];
+                        const year = `20${parts[2]}`;
+                        const monthIndex = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'].findIndex(m => m.toLowerCase() === monthName.toLowerCase());
+                        if (monthIndex === -1) return null;
+                        return new Date(year, monthIndex, 1);
+                    };
+
+                    // Sort billing columns chronologically
+                    billingColumns.sort((a, b) => {
+                        const dateA = parseBillingMonth(a);
+                        const dateB = parseBillingMonth(b);
+                        if (!dateA || !dateB) return 0;
+                        return dateA - dateB;
+                    });
+
                     customers.forEach(c => {
-                        c.acquisitionDate = visitIndex !== -1 ? parseDate(c[headers[visitIndex]]) : null;
+                        c.acquisitionDate = null;
+                        for (const col of billingColumns) {
+                            if (c[col]) {
+                                c.acquisitionDate = parseBillingMonth(col);
+                                break; // Found the first billing month, so we can stop
+                            }
+                        }
                     });
 
                     performanceData[salesName] = {
@@ -218,7 +244,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // 2. Process data for trend chart (monthly acquisitions)
         const monthlyAcquisitions = {};
         salesData.customers.forEach(customer => {
-            console.log('--- DEBUG: Customer object ---', customer);
             if (customer.acquisitionDate) {
                 const monthYear = `${customer.acquisitionDate.getMonth() + 1}/${customer.acquisitionDate.getFullYear()}`;
                 monthlyAcquisitions[monthYear] = (monthlyAcquisitions[monthYear] || 0) + 1;
