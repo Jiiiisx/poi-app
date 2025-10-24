@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function processApiResponse(apiResponse) {
+        console.log('API Response:', JSON.stringify(apiResponse, null, 2)); // Debugging line
         const performanceData = {};
         const reverseSalesDataRanges = Object.fromEntries(Object.entries(salesDataRanges).map(a => a.reverse()));
 
