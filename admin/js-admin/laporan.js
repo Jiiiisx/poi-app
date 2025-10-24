@@ -289,19 +289,29 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function renderReportTable(salesName) {
-        const data = salesPerformance[salesName]?.customers;
-        if (!data || data.length === 0) {
+        const customers = salesPerformance[salesName]?.customers;
+        if (!customers || customers.length === 0) {
             tableContainer.innerHTML = '<p>Tidak ada data pelanggan untuk sales ini.</p>';
             return;
         }
 
+        const currentMonthColumn = getCurrentMonthColumnName();
+        const unpaidCustomers = customers.filter(customer => {
+            return customer[currentMonthColumn]?.toLowerCase() === 'unpaid';
+        });
+
+        if (unpaidCustomers.length === 0) {
+            tableContainer.innerHTML = '<p>Tidak ada pelanggan unpaid untuk sales ini.</p>';
+            return;
+        }
+
         const table = document.createElement('table');
-        table.className = 'customer-table'; // Reusing class from modern-table.css
+        table.className = 'customer-table';
         const thead = document.createElement('thead');
         const tbody = document.createElement('tbody');
         const headerRow = document.createElement('tr');
 
-        const headers = Object.keys(data[0]);
+        const headers = Object.keys(unpaidCustomers[0]);
         headers.forEach(h => {
             const th = document.createElement('th');
             th.textContent = h;
@@ -309,11 +319,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         thead.appendChild(headerRow);
 
-        data.forEach(item => {
+        unpaidCustomers.forEach(item => {
             const tr = document.createElement('tr');
             headers.forEach(header => {
                 const td = document.createElement('td');
-                // Format date for display
                 if (header === 'acquisitionDate' && item[header]) {
                     td.textContent = item[header].toLocaleDateString('id-ID');
                 } else {
