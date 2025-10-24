@@ -83,10 +83,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (header.toLowerCase() === 'details' && typeof cellData === 'string' && cellData.startsWith('{')) {
                     try {
                         const parsedDetails = JSON.parse(cellData);
-                        cellData = JSON.stringify(parsedDetails, null, 2);
-                        td.style.whiteSpace = 'pre-wrap'; // Make the formatted JSON readable
-                        td.style.textAlign = 'left';
-                        td.style.fontFamily = 'monospace';
+                        let formattedDetails = '';
+                        if (item.Action === 'ADD_CUSTOMER' || item.Action === 'UPDATE_CUSTOMER') {
+                            formattedDetails = 'Values: ' + parsedDetails.values.join(', ');
+                        } else if (item.Action === 'DELETE_ROW') {
+                            formattedDetails = `Row: ${parsedDetails.rowIndex}, Sheet: ${parsedDetails.sheetName}`;
+                        } else {
+                            formattedDetails = JSON.stringify(parsedDetails, null, 2);
+                        }
+                        cellData = formattedDetails;
                     } catch (e) {
                         // If parsing fails, just display the raw string
                     }

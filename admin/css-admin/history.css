@@ -1,0 +1,21 @@
+.customer-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.customer-table th, .customer-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.customer-table th {
+    background-color: #f2f2f2;
+}
+
+.customer-table td:nth-child(4) {
+    white-space: pre-wrap; 
+    font-family: monospace;
+    max-width: 400px;
+    overflow-x: auto;
+}
