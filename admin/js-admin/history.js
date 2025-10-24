@@ -14,12 +14,16 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- NEW: Load Analytics Data ---
     async function loadAnalyticsData() {
         try {
+            console.log('Fetching analytics data...');
             const response = await fetch('/api/fetch-analytics');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
+            console.log('Received raw analytics data from API:', data);
+
             if (!data.values || data.values.length < 1) {
+                console.log('No analytics data values found. Rendering empty dashboard.');
                 processAnalytics([]);
                 return;
             }
@@ -31,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
                 return rowAsObject;
             });
+            console.log('Processed analytics data for dashboard:', analyticsData);
             processAnalytics(analyticsData);
         } catch (error) {
             console.error('Error fetching analytics data:', error);
