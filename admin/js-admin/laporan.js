@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const salesFilter = document.getElementById('sales-filter');
     const allSalesView = document.getElementById('all-sales-view');
     const singleSalesView = document.getElementById('single-sales-view');
-    const tableContainer = document.getElementById('sales-report-table-container');
+
 
     // --- START: Data Fetching and Processing ---
 
@@ -288,69 +288,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function renderReportTable(salesName) {
-        const customers = salesPerformance[salesName]?.customers;
-        if (!customers || customers.length === 0) {
-            tableContainer.innerHTML = '<p>Tidak ada data pelanggan untuk sales ini.</p>';
-            return;
-        }
-
-        const currentMonthColumn = getCurrentMonthColumnName();
-        const unpaidCustomers = customers.filter(customer => {
-            return customer[currentMonthColumn]?.toLowerCase() === 'unpaid';
-        });
-
-        if (unpaidCustomers.length === 0) {
-            tableContainer.innerHTML = '<p>Tidak ada pelanggan unpaid untuk sales ini.</p>';
-            return;
-        }
-
-        const table = document.createElement('table');
-        table.className = 'customer-table';
-        const thead = document.createElement('thead');
-        const tbody = document.createElement('tbody');
-        const headerRow = document.createElement('tr');
-
-        const headers = Object.keys(unpaidCustomers[0]);
-        headers.forEach(h => {
-            const th = document.createElement('th');
-            th.textContent = h;
-            headerRow.appendChild(th);
-        });
-        thead.appendChild(headerRow);
-
-        unpaidCustomers.forEach(item => {
-            const tr = document.createElement('tr');
-            headers.forEach(header => {
-                const td = document.createElement('td');
-                if (header === 'acquisitionDate' && item[header]) {
-                    td.textContent = item[header].toLocaleDateString('id-ID');
-                } else {
-                    td.textContent = item[header];
-                }
-                tr.appendChild(td);
-            });
-            tbody.appendChild(tr);
-        });
-
-        table.appendChild(thead);
-        table.appendChild(tbody);
-        tableContainer.innerHTML = '';
-        tableContainer.appendChild(table);
-    }
-
     function updateView() {
         const selectedSales = salesFilter.value;
         if (selectedSales === 'all') {
             allSalesView.style.display = 'block';
             singleSalesView.style.display = 'none';
             renderAllSalesView();
-            tableContainer.innerHTML = '<p>Pilih sales untuk melihat detail...</p>';
         } else {
             allSalesView.style.display = 'none';
             singleSalesView.style.display = 'block';
             renderSingleSalesView(selectedSales);
-            renderReportTable(selectedSales);
         }
     }
 
