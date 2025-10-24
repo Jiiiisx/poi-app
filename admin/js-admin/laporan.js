@@ -57,8 +57,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     // Assuming 'Visit' column contains the acquisition date. This might need adjustment.
                     const visitIndex = headers.findIndex(h => h.toLowerCase() === 'visit');
+                    console.log('--- DEBUG: Headers ---', headers);
+                    console.log('--- DEBUG: Visit column index ---', visitIndex);
                     
                     customers.forEach(c => {
+                        if (visitIndex !== -1) {
+                            console.log('--- DEBUG: Raw date from Visit column ---', c[headers[visitIndex]]);
+                        }
                         c.acquisitionDate = visitIndex !== -1 ? parseDate(c[headers[visitIndex]]) : null;
                     });
 
@@ -185,6 +190,14 @@ document.addEventListener('DOMContentLoaded', function () {
         renderLeaderboardTable(salesData);
     }
 
+    function getCurrentMonthColumnName() {
+        const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+        const d = new Date();
+        const month = months[d.getMonth()];
+        const year = String(d.getFullYear()).slice(-2);
+        return `Billing ${month} ${year}`;
+    }
+
     function renderSingleSalesView(salesName) {
         const salesData = salesPerformance[salesName];
         if (!salesData) return;
@@ -192,9 +205,26 @@ document.addEventListener('DOMContentLoaded', function () {
         // 1. Update stat cards
         document.getElementById('total-pelanggan-sales').textContent = salesData.totalCustomers;
 
+        const currentMonthColumn = getCurrentMonthColumnName();
+        let paidCustomers = 0;
+        let unpaidCustomers = 0;
+        if (salesData.customers.length > 0 && salesData.customers[0].hasOwnProperty(currentMonthColumn)) {
+            salesData.customers.forEach(customer => {
+                const status = customer[currentMonthColumn]?.toLowerCase();
+                if (status === 'paid') {
+                    paidCustomers++;
+                } else if (status === 'unpaid') {
+                    unpaidCustomers++;
+                }
+            });
+        }
+        document.getElementById('paid-customers-sales').textContent = paidCustomers;
+        document.getElementById('unpaid-customers-sales').textContent = unpaidCustomers;
+
         // 2. Process data for trend chart (monthly acquisitions)
         const monthlyAcquisitions = {};
         salesData.customers.forEach(customer => {
+            console.log('--- DEBUG: Parsed acquisitionDate ---', customer.acquisitionDate);
             if (customer.acquisitionDate) {
                 const monthYear = `${customer.acquisitionDate.getMonth() + 1}/${customer.acquisitionDate.getFullYear()}`;
                 monthlyAcquisitions[monthYear] = (monthlyAcquisitions[monthYear] || 0) + 1;
