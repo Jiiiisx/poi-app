@@ -12,6 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -39,6 +40,23 @@
                     <span>Halo Admin</span>
                 </div>
             </header>
+
+            <!-- Web Analytics Section -->
+            <div class="analytics-section">
+                <h2>Web Analytics</h2>
+                <div class="analytics-cards">
+                    <div class="card">
+                        <h3>Active Users</h3>
+                        <p id="active-users-count">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Total Activities</h3>
+                        <p id="total-activities-count">0</p>
+                    </div>
+                </div>
+                <div id="analytics-chart"></div>
+            </div>
+
             <div class="table-container content-area">
                 <h2>User Activity</h2>
                 <div class="filter-controls">
