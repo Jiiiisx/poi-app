@@ -55,15 +55,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         return customerData;
                     });
 
-                    // Assuming 'Visit' column contains the acquisition date. This might need adjustment.
                     const visitIndex = headers.findIndex(h => h.toLowerCase() === 'visit');
-                    console.log('--- DEBUG: Headers ---', headers);
-                    console.log('--- DEBUG: Visit column index ---', visitIndex);
                     
                     customers.forEach(c => {
-                        if (visitIndex !== -1) {
-                            console.log('--- DEBUG: Raw date from Visit column ---', c[headers[visitIndex]]);
-                        }
                         c.acquisitionDate = visitIndex !== -1 ? parseDate(c[headers[visitIndex]]) : null;
                     });
 
@@ -224,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // 2. Process data for trend chart (monthly acquisitions)
         const monthlyAcquisitions = {};
         salesData.customers.forEach(customer => {
-            console.log('--- DEBUG: Parsed acquisitionDate ---', customer.acquisitionDate);
+            console.log('--- DEBUG: Customer object ---', customer);
             if (customer.acquisitionDate) {
                 const monthYear = `${customer.acquisitionDate.getMonth() + 1}/${customer.acquisitionDate.getFullYear()}`;
                 monthlyAcquisitions[monthYear] = (monthlyAcquisitions[monthYear] || 0) + 1;
@@ -239,19 +233,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const chartLabels = sortedMonths;
         const chartData = sortedMonths.map(month => monthlyAcquisitions[month]);
-
-        // Calculate other stats
-        const avgPerMonth = chartData.length > 0 ? (salesData.totalCustomers / chartData.length).toFixed(1) : 0;
-        document.getElementById('avg-akuisisi-sales').textContent = avgPerMonth;
-        
-        let bestMonth = '-';
-        if(chartData.length > 0) {
-            const maxAcquisitions = Math.max(...chartData);
-            const bestMonthIndex = chartData.indexOf(maxAcquisitions);
-            bestMonth = chartLabels[bestMonthIndex];
-        }
-        document.getElementById('best-month-sales').textContent = bestMonth;
-
 
         // 3. Render trend chart
         const ctx = document.getElementById('singleSalesChart').getContext('2d');
