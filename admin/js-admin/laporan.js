@@ -36,14 +36,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function processApiResponse(apiResponse) {
-        console.log('API Response:', JSON.stringify(apiResponse, null, 2)); // Debugging line
         const performanceData = {};
         const reverseSalesDataRanges = Object.fromEntries(Object.entries(salesDataRanges).map(a => a.reverse()));
+        const requestedRanges = Object.values(salesDataRanges);
 
         if (apiResponse.valueRanges) {
-            apiResponse.valueRanges.forEach(valueRange => {
-                const rangeName = valueRange.range.split('!')[0].replace(/'/g, '');
-                const salesName = reverseSalesDataRanges[rangeName];
+            apiResponse.valueRanges.forEach((valueRange, index) => {
+                const namedRange = requestedRanges[index];
+                const salesName = reverseSalesDataRanges[namedRange];
 
                 if (salesName && valueRange.values && valueRange.values.length > 1) {
                     const headers = valueRange.values[0];
