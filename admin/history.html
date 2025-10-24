@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../assets/favicon.ico" type="image/x-icon">
+    <title>History</title>
+    <link rel="stylesheet" href="css-admin/history.css">
+    <link rel="stylesheet" href="../css/modern-table.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span>Point Of Interest</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="pelanggan.html"><i class="fas fa-file-invoice-dollar"></i>Billing Monitoring</a></li>
+                    <li><a href="laporan.html"><i class="fas fa-chart-bar"></i> Laporan</a></li>
+                    <li class="active"><a href="history.html"><i class="fas fa-history"></i> History</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+        <main class="main-content">
+            <header class="main-header">
+                <h1>History</h1>
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Halo Admin</span>
+                </div>
+            </header>
+            <div class="table-container content-area">
+                <h2>User Activity</h2>
+                <div class="filter-controls">
+                    <input type="text" id="searchInput" placeholder="Search history...">
+                </div>
+                <div class="table-responsive">
+                    <div id="history-table-container">
+                        <!-- History table will be loaded here by JavaScript -->
+                        <p>Loading history data...</p>
+                    </div>
+                </div>
+                <div class="pagination-controls">
+                    <button id="prevPage" disabled>Previous</button>
+                    <span id="pageInfo">Page 1 of 1</span>
+                    <button id="nextPage" disabled>Next</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="js-admin/history.js"></script>
+</body>
+</html>
