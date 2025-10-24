@@ -82,30 +82,26 @@
             </div>
 
             <div id="single-sales-view" style="display: none;">
-                <div class="stats-cards">
-                    <div class="card">
-                        <div class="card-header"><p>Total Pelanggan</p></div>
-                        <span id="total-pelanggan-sales">-</span>
+                <div class="table-container content-area">
+                    <h2>Scorecard Sederhana</h2>
+                    <div class="stats-cards">
+                        <div class="card">
+                            <div class="card-header"><p>Total Pelanggan</p></div>
+                            <span id="total-pelanggan-sales">-</span>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><p>Pelanggan Paid</p></div>
+                            <span id="paid-customers-sales">-</span>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><p>Pelanggan Unpaid</p></div>
+                            <span id="unpaid-customers-sales">-</span>
+                        </div>
                     </div>
-                    <div class="card">
-                        <div class="card-header"><p>Pelanggan Paid</p></div>
-                        <span id="paid-customers-sales">-</span>
+                    <div class="chart-container">
+                        <h2>Tren Kinerja Sales (Bulan ke Bulan)</h2>
+                        <canvas id="singleSalesChart"></canvas>
                     </div>
-                    <div class="card">
-                        <div class="card-header"><p>Pelanggan Unpaid</p></div>
-                        <span id="unpaid-customers-sales">-</span>
-                    </div>
-                </div>
-                <div class="chart-container">
-                    <h2>Tren Kinerja Sales (Bulan ke Bulan)</h2>
-                    <canvas id="singleSalesChart"></canvas>
-                </div>
-            </div>
-
-            <div class="table-container content-area">
-                <h2>Detail Akuisisi Pelanggan</h2>
-                <div id="sales-report-table-container">
-                    <p>Pilih sales untuk melihat detail...</p>
                 </div>
             </div>
 
