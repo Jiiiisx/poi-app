@@ -100,39 +100,91 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function renderAllSalesChart() {
+    function renderLeaderboardTable(salesData) {
+        const container = document.getElementById('leaderboard-table-container');
+        if (!container) return;
+
+        const table = document.createElement('table');
+        table.className = 'customer-table'; // Reuse existing table style
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+
+        thead.innerHTML = `
+            <tr>
+                <th>Rank</th>
+                <th>Sales Name</th>
+                <th>Total Pelanggan</th>
+            </tr>
+        `;
+
+        salesData.forEach((sales, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${sales.name}</td>
+                <td>${sales.totalCustomers}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        container.innerHTML = '';
+        container.appendChild(table);
+    }
+
+    function renderAllSalesView() {
         const salesNames = Object.keys(salesPerformance);
-        const customerCounts = salesNames.map(name => salesPerformance[name].totalCustomers);
+        const salesData = salesNames.map(name => ({
+            name: name,
+            totalCustomers: salesPerformance[name].totalCustomers
+        })).sort((a, b) => b.totalCustomers - a.totalCustomers);
+
+        // --- Summary Cards ---
+        const totalSales = salesData.length;
+        const totalPelanggan = salesData.reduce((sum, sales) => sum + sales.totalCustomers, 0);
+        const avgPerSales = totalSales > 0 ? (totalPelanggan / totalSales).toFixed(1) : 0;
+        const topPerformer = totalSales > 0 ? salesData[0].name : '-';
+
+        document.getElementById('summary-total-sales').textContent = totalSales;
+        document.getElementById('summary-total-pelanggan').textContent = totalPelanggan;
+        document.getElementById('summary-avg-per-sales').textContent = avgPerSales;
+        document.getElementById('summary-top-performer').textContent = topPerformer;
+
+        // --- Chart ---
+        const chartLabels = salesData.map(s => s.name);
+        const chartData = salesData.map(s => s.totalCustomers);
 
         const ctx = document.getElementById('allSalesChart').getContext('2d');
         if (allSalesChart) allSalesChart.destroy();
         allSalesChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: salesNames,
+                labels: chartLabels,
                 datasets: [{
                     label: 'Jumlah Pelanggan',
-                    data: customerCounts,
+                    data: chartData,
                     backgroundColor: 'rgba(0, 123, 255, 0.6)',
                     borderColor: 'rgba(0, 123, 255, 1)',
                     borderWidth: 1
                 }]
             },
             options: {
+                indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
+                    x: {
+                        beginAtZero: true
                     }
                 }
             }
         });
+
+        // --- Leaderboard Table ---
+        renderLeaderboardTable(salesData);
     }
-    
+
     function renderSingleSalesView(salesName) {
         const salesData = salesPerformance[salesName];
         if (!salesData) return;
@@ -247,7 +299,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (selectedSales === 'all') {
             allSalesView.style.display = 'block';
             singleSalesView.style.display = 'none';
-            renderAllSalesChart();
+            renderAllSalesView();
             tableContainer.innerHTML = '<p>Pilih sales untuk melihat detail...</p>';
         } else {
             allSalesView.style.display = 'none';

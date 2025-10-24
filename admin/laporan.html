@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="css-admin/laporan.css">
     <link rel="stylesheet" href="../css/modern-table.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -48,9 +51,33 @@
             </div>
 
             <div id="all-sales-view">
-                <div class="chart-container">
+                <div class="stats-cards">
+                    <div class="card">
+                        <div class="card-header"><p>Total Sales</p></div>
+                        <span id="summary-total-sales">-</span>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><p>Total Pelanggan</p></div>
+                        <span id="summary-total-pelanggan">-</span>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><p>Rata-rata per Sales</p></div>
+                        <span id="summary-avg-per-sales">-</span>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><p>Top Performer</p></div>
+                        <span id="summary-top-performer">-</span>
+                    </div>
+                </div>
+                <div class_container">
                     <h2>Jumlah Akuisisi Pelanggan per Sales</h2>
                     <canvas id="allSalesChart"></canvas>
+                </div>
+                <div class="table-container content-area">
+                    <h2>Leaderboard</h2>
+                    <div id="leaderboard-table-container">
+                        <!-- Leaderboard table will be loaded here by JavaScript -->
+                    </div>
                 </div>
             </div>
 
