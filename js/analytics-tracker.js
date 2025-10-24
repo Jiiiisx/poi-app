@@ -6,5 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    navigator.sendBeacon('/api/log-view', JSON.stringify({ page }));
+    try {
+        const blob = new Blob([JSON.stringify({ page })], { type: 'application/json' });
+        navigator.sendBeacon('/api/log-view', blob);
+    } catch (error) {
+        console.error('Error sending analytics beacon:', error);
+    }
 });
