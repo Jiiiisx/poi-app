@@ -21,7 +21,7 @@ async function fetchWithRetry(fn, retries = 3, delayMs = 1000) {
     }
 }
 
-async function handler(req, res) {
+export default async function handler(req, res) {
     if (req.method !== 'GET') {
         return res.status(405).json({ message: 'Only GET requests are allowed' });
     }
@@ -38,41 +38,29 @@ async function handler(req, res) {
             return res.status(200).json({ valueRanges: [] });
         }
 
-        // Chunking the requests to avoid rate limiting and large request sizes
-        const chunkSize = 5;
-        const chunks = [];
-        for (let i = 0; i < requestedRanges.length; i += chunkSize) {
-            chunks.push(requestedRanges.slice(i, i + chunkSize));
-        }
+        const promises = requestedRanges.map(range =>
+            fetchWithRetry(() => sheets.spreadsheets.values.get({
+                spreadsheetId: SPREADSHEET_ID,
+                range: range,
+            }))
+        );
 
-        let allValueRanges = [];
+        const results = await Promise.allSettled(promises);
 
-        for (const chunk of chunks) {
-            const promises = chunk.map(range =>
-                fetchWithRetry(() => sheets.spreadsheets.values.get({
-                    spreadsheetId: SPREADSHEET_ID,
-                    range: range,
-                }))
-            );
-
-            const results = await Promise.allSettled(promises);
-
-            const valueRanges = results.map((result, index) => {
-                if (result.status === 'fulfilled') {
-                    return result.value.data;
-                } else {
-                    console.warn(`Failed to fetch named range "${chunk[index]}" after multiple retries:`, result.reason.message);
-                    return { range: chunk[index], values: [] };
-                }
-            });
-            allValueRanges.push(...valueRanges);
-        }
+        const valueRanges = results.map((result, index) => {
+            if (result.status === 'fulfilled') {
+                return result.value.data;
+            } else {
+                console.warn(`Failed to fetch named range "${requestedRanges[index]}" after multiple retries:`, result.reason.message);
+                return { range: requestedRanges[index], values: [] };
+            }
+        });
 
         res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
-        res.status(200).json({ valueRanges: allValueRanges });
+        res.status(200).json({ valueRanges: valueRanges });
 
     } catch (error) {
-        console.error('Error in fetch-monitoring handler:', JSON.stringify(error, null, 2));
+        console.error('Error in fetch-monitoring handler:', error);
         res.status(500).json({ message: 'Failed to fetch monitoring data', error: error.message });
     }
 }
