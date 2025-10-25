@@ -5,50 +5,64 @@ document.addEventListener('DOMContentLoaded', function () {
     let allSearchableData = [];
     let isDataLoaded = false;
 
+    // This object maps salesperson names to their data ranges in Google Sheets.
+    const salesDataRanges = {
+        'Andi': 'AndiData', 'April': 'AprilData', 'Nandi': 'NandiData', 'Octa': 'OctaData',
+        'Yandi': 'YandiData', 'Totong': 'TotongData', 'Yusdhi': 'YusdhiData', 'Nursyarif': 'NursyarifData',
+        'Reynaldi': 'ReynaldiData', 'Andri': 'AndriData', 'Tri Susantohadi': 'TriSusantohadiData',
+        'Dedi Kurniawan': 'DediKurniawanData', 'Muhammad Arifin': 'MuhammadArifinData', 'Fajar Sodik': 'FajarSodikData',
+        'Ichrima': 'IchrimaData', 'Muhamad Ferdi Ridwan': 'MuhamadFerdiRidwanData', 'Suprihatin': 'SuprihatinData',
+        'Fini Fadilah Handayani': 'FiniFadilahHandayaniData', 'Hinduntomy Wijaya': 'HinduntomyWijayaData'
+    };
+
     async function loadSearchData() {
         if (isDataLoaded) return;
 
         try {
-            const [customerRes, governmentRes] = await Promise.all([
-                fetch('/api/customer-data'),
-                fetch('/api/government-data')
-            ]);
+            const requestedRanges = Object.values(salesDataRanges);
+            const ranges = requestedRanges.join(',');
+            const response = await fetch(`/api/fetch-monitoring?ranges=${ranges}`);
 
-            if (!customerRes.ok || !governmentRes.ok) {
-                throw new Error('Failed to load all search data.');
+            if (!response.ok) {
+                throw new Error('Failed to load monitoring data for search.');
             }
 
-            const customerData = await customerRes.json();
-            const governmentData = await governmentRes.json();
-
-            // Process customer data
-            if (customerData.values && customerData.values.length > 1) {
-                const customerHeaders = customerData.values[0];
-                const customers = customerData.values.slice(1).map(row => {
-                    const name = row[customerHeaders.indexOf('Nama Calon Pelanggan')] || 'N/A';
-                    const type = 'Calon Pelanggan';
-                    return { name, type, source: 'customer' };
-                });
-                allSearchableData.push(...customers);
-            }
-
-            // Process government data
-            if (governmentData.values && governmentData.values.length > 1) {
-                const govHeaders = governmentData.values[0];
-                const customers = governmentData.values.slice(1).map(row => {
-                    const name = row[govHeaders.indexOf('nama_koperasi')] || 'N/A';
-                    const type = 'Pemerintahan';
-                    return { name, type, source: 'government' };
-                });
-                allSearchableData.push(...customers);
-            }
+            const data = await response.json();
             
+            const customerMap = new Map();
+            const rangeToSalesKey = Object.fromEntries(Object.entries(salesDataRanges).map(a => a.reverse()));
+
+            if (data.valueRanges) {
+                data.valueRanges.forEach((valueRange, index) => {
+                    const namedRange = requestedRanges[index];
+                    const salesName = rangeToSalesKey[namedRange];
+
+                    if (salesName && valueRange.values && valueRange.values.length > 1) {
+                        const headers = valueRange.values[0];
+                        const nameIndex = headers.findIndex(h => h.toLowerCase() === 'nama pelanggan');
+                        
+                        if (nameIndex !== -1) {
+                            valueRange.values.slice(1).forEach(row => {
+                                const customerName = row[nameIndex];
+                                if (customerName && !customerMap.has(customerName)) {
+                                    customerMap.set(customerName, {
+                                        name: customerName,
+                                        sales: salesName,
+                                        type: 'Pelanggan Billing'
+                                    });
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+
+            allSearchableData = Array.from(customerMap.values());
             isDataLoaded = true;
-            console.log('Global search data loaded:', allSearchableData.length, 'records.');
+            console.log('Global search data loaded (Billing):', allSearchableData.length, 'records.');
 
         } catch (error) {
             console.error('Error loading global search data:', error);
-            // Don't block the UI, just log the error. Search will not work.
         }
     }
 
@@ -61,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const lowerCaseTerm = term.toLowerCase();
         const results = allSearchableData.filter(item => 
             item.name.toLowerCase().includes(lowerCaseTerm)
-        ).slice(0, 10); // Limit to 10 results
+        ).slice(0, 10);
 
         renderResults(results);
     }
@@ -78,11 +92,10 @@ document.addEventListener('DOMContentLoaded', function () {
             resultItem.className = 'result-item';
             resultItem.innerHTML = `
                 <h4>${item.name}</h4>
-                <p>${item.type}</p>
+                <p>Sales: ${item.sales}</p>
             `;
             resultItem.addEventListener('click', () => {
-                // Redirect to dashboard with search query
-                window.location.href = `/admin/dashboard.html?q=${encodeURIComponent(item.name)}`;
+                window.location.href = `/admin/pelanggan.html?sales=${encodeURIComponent(item.sales)}&q=${encodeURIComponent(item.name)}`;
             });
             searchResultsContainer.appendChild(resultItem);
         });
@@ -96,7 +109,6 @@ document.addEventListener('DOMContentLoaded', function () {
         performSearch(searchInput.value);
     });
 
-    // Hide results when clicking outside
     document.addEventListener('click', function(event) {
         if (!searchResultsContainer.contains(event.target) && event.target !== searchInput) {
             searchResultsContainer.style.display = 'none';
