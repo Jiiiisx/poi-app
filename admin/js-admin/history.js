@@ -94,32 +94,78 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- MODIFIED: Render Chart ---
     function renderChart(activitiesByDay, labels) {
+        const rootStyles = getComputedStyle(document.documentElement);
+        const textColor = rootStyles.getPropertyValue('--text-secondary').trim() || '#777';
+        const gridColor = rootStyles.getPropertyValue('--border-color').trim() || '#e0e0e0';
+        const primaryColor = rootStyles.getPropertyValue('--primary-color').trim() || '#d9363e';
+
         const options = {
             chart: {
                 type: 'area',
                 height: 350,
                 toolbar: { show: false },
-                zoom: { enabled: false }
+                zoom: { enabled: false },
+                background: 'transparent'
             },
+            colors: [primaryColor],
             series: [{
                 name: 'Page Views',
                 data: labels.map(day => activitiesByDay[day] || 0)
             }],
             xaxis: {
                 categories: labels,
-                labels: { style: { colors: '#999' } }
+                labels: {
+                    style: {
+                        colors: textColor
+                    }
+                },
+                axisBorder: {
+                    show: false
+                },
+                axisTicks: {
+                    show: false
+                }
             },
             yaxis: {
-                labels: { style: { colors: '#999' } }
+                labels: {
+                    style: {
+                        colors: textColor
+                    }
+                }
             },
             dataLabels: { enabled: false },
-            stroke: { curve: 'smooth', width: 2 },
+            stroke: { curve: 'smooth', width: 3 },
             fill: {
                 type: 'gradient',
-                gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.3, stops: [0, 90, 100] }
+                gradient: {
+                    shade: 'light',
+                    type: "vertical",
+                    shadeIntensity: 0.3,
+                    gradientToColors: undefined,
+                    inverseColors: false,
+                    opacityFrom: 0.7,
+                    opacityTo: 0.2,
+                    stops: [0, 100]
+                }
             },
-            grid: { borderColor: '#e0e0e0' },
-            tooltip: { theme: 'light' }
+            grid: {
+                borderColor: gridColor,
+                strokeDashArray: 4,
+                position: 'back'
+            },
+            tooltip: {
+                theme: 'light',
+                style: {
+                    fontSize: '12px',
+                    fontFamily: rootStyles.getPropertyValue('--font-family').trim() || 'sans-serif'
+                },
+                x: {
+                    format: 'dd MMM yyyy'
+                }
+            },
+            legend: {
+                show: false
+            }
         };
 
         const chartEl = document.querySelector("#analytics-chart");
