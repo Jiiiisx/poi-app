@@ -34,6 +34,11 @@
         <main class="main-content">
             <header class="main-header">
                 <h1>Dashboard</h1>
+                <div class="global-search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="globalSearchInput" placeholder="Search for customers...">
+                    <div id="globalSearchResults" class="global-search-results"></div>
+                </div>
                 <div class="user-info">
                     <i class="fas fa-user-circle"></i>
                     <span>Halo Admin</span>
@@ -114,5 +119,6 @@
     <script src="../js/google-sheets-crud.js"></script>
     <script src="../js/school-data-filter.js"></script>
     <script src="js-admin/dashboard.js"></script>
+    <script src="js-admin/global-search.js"></script>
 </body>
 </html>

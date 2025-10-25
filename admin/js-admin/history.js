@@ -49,22 +49,25 @@ document.addEventListener('DOMContentLoaded', function () {
         const uniquePagesCountEl = document.getElementById('total-activities-count');
         
         // Update card titles
-        pageViewsCountEl.previousElementSibling.textContent = 'Total Page Views';
-        uniquePagesCountEl.previousElementSibling.textContent = 'Unique Pages';
+        if (pageViewsCountEl && uniquePagesCountEl) {
+            pageViewsCountEl.previousElementSibling.textContent = 'Total Page Views';
+            uniquePagesCountEl.previousElementSibling.textContent = 'Unique Pages';
 
-        if (!data || data.length === 0) {
-            pageViewsCountEl.textContent = '0';
-            uniquePagesCountEl.textContent = '0';
-            renderChart({}, []);
-            return;
+            if (!data || data.length === 0) {
+                pageViewsCountEl.textContent = '0';
+                uniquePagesCountEl.textContent = '0';
+                renderChart({}, []);
+                return;
+            }
+
+            // Calculate metrics
+            const totalPageViews = data.length;
+            const uniquePages = new Set(data.map(row => row.Page));
+
+            pageViewsCountEl.textContent = totalPageViews;
+            uniquePagesCountEl.textContent = uniquePages.size;
         }
 
-        // Calculate metrics
-        const totalPageViews = data.length;
-        const uniquePages = new Set(data.map(row => row.Page));
-
-        pageViewsCountEl.textContent = totalPageViews;
-        uniquePagesCountEl.textContent = uniquePages.size;
 
         // Prepare data for the chart (activities per day for the last 7 days)
         const activitiesByDay = {};
@@ -79,15 +82,17 @@ document.addEventListener('DOMContentLoaded', function () {
             activitiesByDay[day] = 0;
         });
 
-        data.forEach(row => {
-            if (row.Timestamp) {
-                const rowDate = new Date(row.Timestamp);
-                const day = rowDate.toISOString().split('T')[0];
-                if (activitiesByDay.hasOwnProperty(day)) {
-                    activitiesByDay[day]++;
+        if (data) {
+            data.forEach(row => {
+                if (row.Timestamp) {
+                    const rowDate = new Date(row.Timestamp);
+                    const day = rowDate.toISOString().split('T')[0];
+                    if (activitiesByDay.hasOwnProperty(day)) {
+                        activitiesByDay[day]++;
+                    }
                 }
-            }
-        });
+            });
+        }
 
         renderChart(activitiesByDay, last7Days);
     }
@@ -169,9 +174,11 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         const chartEl = document.querySelector("#analytics-chart");
-        chartEl.innerHTML = ''; // Clear previous chart
-        const chart = new ApexCharts(chartEl, options);
-        chart.render();
+        if (chartEl) {
+            chartEl.innerHTML = ''; // Clear previous chart
+            const chart = new ApexCharts(chartEl, options);
+            chart.render();
+        }
     }
 
     // --- Existing functions for history table (from original file) ---
@@ -195,15 +202,105 @@ document.addEventListener('DOMContentLoaded', function () {
                 return rowAsObject;
             }).reverse(); // Reverse to show newest first
 
-            // filterAndRenderTable(); // This function is not defined
+            filterAndRenderTable(); // This function is now defined
         } catch (error) {
             console.error('Error fetching history data:', error);
             tableContainer.innerHTML = '<p>Failed to load history data. Please try again.</p>';
         }
     }
 
+    function renderTable() {
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const paginatedData = filteredHistoryData.slice(start, end);
+
+        if (paginatedData.length === 0) {
+            tableContainer.innerHTML = '<p>No history data found.</p>';
+            updatePagination();
+            return;
+        }
+
+        const table = document.createElement('table');
+        table.className = 'customer-table'; // Reusing styles
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+
+        // Create headers
+        const headerRow = document.createElement('tr');
+        if (paginatedData.length > 0) {
+            const headers = Object.keys(paginatedData[0]);
+            headers.forEach(h => {
+                const th = document.createElement('th');
+                th.textContent = h;
+                headerRow.appendChild(th);
+            });
+        }
+        thead.appendChild(headerRow);
+
+        // Create rows
+        paginatedData.forEach(item => {
+            const tr = document.createElement('tr');
+            Object.values(item).forEach(cellData => {
+                const td = document.createElement('td');
+                td.textContent = cellData;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        tableContainer.innerHTML = '';
+        tableContainer.appendChild(table);
+
+        updatePagination();
+    }
+
+    function updatePagination() {
+        const totalPages = Math.ceil(filteredHistoryData.length / rowsPerPage);
+        pageInfo.textContent = `Page ${currentPage} of ${totalPages || 1}`;
+        prevPageButton.disabled = currentPage === 1;
+        nextPageButton.disabled = currentPage === totalPages || totalPages === 0;
+    }
+
+    function filterAndRenderTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        
+        if (searchTerm) {
+            filteredHistoryData = allHistoryData.filter(row => 
+                Object.values(row).some(cell => 
+                    cell && cell.toString().toLowerCase().includes(searchTerm)
+                )
+            );
+        } else {
+            filteredHistoryData = [...allHistoryData];
+        }
+
+        currentPage = 1;
+        renderTable();
+    }
+
+    function setupEventListeners() {
+        searchInput.addEventListener('input', filterAndRenderTable);
+
+        prevPageButton.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        });
+
+        nextPageButton.addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredHistoryData.length / rowsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderTable();
+            }
+        });
+    }
+
     // Initial Load
     loadAnalyticsData();
     loadHistoryData();
-    // setupEventListeners(); // This function is not defined
+    setupEventListeners(); // This function is now defined
 });

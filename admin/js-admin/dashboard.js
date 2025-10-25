@@ -29,6 +29,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const btnShowNonSchool = document.getElementById('btnTableShowNonSchool');
     const btnShowGovernment = document.getElementById('btnTableShowGovernment');
 
+    // --- Handle search query from URL ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get('q');
+    if (searchQuery) {
+        searchInput.value = decodeURIComponent(searchQuery);
+    }
+
     // --- START: School Filter Logic (Restored) ---
     const schoolKeywords = [
         'SEKOLAH', 'SCHOOL', 'SMA', 'SMK', 'SMP', 'SMPIT', 'SMIT', 'SDN', 'MI', 'MTS', 'MA', 'MAK',

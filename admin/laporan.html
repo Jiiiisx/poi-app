@@ -35,6 +35,11 @@
         <main class="main-content">
             <header class="main-header">
                 <h1>Laporan Kinerja Sales</h1>
+                <div class="global-search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="globalSearchInput" placeholder="Search for customers...">
+                    <div id="globalSearchResults" class="global-search-results"></div>
+                </div>
                 <div class="user-info">
                     <i class="fas fa-user-circle"></i>
                     <span>Halo Admin</span>
@@ -71,7 +76,7 @@
                     </div>
                 </div>
                 <div class="chart-container">
-                    <h2>Jumlah Akuisisi Pelanggan per Sales</h2>
+                    <h2>Jumlah Pelanggan per Sales</h2>
                     <canvas id="allSalesChart"></canvas>
                 </div>
                 <div class="table-container content-area">
@@ -109,5 +114,6 @@
         </main>
     </div>
     <script src="js-admin/laporan.js"></script>
+    <script src="js-admin/global-search.js"></script>
 </body>
 </html>
