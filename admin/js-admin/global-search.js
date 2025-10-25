@@ -86,10 +86,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
 
-            // Deduplicate
+            // Deduplicate, prioritizing billing customers
             const customerMap = new Map();
             searchableItems.forEach(item => {
-                if (!customerMap.has(item.name)) {
+                const existing = customerMap.get(item.name);
+                // If it doesn't exist, add it.
+                // If it exists but is not a billing customer, and the new one is, replace it.
+                if (!existing || (existing.source !== 'billing' && item.source === 'billing')) {
                     customerMap.set(item.name, item);
                 }
             });
