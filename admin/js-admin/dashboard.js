@@ -344,12 +344,55 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function renderUnpaidTrendChart(chartData) {
         const ctx = document.getElementById('unpaidTrendChart').getContext('2d');
+        
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(217, 54, 62, 0.8)');
+        gradient.addColorStop(1, 'rgba(217, 54, 62, 0.2)');
+
         new Chart(ctx, {
-            type: 'bar', data: { labels: chartData.labels, datasets: [{
-                label: 'Jumlah Pelanggan Menunggak', data: chartData.data,
-                backgroundColor: 'rgba(217, 54, 62, 0.6)', borderColor: 'rgba(217, 54, 62, 1)',
-                borderWidth: 1, borderRadius: 4,
-            }]}, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => ` ${c.raw} Pelanggan` } } }, scales: { y: { beginAtZero: true, grid: { drawBorder: false }, ticks: { stepSize: 10 } }, x: { grid: { display: false } } } }
+            type: 'bar', 
+            data: { 
+                labels: chartData.labels, 
+                datasets: [{
+                    label: 'Jumlah Pelanggan Menunggak', 
+                    data: chartData.data,
+                    backgroundColor: gradient, 
+                    borderColor: 'rgba(217, 54, 62, 1)',
+                    borderWidth: 0,
+                    borderRadius: 8,
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.7
+                }]
+            }, 
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                plugins: { 
+                    legend: { display: false }, 
+                    tooltip: { 
+                        callbacks: { 
+                            label: (c) => ` ${c.raw} Pelanggan` 
+                        } 
+                    } 
+                }, 
+                scales: { 
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { 
+                            drawBorder: false,
+                            color: '#f0f0f0'
+                        }, 
+                        ticks: { 
+                            stepSize: 10 
+                        } 
+                    }, 
+                    x: { 
+                        grid: { 
+                            display: false 
+                        } 
+                    } 
+                } 
+            } 
         });
     }
 

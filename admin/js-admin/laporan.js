@@ -181,6 +181,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const ctx = document.getElementById('allSalesChart').getContext('2d');
         if (allSalesChart) allSalesChart.destroy();
+
+        const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#d9363e';
+        const gradient = ctx.createLinearGradient(0, 0, 600, 0);
+        gradient.addColorStop(0, primaryColor);
+        gradient.addColorStop(1, '#ff7e5f');
+
+
         allSalesChart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -188,18 +195,52 @@ document.addEventListener('DOMContentLoaded', function () {
                 datasets: [{
                     label: 'Jumlah Pelanggan',
                     data: chartData,
-                    backgroundColor: 'rgba(0, 123, 255, 0.6)',
-                    borderColor: 'rgba(0, 123, 255, 1)',
-                    borderWidth: 1
+                    backgroundColor: gradient,
+                    borderRadius: 4,
+                    borderWidth: 0
                 }]
             },
             options: {
                 indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#fff',
+                        titleColor: '#333',
+                        bodyColor: '#666',
+                        borderColor: '#ddd',
+                        borderWidth: 1,
+                        padding: 10,
+                        callbacks: {
+                            label: (context) => ` ${context.raw} Pelanggan`
+                        }
+                    }
+                },
                 scales: {
                     x: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        grid: {
+                            drawBorder: false,
+                        },
+                        ticks: {
+                            font: {
+                                family: ''Poppins', sans-serif'
+                            }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                family: ''Poppins', sans-serif'
+                            }
+                        }
                     }
                 }
             }
@@ -261,6 +302,11 @@ document.addEventListener('DOMContentLoaded', function () {
         // 3. Render trend chart
         const ctx = document.getElementById('singleSalesChart').getContext('2d');
         if (singleSalesChart) singleSalesChart.destroy();
+
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(40, 167, 69, 0.6)');
+        gradient.addColorStop(1, 'rgba(40, 167, 69, 0)');
+
         singleSalesChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -268,19 +314,36 @@ document.addEventListener('DOMContentLoaded', function () {
                 datasets: [{
                     label: 'Akuisisi per Bulan',
                     data: chartData,
-                    backgroundColor: 'rgba(40, 167, 69, 0.2)',
-                    borderColor: 'rgba(40, 167, 69, 1)',
-                    borderWidth: 2,
-                    tension: 0.1,
-                    fill: true
+                    backgroundColor: gradient,
+                    borderColor: '#28a745',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#28a745',
+                    pointHoverRadius: 7,
+                    pointRadius: 5
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        grid: {
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
                     }
                 }
             }
