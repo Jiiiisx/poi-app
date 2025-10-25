@@ -38,23 +38,12 @@ export default async function handler(req, res) {
             return res.status(200).json({ valueRanges: [] });
         }
 
-        const promises = requestedRanges.map(range =>
-            fetchWithRetry(() => sheets.spreadsheets.values.get({
-                spreadsheetId: SPREADSHEET_ID,
-                range: range,
-            }))
-        );
+        const response = await fetchWithRetry(() => sheets.spreadsheets.values.batchGet({
+            spreadsheetId: SPREADSHEET_ID,
+            ranges: requestedRanges,
+        }));
 
-        const results = await Promise.allSettled(promises);
-
-        const valueRanges = results.map((result, index) => {
-            if (result.status === 'fulfilled') {
-                return result.value.data;
-            } else {
-                console.warn(`Failed to fetch named range "${requestedRanges[index]}" after multiple retries:`, result.reason.message);
-                return { range: requestedRanges[index], values: [] };
-            }
-        });
+        const valueRanges = response.data.valueRanges;
 
         res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
         res.status(200).json({ valueRanges: valueRanges });
