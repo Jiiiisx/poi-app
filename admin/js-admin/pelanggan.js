@@ -184,12 +184,29 @@ document.addEventListener('DOMContentLoaded', function () {
     function applyFilters() {
         const searchTerm = searchInput.value.toLowerCase();
         let data = monitoringDataBySales[selectedSales] || [];
+
+        // Search filter
         if (searchTerm) {
             data = data.filter(item => Object.values(item).some(val => val.toString().toLowerCase().includes(searchTerm)));
         }
-        if (selectedStatus !== 'all') {
-            // ... (rest of filter logic is complex and unchanged)
+
+        // Month and Status filters
+        if (selectedMonth !== 'all') {
+            if (selectedStatus !== 'all') {
+                // Filter by status for the selected month
+                data = data.filter(item => (item[selectedMonth] || '').toLowerCase() === selectedStatus);
+            } else {
+                // Filter by any status for the selected month (i.e., not empty)
+                data = data.filter(item => (item[selectedMonth] || '') !== '');
+            }
+        } else { // selectedMonth === 'all'
+            if (selectedStatus !== 'all') {
+                // Filter by status across all billing months
+                const billingHeaders = (monitoringDataHeadersBySales[selectedSales] || []).filter(h => h.toLowerCase().startsWith('billing'));
+                data = data.filter(item => billingHeaders.some(header => (item[header] || '').toLowerCase() === selectedStatus));
+            }
         }
+
         filteredData = data;
         currentPage = 1;
         renderBillingTable();
