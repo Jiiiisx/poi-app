@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
             searchableItems.forEach(item => {
                 const existing = customerMap.get(item.name);
                 if (!existing || (existing.source !== 'billing' && item.source === 'billing')) {
-                    customerMap..set(item.name, item);
+                    customerMap.set(item.name, item);
                 }
             });
 
