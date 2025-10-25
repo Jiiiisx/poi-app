@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function loadSearchData() {
         if (isDataLoaded) return;
-        console.log('Loading all data for global search...');
+        console.log('[Global Search] Starting to load all data...');
 
         try {
             const [customerRes, governmentRes, monitoringRes] = await Promise.all([
@@ -34,14 +34,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     const headers = customerData.values[0];
                     const nameIndex = headers.indexOf('Nama Calon Pelanggan');
                     if (nameIndex !== -1) {
-                        customerData.values.slice(1).forEach(row => {
+                        const customers = customerData.values.slice(1).map(row => {
                             const name = row[nameIndex];
-                            if (name) {
-                                searchableItems.push({ name, type: 'Calon Pelanggan', source: 'customer' });
-                            }
-                        });
+                            return name ? { name, type: 'Calon Pelanggan', source: 'customer' } : null;
+                        }).filter(Boolean);
+                        searchableItems.push(...customers);
+                        console.log(`[Global Search] Loaded ${customers.length} potential customers.`);
                     }
                 }
+            } else {
+                console.error('[Global Search] Failed to load customer data.');
             }
 
             // 2. Process Government Data
@@ -51,14 +53,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     const headers = governmentData.values[0];
                     const nameIndex = headers.indexOf('nama_koperasi');
                      if (nameIndex !== -1) {
-                        governmentData.values.slice(1).forEach(row => {
+                        const customers = governmentData.values.slice(1).map(row => {
                             const name = row[nameIndex];
-                            if (name) {
-                                searchableItems.push({ name, type: 'Pemerintahan', source: 'government' });
-                            }
-                        });
+                            return name ? { name, type: 'Pemerintahan', source: 'government' } : null;
+                        }).filter(Boolean);
+                        searchableItems.push(...customers);
+                        console.log(`[Global Search] Loaded ${customers.length} government customers.`);
                     }
                 }
+            } else {
+                console.error('[Global Search] Failed to load government data.');
             }
 
             // 3. Process Billing Data
@@ -66,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const monitoringData = await monitoringRes.json();
                 const rangeToSalesKey = Object.fromEntries(Object.entries(salesDataRanges).map(a => a.reverse()));
                 const requestedRanges = Object.values(salesDataRanges);
+                let billingCustomersCount = 0;
 
                 if (monitoringData.valueRanges) {
                     monitoringData.valueRanges.forEach((valueRange, index) => {
@@ -78,20 +83,24 @@ document.addEventListener('DOMContentLoaded', function () {
                                     const name = row[nameIndex];
                                     if (name) {
                                         searchableItems.push({ name, type: `Billing (${salesName})`, source: 'billing', sales: salesName });
+                                        billingCustomersCount++;
                                     }
                                 });
                             }
                         }
                     });
                 }
+                console.log(`[Global Search] Loaded ${billingCustomersCount} billing customers.`);
+            } else {
+                 console.error('[Global Search] Failed to load billing data.');
             }
+
+            console.log('[Global Search] All items before deduplication:', searchableItems);
 
             // Deduplicate, prioritizing billing customers
             const customerMap = new Map();
             searchableItems.forEach(item => {
                 const existing = customerMap.get(item.name);
-                // If it doesn't exist, add it.
-                // If it exists but is not a billing customer, and the new one is, replace it.
                 if (!existing || (existing.source !== 'billing' && item.source === 'billing')) {
                     customerMap.set(item.name, item);
                 }
@@ -99,10 +108,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
             allSearchableData = Array.from(customerMap.values());
             isDataLoaded = true;
-            console.log('Global search data loaded (All Sources):', allSearchableData.length, 'records.');
+            console.log('[Global Search] Final searchable data after deduplication:', allSearchableData);
+            console.log(`[Global Search] Total unique records: ${allSearchableData.length}`);
 
         } catch (error) {
-            console.error('Error loading global search data:', error);
+            console.error('[Global Search] General error in loadSearchData:', error);
         }
     }
 
