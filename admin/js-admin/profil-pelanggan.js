@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const urlParams = new URLSearchParams(window.location.search);
     const customerName = urlParams.get('name');
+    const salesTeam = urlParams.get('sales'); // New: get sales team from URL
 
     if (!customerName) {
         customerNameEl.textContent = 'Pelanggan Tidak Ditemukan';
@@ -34,10 +35,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function loadCustomerProfile() {
         console.log(`Fetching profile for: ${decodedCustomerName}`);
-
+        
         try {
-            const requestedRanges = Object.values(salesDataRanges);
-            const ranges = requestedRanges.join(',');
+            let ranges;
+            // If sales team is specified, fetch only that data range
+            if (salesTeam && salesDataRanges[salesTeam]) {
+                ranges = salesDataRanges[salesTeam];
+                console.log(`Fetching data specifically for sales team: ${salesTeam} (${ranges})`);
+            } else {
+                // Fallback to fetching all ranges if sales team is not specified
+                console.log('Sales team not specified, fetching all data ranges as a fallback.');
+                ranges = Object.values(salesDataRanges).join(',');
+            }
+
             const response = await fetch(`/api/fetch-monitoring?ranges=${ranges}`);
 
             if (!response.ok) {
