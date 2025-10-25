@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const data = await response.json();
             findAndRenderCustomer(data);
+            document.dispatchEvent(new Event('page-rendered'));
 
         } catch (error) {
             console.error('Error loading customer profile:', error);

@@ -372,6 +372,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (success) {
             populateSalesFilter();
             updateView();
+            document.dispatchEvent(new Event('page-rendered'));
         }
     }
 

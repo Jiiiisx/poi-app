@@ -181,6 +181,7 @@ document.addEventListener('DOMContentLoaded', function () {
             ]);
             console.log('Dashboard loaded successfully.');
             render(); // Initial render call
+            document.dispatchEvent(new Event('page-rendered'));
         } catch (error) {
             console.error('Dashboard failed to load:', error);
             tableContainer.innerHTML = '<p>Failed to load dashboard data. Please try again.</p>';

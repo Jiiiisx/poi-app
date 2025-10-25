@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         await filterBySales(selectedSales, true);
+        document.dispatchEvent(new Event('page-rendered'));
     }
 
     function populateSalesList() {

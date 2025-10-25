@@ -300,7 +300,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Initial Load
-    loadAnalyticsData();
-    loadHistoryData();
-    setupEventListeners(); // This function is now defined
+    async function init() {
+        await Promise.all([loadAnalyticsData(), loadHistoryData()]);
+        setupEventListeners();
+        document.dispatchEvent(new Event('page-rendered'));
+    }
+
+    init();
 });
