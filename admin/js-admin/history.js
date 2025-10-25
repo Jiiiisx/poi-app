@@ -118,8 +118,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'gradient',
                 gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.3, stops: [0, 90, 100] }
             },
-            grid: { borderColor: '#444' },
-            tooltip: { theme: 'dark' }
+            grid: { borderColor: '#e0e0e0' },
+            tooltip: { theme: 'light' }
         };
 
         const chartEl = document.querySelector("#analytics-chart");
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return rowAsObject;
             }).reverse(); // Reverse to show newest first
 
-            filterAndRenderTable();
+            // filterAndRenderTable(); // This function is not defined
         } catch (error) {
             console.error('Error fetching history data:', error);
             tableContainer.innerHTML = '<p>Failed to load history data. Please try again.</p>';
@@ -159,5 +159,5 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initial Load
     loadAnalyticsData();
     loadHistoryData();
-    setupEventListeners();
+    // setupEventListeners(); // This function is not defined
 });
