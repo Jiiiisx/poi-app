@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const governmentData = await governmentRes.json();
                 if (governmentData.values && governmentData.values.length > 1) {
                     const headers = governmentData.values[0];
-                    const nameIndex = headers.indexOf('nama_koperasi');
+                    const nameIndex = headers.indexOf('Nama Instansi');
                      if (nameIndex !== -1) {
                         const customers = governmentData.values.slice(1).map(row => {
                             const name = row[nameIndex];
