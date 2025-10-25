@@ -123,6 +123,30 @@
     font-weight: 600;
 }
 
+.table-card .status-cell {
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #fff;
+    text-align: center;
+    display: inline-block;
+}
+
+.table-card .status-paid {
+    background-color: #28a745; /* Green */
+}
+
+.table-card .status-unpaid {
+    background-color: #dc3545; /* Red */
+}
+
+.table-card .status-n\/a {
+    background-color: #6c757d; /* Gray */
+}
+
 @media (max-width: 1200px) {
     .profile-grid {
         grid-template-columns: 1fr 1fr;

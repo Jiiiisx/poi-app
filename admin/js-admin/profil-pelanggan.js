@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
         paymentHistoryBodyEl.innerHTML = paymentHistory.reverse().map(p => `
             <tr>
                 <td>${p.month}</td>
-                <td><span class="status-cell status-${p.status}">${p.status}</span></td>
+                <td><span class="status-cell status-${p.status.replace('/', '')}">${p.status}</span></td>
                 <td>-</td>
             </tr>
         `).join('');
