@@ -21,7 +21,7 @@ async function fetchWithRetry(fn, retries = 3, delayMs = 1000) {
     }
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
     if (req.method !== 'GET') {
         return res.status(405).json({ message: 'Only GET requests are allowed' });
     }
@@ -38,18 +38,41 @@ export default async function handler(req, res) {
             return res.status(200).json({ valueRanges: [] });
         }
 
-        const response = await fetchWithRetry(() => sheets.spreadsheets.values.batchGet({
-            spreadsheetId: SPREADSHEET_ID,
-            ranges: requestedRanges,
-        }));
+        // Chunking the requests to avoid rate limiting and large request sizes
+        const chunkSize = 5;
+        const chunks = [];
+        for (let i = 0; i < requestedRanges.length; i += chunkSize) {
+            chunks.push(requestedRanges.slice(i, i + chunkSize));
+        }
 
-        const valueRanges = response.data.valueRanges;
+        let allValueRanges = [];
+
+        for (const chunk of chunks) {
+            const promises = chunk.map(range =>
+                fetchWithRetry(() => sheets.spreadsheets.values.get({
+                    spreadsheetId: SPREADSHEET_ID,
+                    range: range,
+                }))
+            );
+
+            const results = await Promise.allSettled(promises);
+
+            const valueRanges = results.map((result, index) => {
+                if (result.status === 'fulfilled') {
+                    return result.value.data;
+                } else {
+                    console.warn(`Failed to fetch named range "${chunk[index]}" after multiple retries:`, result.reason.message);
+                    return { range: chunk[index], values: [] };
+                }
+            });
+            allValueRanges.push(...valueRanges);
+        }
 
         res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
-        res.status(200).json({ valueRanges: valueRanges });
+        res.status(200).json({ valueRanges: allValueRanges });
 
     } catch (error) {
-        console.error('Error in fetch-monitoring handler:', error);
+        console.error('Error in fetch-monitoring handler:', JSON.stringify(error, null, 2));
         res.status(500).json({ message: 'Failed to fetch monitoring data', error: error.message });
     }
 }
