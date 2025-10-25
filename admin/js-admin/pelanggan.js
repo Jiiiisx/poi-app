@@ -223,7 +223,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const table = document.createElement('table'); table.className = 'customer-table';
         const thead = document.createElement('thead'), tbody = document.createElement('tbody');
         const headerRow = document.createElement('tr');
-        const headers = monitoringDataHeadersBySales[selectedSales] || [];
+        
+        let headers = monitoringDataHeadersBySales[selectedSales] || [];
+        if (selectedMonth !== 'all') {
+            const nonBillingHeaders = headers.filter(h => !h.toLowerCase().startsWith('billing'));
+            headers = [...nonBillingHeaders, selectedMonth];
+        }
+
         headers.forEach(h => { const th = document.createElement('th'); th.textContent = h; headerRow.appendChild(th); });
         thead.appendChild(headerRow);
 
