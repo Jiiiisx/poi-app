@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         },
                         ticks: {
                             font: {
-                                family: ''Poppins', sans-serif'
+                                family: "'Poppins', sans-serif"
                             }
                         }
                     },
@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         },
                         ticks: {
                             font: {
-                                family: ''Poppins', sans-serif'
+                                family: "'Poppins', sans-serif"
                             }
                         }
                     }
