@@ -108,7 +108,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return true;
         } catch (error) {
             console.error('Failed to load sales data:', error);
-            tableContainer.innerHTML = '<p>Gagal memuat data kinerja sales. Silakan coba lagi.</p>';
             return false;
         }
     }
