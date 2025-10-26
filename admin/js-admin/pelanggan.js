@@ -167,6 +167,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 const headers = valueRange.values[0].map(h => h.trim());
                 const nameIndex = headers.findIndex(h => h.toLowerCase() === 'nama pelanggan');
                 const range = valueRange.range;
+
+                // Extract sheet name from range like ''Sheet Name'!A1:Z100'
+                const sheetNameMatch = range.match(/^'([^']*)'/);
+                const sheetName = sheetNameMatch ? sheetNameMatch[1] : range.split('!')[0];
+
                 const startRowMatch = range.match(/(\d+)/);
                 if (!startRowMatch) { console.error('Could not parse start row from range:', range); return; }
                 const headerRow = parseInt(startRowMatch[0], 10);
@@ -181,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         rows.push({ ...rowAsObject, originalSheetRow: headerRow + 1 + i });
                     }
                 });
-                monitoringDataHeadersBySales[salesName] = headers;
+                monitoringDataHeadersBySales[salesName] = { headers: headers, sheetName: sheetName };
                 monitoringDataBySales[salesName] = rows;
             }
         });
@@ -189,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function populateMonthFilter() {
         monthFilter.innerHTML = '<option value="all">All Months</option>';
-        const headers = monitoringDataHeadersBySales[selectedSales] || [];
+        const headers = (monitoringDataHeadersBySales[selectedSales] || {}).headers || [];
         const billingHeaders = headers.filter(h => h.toLowerCase().startsWith('billing'));
         const sortedBillingHeaders = [...billingHeaders].sort((a, b) => {
             const dateA = _parseHeaderDate(a), dateB = _parseHeaderDate(b);
@@ -240,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } else { // selectedMonth === 'all'
             if (selectedStatus !== 'all') {
                 // Filter by status across all billing months
-                const billingHeaders = (monitoringDataHeadersBySales[selectedSales] || []).filter(h => h.toLowerCase().startsWith('billing'));
+                const billingHeaders = ((monitoringDataHeadersBySales[selectedSales] || {}).headers || []).filter(h => h.toLowerCase().startsWith('billing'));
                 data = data.filter(item => billingHeaders.some(header => (item[header] || '').toLowerCase() === selectedStatus));
             }
         }
@@ -262,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const thead = document.createElement('thead'), tbody = document.createElement('tbody');
         const headerRow = document.createElement('tr');
         
-        let headers = monitoringDataHeadersBySales[selectedSales] || [];
+        let headers = (monitoringDataHeadersBySales[selectedSales] || {}).headers || [];
         if (selectedMonth !== 'all') {
             const nonBillingHeaders = headers.filter(h => !h.toLowerCase().startsWith('billing'));
             headers = [...nonBillingHeaders, selectedMonth];
@@ -349,7 +354,15 @@ document.addEventListener('DOMContentLoaded', function () {
             const newValue = td.textContent.trim();
             const originalRow = td.dataset.originalRow;
             const header = td.dataset.header;
-            const sheetName = salesDataRanges[selectedSales];
+
+            const headerInfo = monitoringDataHeadersBySales[selectedSales] || {};
+            const sheetName = headerInfo.sheetName;
+
+            if (!sheetName) {
+                console.error('Could not determine sheet name for saving.');
+                td.style.backgroundColor = '#f8d7da'; // Error
+                return;
+            }
 
             const originalData = monitoringDataBySales[selectedSales] || [];
             const originalItem = originalData.find(item => item.originalSheetRow == originalRow);
@@ -359,7 +372,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return; // No change
             }
 
-            const allHeaders = monitoringDataHeadersBySales[selectedSales] || [];
+            const allHeaders = headerInfo.headers || [];
             const colIndex = allHeaders.findIndex(h => h === header);
             if (colIndex === -1) {
                 console.error('Could not find column index for header:', header);
