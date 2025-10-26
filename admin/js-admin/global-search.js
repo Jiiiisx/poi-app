@@ -148,14 +148,48 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const lowerCaseTerm = term.toLowerCase();
-        const results = allSearchableData.filter(item => 
-            item.name.toLowerCase().includes(lowerCaseTerm)
-        ).slice(0, 10);
 
-        renderResults(results);
+        const results = allSearchableData
+            .map(item => {
+                const lowerCaseName = item.name.toLowerCase();
+                let score = 0;
+
+                // Exact match scoring
+                const index = lowerCaseName.indexOf(lowerCaseTerm);
+                if (index === 0) {
+                    score = 100; // Starts with
+                } else if (index > 0) {
+                    score = 50;  // Includes
+                }
+
+                // Fuzzy match scoring (if no exact match was found)
+                if (score === 0) {
+                    let termIndex = 0;
+                    let nameIndex = 0;
+                    let fuzzyScore = 0;
+                    while (termIndex < lowerCaseTerm.length && nameIndex < lowerCaseName.length) {
+                        if (lowerCaseTerm[termIndex] === lowerCaseName[nameIndex]) {
+                            termIndex++;
+                            fuzzyScore += 10; // Add to score for each matched character
+                        }
+                        nameIndex++;
+                    }
+                    // Only consider it a fuzzy match if all characters of the term were found in order
+                    if (termIndex === lowerCaseTerm.length) {
+                        score = fuzzyScore;
+                    }
+                }
+
+                return { ...item, score };
+            })
+            .filter(item => item.score > 0)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 10);
+
+        renderResults(results, term);
     }
 
-    function renderResults(results) {
+    function renderResults(results, term) {
         if (results.length === 0) {
             searchResultsContainer.innerHTML = '<div class="result-item"><em>No results found</em></div>';
             searchResultsContainer.style.display = 'block';
@@ -168,8 +202,13 @@ document.addEventListener('DOMContentLoaded', function () {
         results.forEach(item => {
             const resultItem = document.createElement('div');
             resultItem.className = 'result-item';
+
+            // Highlight the search term
+            const regex = new RegExp(`(${term})`, 'gi');
+            const highlightedName = item.name.replace(regex, '<strong>$1</strong>');
+
             resultItem.innerHTML = `
-                <h4>${item.name}</h4>
+                <h4>${highlightedName}</h4>
                 <p>${item.type}</p>
             `;
             resultItem.addEventListener('click', () => {
