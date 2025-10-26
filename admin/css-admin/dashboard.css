@@ -276,3 +276,15 @@ body {
     height: 400px; /* Set a fixed height for the chart container */
 }
 
+#calon-pelanggan-list-container .customer-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+#calon-pelanggan-list-container .customer-table th,
+#calon-pelanggan-list-container .customer-table td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+
