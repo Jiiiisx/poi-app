@@ -273,6 +273,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         btn.onclick = () => window.open(cellData, '_blank');
                         td.appendChild(btn);
                     }
+                } else if (header === 'URL Gambar') {
+                    td.classList.add('truncate');
+                    td.title = cellData;
+                    td.textContent = cellData;
                 } else {
                     td.textContent = cellData;
                     td.contentEditable = true;

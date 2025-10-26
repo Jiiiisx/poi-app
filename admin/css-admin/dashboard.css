@@ -276,6 +276,26 @@ body {
     height: 400px; /* Set a fixed height for the chart container */
 }
 
+.filter-buttons .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    color: #333;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.filter-buttons .btn:hover {
+    background-color: #e0e0e0;
+}
+
+.filter-buttons .btn.active {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
 #calon-pelanggan-list-container .customer-table {
     table-layout: fixed;
     width: 100%;

@@ -64,10 +64,27 @@
 .btn-view-map {
     background-color: #007bff;
     color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
 }
 
 .btn-view-map:hover {
     background-color: #0056b3;
+}
+
+.customer-table .truncate {
+    max-width: 200px; /* Adjust as needed */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .btn-view-image {
