@@ -321,7 +321,9 @@ body {
             "details"
             "stats"
             "history"
+            "notes";
     }
+}
 
 /* Initial Prompt View Styles */
 .initial-prompt-view {
