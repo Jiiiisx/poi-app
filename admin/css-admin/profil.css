@@ -324,27 +324,3 @@ body {
             "notes";
     }
 }
-
-/* Skeleton Loader Styles */
-.skeleton-loader {
-    display: none; /* Hidden by default */
-    display: grid;
-    gap: 20px;
-}
-
-.skeleton-profile-card, .skeleton-stats-card, .skeleton-table-card, .skeleton-notes-card {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    border-radius: 10px;
-    animation: shimmer 1.5s infinite linear;
-}
-
-.skeleton-profile-card { height: 250px; }
-.skeleton-stats-card { height: 120px; }
-.skeleton-table-card { height: 300px; }
-.skeleton-notes-card { height: 200px; }
-
-@keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}

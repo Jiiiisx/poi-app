@@ -11,20 +11,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const customerNotesEl = document.getElementById('customer-notes');
     const saveNotesBtn = document.getElementById('save-notes-btn');
 
-    // --- Skeleton Loader ---
-    const skeletonLoader = document.querySelector('.skeleton-loader');
-    const profileGrid = document.querySelector('.profile-grid');
-
-    function showSkeletonLoader() {
-        profileGrid.style.display = 'none';
-        skeletonLoader.style.display = 'grid';
-    }
-
-    function hideSkeletonLoader() {
-        skeletonLoader.style.display = 'none';
-        profileGrid.style.display = 'grid';
-    }
-
     const urlParams = new URLSearchParams(window.location.search);
     const customerName = urlParams.get('name');
     const salesTeam = urlParams.get('sales'); // New: get sales team from URL
@@ -49,7 +35,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function loadCustomerProfile() {
         console.log(`Fetching profile for: ${decodedCustomerName}`);
-        showSkeletonLoader();
         
         try {
             let ranges;
@@ -76,8 +61,6 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error('Error loading customer profile:', error);
             customerNameEl.textContent = 'Gagal memuat data pelanggan.';
-        } finally {
-            hideSkeletonLoader();
         }
     }
 
