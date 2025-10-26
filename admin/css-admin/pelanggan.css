@@ -14,7 +14,6 @@ body {
     margin: 0;
     background-color: var(--secondary-color);
     color: var(--text-primary);
-    overflow: hidden;
 }
 
 .dashboard-container {
@@ -130,6 +129,7 @@ body {
 .right-column {
     flex-grow: 1;
     min-width: 0;
+    overflow-x: hidden;
 }
 
 .sales-list-container {
@@ -172,7 +172,6 @@ body {
 .table-responsive {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    flex-grow: 1;
     overflow-y: auto;
 }
 
