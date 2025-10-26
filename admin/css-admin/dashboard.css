@@ -277,6 +277,52 @@ body {
     margin-bottom: 30px;
 }
 
+.leaderboard-container {
+    margin-top: 30px;
+}
+
+.leaderboard-container h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+#sales-leaderboard-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#sales-leaderboard-list li {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+#sales-leaderboard-list li:last-child {
+    border-bottom: none;
+}
+
+#sales-leaderboard-list .rank {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    width: 40px;
+    text-align: center;
+}
+
+#sales-leaderboard-list .name {
+    font-size: 1rem;
+    font-weight: 500;
+    flex-grow: 1;
+}
+
+#sales-leaderboard-list .score {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
 .filter-controls {
     display: flex;
     gap: 20px;

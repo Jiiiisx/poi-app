@@ -128,6 +128,8 @@ document.addEventListener('DOMContentLoaded', function () {
         renderUnpaidTrendChart(unpaidChartData);
         const stats = processStatsForCards(uniqueCustomers, sortedBillingHeaders);
         updateStatsCards(stats);
+        const leaderboardData = processSalesLeaderboard(uniqueCustomers, sortedBillingHeaders);
+        renderSalesLeaderboard(leaderboardData);
     }
 
     async function loadCustomerData() {
@@ -416,6 +418,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function renderSalesLeaderboard(leaderboardData) {
+        const leaderboardList = document.getElementById('sales-leaderboard-list');
+        leaderboardList.innerHTML = '';
+
+        leaderboardData.forEach((sales, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span class="rank">${index + 1}</span>
+                <span class="name">${sales.name}</span>
+                <span class="score">${sales.score}</span>
+            `;
+            leaderboardList.appendChild(li);
+        });
+    }
+
     function processUnpaidForChart(uniqueCustomers, sortedBillingHeaders) {
         const unpaidCounts = sortedBillingHeaders.map(header => {
             let count = 0;
@@ -430,6 +447,36 @@ document.addEventListener('DOMContentLoaded', function () {
             labels: sortedBillingHeaders.map(h => h.replace('Billing ', '')),
             data: unpaidCounts
         };
+    }
+
+    function processSalesLeaderboard(uniqueCustomers, sortedBillingHeaders) {
+        const salesPerformance = {};
+        const date = new Date();
+        const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+        const currentMonthShort = months[date.getMonth()];
+        const currentYearShort = String(date.getFullYear()).slice(-2);
+        const currentMonthHeader = sortedBillingHeaders.find(h => h.includes(currentMonthShort) && h.includes(currentYearShort));
+
+        if (currentMonthHeader) {
+            for (const customer of uniqueCustomers.values()) {
+                const salesPerson = customer['Nama Sales'];
+                if (salesPerson) {
+                    if (!salesPerformance[salesPerson]) {
+                        salesPerformance[salesPerson] = 0;
+                    }
+                    const status = (customer[currentMonthHeader] || '').toLowerCase();
+                    if (status === 'paid') {
+                        salesPerformance[salesPerson]++;
+                    }
+                }
+            }
+        }
+
+        const leaderboardData = Object.entries(salesPerformance)
+            .map(([name, score]) => ({ name, score }))
+            .sort((a, b) => b.score - a.score);
+
+        return leaderboardData;
     }
 
     function processStatsForCards(uniqueCustomers, sortedBillingHeaders) {
