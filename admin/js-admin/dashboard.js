@@ -114,6 +114,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!dateA) return 1; if (!dateB) return -1;
             return dateA - dateB;
         });
+        console.log('customerMap', customerMap);
         return { uniqueCustomers: customerMap, sortedBillingHeaders };
     }
 
@@ -475,6 +476,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .map(([name, score]) => ({ name, score }))
             .sort((a, b) => b.score - a.score);
 
+        console.log('leaderboardData', leaderboardData);
         return leaderboardData;
     }
 
