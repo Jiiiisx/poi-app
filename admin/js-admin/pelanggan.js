@@ -231,7 +231,13 @@ document.addEventListener('DOMContentLoaded', function () {
             headers = [...nonBillingHeaders, selectedMonth];
         }
 
-        headers.forEach(h => { const th = document.createElement('th'); th.textContent = h; headerRow.appendChild(th); });
+        headers.forEach(h => { 
+            const th = document.createElement('th'); 
+            th.textContent = h; 
+            if (headers.indexOf(h) === 0) th.classList.add('sticky-col-1');
+            if (headers.indexOf(h) === 1) th.classList.add('sticky-col-2');
+            headerRow.appendChild(th); 
+        });
         thead.appendChild(headerRow);
 
         paginatedData.forEach((item, rowIndex) => {
@@ -240,12 +246,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 const td = document.createElement('td'), cellData = item[header] || '';
                 // ... (cell rendering logic is complex and unchanged)
                 td.textContent = cellData;
+                if (colIndex === 0) td.classList.add('sticky-col-1');
+                if (colIndex === 1) td.classList.add('sticky-col-2');
                 tr.appendChild(td);
             });
             tbody.appendChild(tr);
         });
         table.appendChild(thead); table.appendChild(tbody);
         tableContainer.innerHTML = ''; tableContainer.appendChild(table);
+
+        // Freeze column logic
+        const firstColWidth = table.querySelector('.sticky-col-1').offsetWidth;
+        const stickyCol2s = table.querySelectorAll('.sticky-col-2');
+        stickyCol2s.forEach(cell => {
+            cell.style.left = `${firstColWidth}px`;
+        });
+
         updatePagination();
     }
 
