@@ -296,6 +296,10 @@ body {
     color: #fff;
 }
 
+#calon-pelanggan-list-container {
+    margin-top: 30px;
+}
+
 #calon-pelanggan-list-container .customer-table {
     table-layout: fixed;
     width: 100%;

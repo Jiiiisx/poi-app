@@ -274,9 +274,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         td.appendChild(btn);
                     }
                 } else if (header === 'URL Gambar') {
-                    td.classList.add('truncate');
-                    td.title = cellData;
-                    td.textContent = cellData;
+                    if (cellData && cellData.startsWith('http')) {
+                        const btn = document.createElement('button');
+                        btn.textContent = 'View Image';
+                        btn.className = 'action-btn btn-view-image';
+                        btn.onclick = () => window.open(cellData, '_blank');
+                        td.appendChild(btn);
+                    }
                 } else {
                     td.textContent = cellData;
                     td.contentEditable = true;
