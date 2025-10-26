@@ -421,7 +421,12 @@ document.addEventListener('DOMContentLoaded', function () {
     function renderSalesLeaderboard(leaderboardData) {
         const leaderboardList = document.getElementById('sales-leaderboard-list');
         leaderboardList.innerHTML = '';
-
+    
+        if (leaderboardData.length === 0) {
+            leaderboardList.innerHTML = '<li>No sales data for the current month.</li>';
+            return;
+        }
+    
         leaderboardData.forEach((sales, index) => {
             const li = document.createElement('li');
             li.innerHTML = `
@@ -432,7 +437,6 @@ document.addEventListener('DOMContentLoaded', function () {
             leaderboardList.appendChild(li);
         });
     }
-
     function processUnpaidForChart(uniqueCustomers, sortedBillingHeaders) {
         const unpaidCounts = sortedBillingHeaders.map(header => {
             let count = 0;
