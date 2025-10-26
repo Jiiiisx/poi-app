@@ -455,20 +455,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function processSalesLeaderboard(uniqueCustomers, sortedBillingHeaders) {
         const salesPerformance = {};
-        const date = new Date();
-        const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
-        const currentMonthShort = months[date.getMonth()];
-        const currentYearShort = String(date.getFullYear()).slice(-2);
-        const currentMonthHeader = sortedBillingHeaders.find(h => h.includes(currentMonthShort) && h.includes(currentYearShort));
 
-        if (currentMonthHeader) {
-            for (const customer of uniqueCustomers.values()) {
-                const salesPerson = customer['Nama Sales'];
-                if (salesPerson) {
-                    if (!salesPerformance[salesPerson]) {
-                        salesPerformance[salesPerson] = 0;
-                    }
-                    const status = (customer[currentMonthHeader] || '').toLowerCase();
+        for (const customer of uniqueCustomers.values()) {
+            const salesPerson = customer['Nama Sales'];
+            if (salesPerson) {
+                if (!salesPerformance[salesPerson]) {
+                    salesPerformance[salesPerson] = 0;
+                }
+                for (const header of sortedBillingHeaders) {
+                    const status = (customer[header] || '').toLowerCase();
                     if (status === 'paid') {
                         salesPerformance[salesPerson]++;
                     }
