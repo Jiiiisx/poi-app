@@ -64,22 +64,34 @@
 .btn-view-map {
     background-color: #007bff;
     color: white;
-    padding: 8px 12px;
+    padding: 10px 15px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 12px;
     font-weight: bold;
     text-transform: uppercase;
-    transition: background-color 0.3s ease;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .btn-view-map:hover {
     background-color: #0056b3;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+    transform: translateY(-2px);
 }
 
 .customer-table .truncate {
     max-width: 200px; /* Adjust as needed */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.customer-table .truncate-name {
+    max-width: 150px; /* Adjust as needed */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

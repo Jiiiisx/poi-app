@@ -274,26 +274,53 @@ body {
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     height: 400px; /* Set a fixed height for the chart container */
+    margin-bottom: 30px;
+}
+
+.filter-controls {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#searchInput {
+    padding: 12px 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-family: var(--font-family);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+#searchInput:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(201, 55, 66, 0.2);
 }
 
 .filter-buttons .btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #f0f0f0;
-    color: #333;
+    padding: 12px 25px;
+    border: 1px solid transparent;
+    border-radius: 25px;
+    background-color: #fff;
+    color: var(--text-secondary);
     cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s ease-in-out;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .filter-buttons .btn:hover {
-    background-color: #e0e0e0;
+    background-color: #f8f8f8;
+    border-color: var(--primary-color);
 }
 
 .filter-buttons .btn.active {
     background-color: var(--primary-color);
     color: #fff;
+    box-shadow: 0 4px 10px rgba(201, 55, 66, 0.3);
 }
 
 #calon-pelanggan-list-container {

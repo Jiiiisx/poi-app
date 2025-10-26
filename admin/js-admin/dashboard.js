@@ -259,7 +259,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 td.dataset.colIndex = colIndex;
                 td.dataset.header = header;
 
-                if (header === 'Alamat' && typeof cellData === 'string' && cellData.startsWith('http')) {
+                if (header === 'Nama Calon Pelanggan') {
+                    td.classList.add('truncate-name');
+                    td.title = cellData;
+                    td.textContent = cellData;
+                } else if (header === 'Alamat' && typeof cellData === 'string' && cellData.startsWith('http')) {
                     const button = document.createElement('button');
                     button.textContent = 'View on Map';
                     button.className = 'btn-maps';
