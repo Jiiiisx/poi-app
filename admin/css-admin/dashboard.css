@@ -268,13 +268,18 @@ body {
     gap: 8px;
 }
 
+.dashboard-main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
 .chart-container {
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     height: 400px; /* Set a fixed height for the chart container */
-    margin-bottom: 30px;
 }
 
 .leaderboard-container {
