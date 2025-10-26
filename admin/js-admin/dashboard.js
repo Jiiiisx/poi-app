@@ -458,7 +458,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const salesPerformance = {};
 
         for (const customer of uniqueCustomers.values()) {
-            const salesPerson = customer['Nama Sales'];
+            const salesPerson = customer['Nama AR'];
             if (salesPerson) {
                 if (!salesPerformance[salesPerson]) {
                     salesPerformance[salesPerson] = 0;
