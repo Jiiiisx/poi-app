@@ -175,7 +175,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function loadAllData() {
-        tableContainer.innerHTML = '<p>Loading all data...</p>';
+        const skeletonLoader = document.querySelector('.skeleton-loader');
+        const statsCards = document.querySelector('.stats-cards');
+        const mainDashboardContent = document.querySelector('.dashboard-main-content');
+
+        // Show skeleton loader and hide content
+        skeletonLoader.style.display = 'block';
+        statsCards.style.display = 'none';
+        mainDashboardContent.style.display = 'none';
+        tableContainer.innerHTML = ''; // Clear any previous message
+
         try {
             await Promise.all([
                 loadAndProcessMonitoringData(),
@@ -185,8 +194,18 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('Dashboard loaded successfully.');
             render(); // Initial render call
             document.dispatchEvent(new Event('page-rendered'));
+
+            // Hide skeleton and show content
+            skeletonLoader.style.display = 'none';
+            statsCards.style.display = 'grid'; // or 'flex', check your css
+            mainDashboardContent.style.display = 'flex'; // or 'block'
+
         } catch (error) {
             console.error('Dashboard failed to load:', error);
+            // Hide skeleton and show error
+            skeletonLoader.style.display = 'none';
+            statsCards.style.display = 'grid'; // Show original structure even on error
+            mainDashboardContent.style.display = 'flex';
             tableContainer.innerHTML = '<p>Failed to load dashboard data. Please try again.</p>';
         }
     }

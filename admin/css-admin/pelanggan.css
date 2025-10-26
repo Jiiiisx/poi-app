@@ -290,7 +290,8 @@ body {
 
 /* Styles for sticky columns */
 .sticky-col-1,
-.sticky-col-2 {
+.sticky-col-2,
+.sticky-col-3 {
     position: sticky;
     z-index: 1;
 }
@@ -301,17 +302,20 @@ body {
 
 /* Ensure backgrounds are correct for sticky columns */
 .customer-table th.sticky-col-1,
-.customer-table th.sticky-col-2 {
+.customer-table th.sticky-col-2,
+.customer-table th.sticky-col-3 {
     background-color: #f8f9fa;
     z-index: 3; /* Above other header cells */
 }
 
 .customer-table td.sticky-col-1,
-.customer-table td.sticky-col-2 {
+.customer-table td.sticky-col-2,
+.customer-table td.sticky-col-3 {
     background-color: #fff;
 }
 
 .customer-table tbody tr:hover td.sticky-col-1,
-.customer-table tbody tr:hover td.sticky-col-2 {
+.customer-table tbody tr:hover td.sticky-col-2,
+.customer-table tbody tr:hover td.sticky-col-3 {
     background-color: #f5f5f5; /* Match hover background */
 }

@@ -508,3 +508,41 @@ body {
 .btn-view-image:hover {
     background-color: #1e7e34;
 }
+
+/* Skeleton Loader Styles */
+.skeleton-loader {
+    display: none; /* Hidden by default */
+    width: 100%;
+}
+
+.skeleton-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.skeleton-card {
+    height: 130px; /* Match the approximate height of the real cards */
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    border-radius: 10px;
+    animation: shimmer 1.5s infinite linear;
+}
+
+.skeleton-chart {
+    height: 400px; /* Match the approximate height of the real chart */
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    border-radius: 10px;
+    animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
