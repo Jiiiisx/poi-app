@@ -95,6 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function initialLoad() {
         populateSalesList(); // This will now use the updated selectedSales to set the 'active' class
+        setupEventListeners();
         
         if (searchQueryParam) {
             searchInput.value = decodeURIComponent(searchQueryParam);
@@ -280,9 +281,15 @@ document.addEventListener('DOMContentLoaded', function () {
         paginatedData.forEach((item, rowIndex) => {
             const tr = document.createElement('tr');
             headers.forEach((header, colIndex) => {
-                const td = document.createElement('td'), cellData = item[header] || '';
-                // ... (cell rendering logic is complex and unchanged)
+                const td = document.createElement('td');
+                const cellData = item[header] || '';
                 td.textContent = cellData;
+                td.contentEditable = true; // Make cell editable
+
+                // Add data attributes for saving
+                td.dataset.originalRow = item.originalSheetRow;
+                td.dataset.header = header;
+
                 if (colIndex === 0) td.classList.add('sticky-col-1');
                 if (colIndex === 1) td.classList.add('sticky-col-2');
                 if (colIndex === 2) td.classList.add('sticky-col-3');
@@ -310,6 +317,16 @@ document.addEventListener('DOMContentLoaded', function () {
         updatePagination();
     }
 
+    function columnIndexToLetter(index) {
+        let temp, letter = '';
+        while (index >= 0) {
+            temp = index % 26;
+            letter = String.fromCharCode(temp + 65) + letter;
+            index = Math.floor(index / 26) - 1;
+        }
+        return letter;
+    }
+
     function updatePagination() {
         const totalPages = Math.ceil(filteredData.length / rowsPerPage);
         pageInfo.textContent = `Page ${currentPage} of ${totalPages || 1}`;
@@ -317,11 +334,69 @@ document.addEventListener('DOMContentLoaded', function () {
         nextPageButton.disabled = currentPage === totalPages || totalPages === 0;
     }
 
+    function setupEventListeners() {
+        searchInput.addEventListener('input', applyFilters);
+        monthFilter.addEventListener('change', (e) => { selectedMonth = e.target.value; applyFilters(); });
+        statusFilters.addEventListener('click', (e) => { if (e.target.tagName === 'BUTTON') { statusFilters.querySelector('.active').classList.remove('active'); e.target.classList.add('active'); selectedStatus = e.target.dataset.status; applyFilters(); } });
+
+        // Event listener for inline editing
+        tableContainer.addEventListener('blur', async (e) => {
+            const td = e.target;
+            if (td.tagName !== 'TD' || !td.isContentEditable) {
+                return;
+            }
+
+            const newValue = td.textContent.trim();
+            const originalRow = td.dataset.originalRow;
+            const header = td.dataset.header;
+            const sheetName = salesDataRanges[selectedSales];
+
+            const originalData = monitoringDataBySales[selectedSales] || [];
+            const originalItem = originalData.find(item => item.originalSheetRow == originalRow);
+            const oldValue = originalItem ? originalItem[header] : '';
+
+            if (newValue === oldValue) {
+                return; // No change
+            }
+
+            const allHeaders = monitoringDataHeadersBySales[selectedSales] || [];
+            const colIndex = allHeaders.findIndex(h => h === header);
+            if (colIndex === -1) {
+                console.error('Could not find column index for header:', header);
+                return;
+            }
+
+            const colLetter = columnIndexToLetter(colIndex);
+            const range = `'${sheetName}'!${colLetter}${originalRow}`;
+
+            td.style.backgroundColor = '#fdffab'; // Saving...
+
+            try {
+                const response = await fetch('/api/update-cell', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ range, value: newValue }),
+                });
+
+                if (!response.ok) throw new Error('Failed to update sheet');
+
+                if (originalItem) {
+                    originalItem[header] = newValue;
+                }
+
+                td.style.backgroundColor = '#d4edda'; // Success
+                setTimeout(() => { td.style.backgroundColor = ''; }, 2000);
+
+            } catch (error) {
+                console.error('Error updating cell:', error);
+                td.textContent = oldValue; // Revert on failure
+                td.style.backgroundColor = '#f8d7da'; // Error
+                setTimeout(() => { td.style.backgroundColor = ''; }, 2000);
+            }
+        }, true);
+    }
+
     // --- Event Listeners ---
-    searchInput.addEventListener('input', applyFilters);
-    monthFilter.addEventListener('change', (e) => { selectedMonth = e.target.value; applyFilters(); });
-    statusFilters.addEventListener('click', (e) => { if (e.target.tagName === 'BUTTON') { statusFilters.querySelector('.active').classList.remove('active'); e.target.classList.add('active'); selectedStatus = e.target.dataset.status; applyFilters(); } });
-    // ... (other listeners)
 
     initialLoad();
 });
