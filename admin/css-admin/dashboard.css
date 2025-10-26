@@ -323,6 +323,10 @@ body {
     box-shadow: 0 4px 10px rgba(201, 55, 66, 0.3);
 }
 
+.table-title {
+    padding-top: 30px;
+}
+
 #calon-pelanggan-list-container {
     margin-top: 30px;
 }

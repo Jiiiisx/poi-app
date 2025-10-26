@@ -61,7 +61,7 @@
     transition: background-color 0.3s ease;
 }
 
-.btn-view-map {
+#calon-pelanggan-list-container .customer-table .btn-maps {
     background-color: #007bff;
     color: white;
     padding: 10px 15px;
@@ -75,7 +75,7 @@
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.btn-view-map:hover {
+#calon-pelanggan-list-container .customer-table .btn-maps:hover {
     background-color: #0056b3;
     box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
     transform: translateY(-2px);
@@ -90,7 +90,7 @@
     vertical-align: middle;
 }
 
-.customer-table .truncate-name {
+#calon-pelanggan-list-container .customer-table .truncate-name {
     max-width: 150px; /* Adjust as needed */
     white-space: nowrap;
     overflow: hidden;
