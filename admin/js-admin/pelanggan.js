@@ -289,7 +289,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 const td = document.createElement('td');
                 const cellData = item[header] || '';
                 td.textContent = cellData;
-                td.contentEditable = true; // Make cell editable
+                
+                // Make the first column a link to the customer profile
+                if (colIndex === 0) { // Assuming the first column is 'Nama Pelanggan'
+                    td.classList.add('customer-link');
+                    td.addEventListener('click', () => {
+                        // Use 'Nama Pelanggan' for the customerIdentifier
+                        const customerIdentifier = item['Nama Pelanggan'];
+                        if (customerIdentifier) {
+                            window.location.href = `profil-pelanggan.html?customer=${encodeURIComponent(customerIdentifier)}&sales=${encodeURIComponent(selectedSales)}`;
+                        } else {
+                            console.error('Customer identifier not found for this row.');
+                        }
+                    });
+                } else {
+                    td.contentEditable = true; // Make other cells editable
+                }
 
                 // Add data attributes for saving
                 td.dataset.originalRow = item.originalSheetRow;

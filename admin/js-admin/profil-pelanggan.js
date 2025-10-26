@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const profileGrid = document.querySelector('.profile-grid');
 
     const urlParams = new URLSearchParams(window.location.search);
-    const customerName = urlParams.get('name');
+    const customerName = urlParams.get('customer');
     const salesTeam = urlParams.get('sales'); // New: get sales team from URL
 
     if (!customerName) {
