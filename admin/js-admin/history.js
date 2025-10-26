@@ -11,6 +11,35 @@ document.addEventListener('DOMContentLoaded', function () {
     const nextPageButton = document.getElementById('nextPage');
     const pageInfo = document.getElementById('pageInfo');
 
+    // --- Skeleton Loader --- 
+    const skeletonLoader = document.querySelector('.skeleton-loader');
+    const analyticsSection = document.querySelector('.analytics-section');
+    const tableContainerArea = document.querySelector('.table-container.content-area');
+
+    function showSkeletonLoader() {
+        let cardsHTML = '';
+        for (let i = 0; i < 2; i++) { // 2 analytics cards
+            cardsHTML += '<div class="skeleton-card-item"></div>';
+        }
+        skeletonLoader.querySelector('.skeleton-analytics-cards').innerHTML = cardsHTML;
+
+        let tableRowsHTML = '';
+        for (let i = 0; i < 15; i++) { // 15 rows for history table
+            tableRowsHTML += '<div class="skeleton-row"></div>';
+        }
+        skeletonLoader.querySelector('.skeleton-table').innerHTML = tableRowsHTML;
+
+        analyticsSection.style.display = 'none';
+        tableContainerArea.style.display = 'none';
+        skeletonLoader.style.display = 'block';
+    }
+
+    function hideSkeletonLoader() {
+        skeletonLoader.style.display = 'none';
+        analyticsSection.style.display = 'block';
+        tableContainerArea.style.display = 'block';
+    }
+
     // --- NEW: Load Analytics Data ---
     async function loadAnalyticsData() {
         try {
@@ -301,7 +330,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initial Load
     async function init() {
+        showSkeletonLoader();
         await Promise.all([loadAnalyticsData(), loadHistoryData()]);
+        hideSkeletonLoader();
         setupEventListeners();
         document.dispatchEvent(new Event('page-rendered'));
     }

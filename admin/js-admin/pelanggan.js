@@ -32,15 +32,49 @@ document.addEventListener('DOMContentLoaded', function () {
     const monthFilter = document.getElementById('month-filter');
     const statusFilters = document.getElementById('status-filters');
 
+    // Skeleton Loader Elements
+    const skeletonSalesList = document.querySelector('.skeleton-sales-list');
+    const skeletonTableArea = document.querySelector('.skeleton-table-area');
+    const realSalesList = document.querySelector('.sales-list-container');
+    const realBillingArea = document.querySelector('.billing-monitoring-area');
+
     let selectedMonth = 'all';
     let selectedStatus = 'all';
+
+    function showSkeletonLoader() {
+        // Generate and show sales list skeleton
+        let salesSkeletonHTML = '';
+        for (let i = 0; i < 15; i++) { // Approx number of sales people
+            salesSkeletonHTML += '<div class="skeleton-item"></div>';
+        }
+        skeletonSalesList.innerHTML = salesSkeletonHTML;
+        skeletonSalesList.style.display = 'block';
+        realSalesList.style.display = 'none';
+
+        // Generate and show table area skeleton
+        let tableSkeletonHTML = '<div class="skeleton-filters"></div>';
+        for (let i = 0; i < 10; i++) { // 10 rows for the table
+            tableSkeletonHTML += '<div class="skeleton-row"></div>';
+        }
+        skeletonTableArea.innerHTML = tableSkeletonHTML;
+        skeletonTableArea.style.display = 'block';
+        realBillingArea.style.display = 'none';
+    }
+
+    function hideSkeletonLoader() {
+        skeletonSalesList.style.display = 'none';
+        realSalesList.style.display = 'block';
+        skeletonTableArea.style.display = 'none';
+        realBillingArea.style.display = 'block';
+    }
 
     async function ensureDataForSales(salesName) {
         if (monitoringDataBySales[salesName]) {
             return; // Data already loaded
         }
 
-        tableContainer.innerHTML = '<p>Loading data for ' + salesName + '...</p>';
+        showSkeletonLoader();
+        // tableContainer.innerHTML = '<p>Loading data for ' + salesName + '...</p>';
         try {
             const rangeName = salesDataRanges[salesName];
             if (!rangeName) throw new Error('Invalid sales name.');
@@ -50,8 +84,10 @@ document.addEventListener('DOMContentLoaded', function () {
             
             const data = await response.json();
             processMonitoringData(data, [rangeName]);
+            hideSkeletonLoader();
         } catch (error) {
             console.error(`Error fetching data for ${salesName}:`, error);
+            hideSkeletonLoader();
             tableContainer.innerHTML = `<p>Failed to load data for ${salesName}. Please try again.</p>`;
             throw error;
         }

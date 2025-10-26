@@ -21,6 +21,30 @@ document.addEventListener('DOMContentLoaded', function () {
     const allSalesView = document.getElementById('all-sales-view');
     const singleSalesView = document.getElementById('single-sales-view');
 
+    // --- Skeleton Loader --- 
+    const skeletonLoader = document.querySelector('.skeleton-loader');
+
+    function showSkeletonLoader() {
+        let cardsHTML = '';
+        for (let i = 0; i < 4; i++) {
+            cardsHTML += '<div class="skeleton-card-item"></div>';
+        }
+        skeletonLoader.querySelector('.skeleton-cards').innerHTML = cardsHTML;
+
+        let tableRowsHTML = '';
+        for (let i = 0; i < 5; i++) { // 5 rows for leaderboard
+            tableRowsHTML += '<div class="skeleton-row"></div>';
+        }
+        skeletonLoader.querySelector('.skeleton-table').innerHTML = tableRowsHTML;
+
+        allSalesView.style.display = 'none';
+        singleSalesView.style.display = 'none';
+        skeletonLoader.style.display = 'block';
+    }
+
+    function hideSkeletonLoader() {
+        skeletonLoader.style.display = 'none';
+    }
 
     // --- START: Data Fetching and Processing ---
 
@@ -368,11 +392,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Initial Load ---
     async function init() {
+        showSkeletonLoader();
         const success = await loadAndProcessSalesData();
+        hideSkeletonLoader();
         if (success) {
             populateSalesFilter();
             updateView();
             document.dispatchEvent(new Event('page-rendered'));
+        } else {
+            // Optionally handle the error case, e.g., show an error message
+            document.getElementById('all-sales-view').innerHTML = '<p>Failed to load report data.</p>';
+            document.getElementById('all-sales-view').style.display = 'block';
         }
     }
 

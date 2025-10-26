@@ -319,3 +319,43 @@ body {
 .customer-table tbody tr:hover td.sticky-col-3 {
     background-color: #f5f5f5; /* Match hover background */
 }
+
+/* Skeleton Loader Styles */
+.skeleton-sales-list, .skeleton-table-area {
+    display: none; /* Hidden by default */
+}
+
+.skeleton-sales-list .skeleton-item {
+    height: 45px;
+    margin-bottom: 10px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    border-radius: 5px;
+    animation: shimmer 1.5s infinite linear;
+}
+
+.skeleton-table-area .skeleton-filters {
+    height: 60px;
+    margin-bottom: 20px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    border-radius: 8px;
+    animation: shimmer 1.5s infinite linear;
+}
+
+.skeleton-table-area .skeleton-row {
+    height: 50px;
+    margin-bottom: 1px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
