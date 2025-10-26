@@ -78,6 +78,9 @@ body {
     margin-left: 250px;
     flex-grow: 1;
     padding: 30px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
 .main-header {
@@ -168,6 +171,8 @@ body {
 .table-responsive {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    flex-grow: 1;
+    overflow-y: auto;
 }
 
 .customer-table {
