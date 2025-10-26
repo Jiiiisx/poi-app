@@ -359,6 +359,23 @@ document.addEventListener('DOMContentLoaded', function () {
         monthFilter.addEventListener('change', (e) => { selectedMonth = e.target.value; applyFilters(); });
         statusFilters.addEventListener('click', (e) => { if (e.target.tagName === 'BUTTON') { statusFilters.querySelector('.active').classList.remove('active'); e.target.classList.add('active'); selectedStatus = e.target.dataset.status; applyFilters(); } });
 
+        prevPageButton.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderBillingTable();
+                updatePagination();
+            }
+        });
+
+        nextPageButton.addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderBillingTable();
+                updatePagination();
+            }
+        });
+
         // Event listener for inline editing
         tableContainer.addEventListener('blur', async (e) => {
             const td = e.target;
