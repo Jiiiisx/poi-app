@@ -12,38 +12,13 @@
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     border-radius: 8px;
-    table-layout: fixed;
-}
-
-.customer-table thead tr {
-    background-color: #f8f9fa;
-    color: #333;
-    text-align: left;
-    font-weight: bold;
 }
 
 .customer-table th, .customer-table td {
     padding: 12px 15px;
     border-bottom: 1px solid #f1f1f1;
     word-wrap: break-word;
-    white-space: normal;
-    overflow-wrap: break-word;
-    max-width: 200px;
 }
-
-.customer-table th:nth-child(1) { width: 15%; }
-.customer-table th:nth-child(2) { width: 20%; }
-.customer-table th:nth-child(3) { width: 10%; }
-.customer-table th:nth-child(4) { width: 10%; }
-.customer-table th:nth-child(5) { width: 10%; }
-.customer-table th:nth-child(6) { width: 5%; }
-.customer-table th:nth-child(7) { width: 10%; }
-.customer-table th:nth-child(8) { width: 15%; }
-.customer-table th:nth-child(9) { width: 5%; }
-
-
-
-
 .customer-table tbody tr:last-of-type td {
     border-bottom: none;
 }

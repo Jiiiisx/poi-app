@@ -1,0 +1,80 @@
+/* Dashboard Table Styles */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.customer-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px;
+    font-family: 'Poppins', sans-serif;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.customer-table thead tr {
+    background-color: var(--primary-color);
+    color: #fff;
+    text-align: left;
+}
+
+.customer-table th,
+.customer-table td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    word-wrap: break-word;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+.customer-table th {
+    font-weight: 600;
+}
+
+.customer-table tbody tr {
+    transition: all 0.2s ease-in-out;
+}
+
+.customer-table tbody tr:hover {
+    background-color: #f9f9f9;
+    transform: scale(1.01);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.customer-table tbody tr:last-of-type td {
+    border-bottom: none;
+}
+
+/* Action Buttons */
+.action-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+}
+
+.btn-view-map {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-view-map:hover {
+    background-color: #0056b3;
+}
+
+.btn-view-image {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-view-image:hover {
+    background-color: #1e7e34;
+}
