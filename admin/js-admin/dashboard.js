@@ -502,9 +502,20 @@ document.addEventListener('DOMContentLoaded', function () {
     function processStatsForCards(uniqueCustomers, sortedBillingHeaders) {
         const date = new Date();
         const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
-        const currentMonthShort = months[date.getMonth()];
-        const currentYearShort = String(date.getFullYear()).slice(-2);
+        
+        const currentMonthIndex = date.getMonth();
+        const currentYear = date.getFullYear();
+        const currentMonthShort = months[currentMonthIndex];
+        const currentYearShort = String(currentYear).slice(-2);
+
+        const prevMonthIndex = currentMonthIndex === 0 ? 11 : currentMonthIndex - 1;
+        const prevYear = currentMonthIndex === 0 ? currentYear - 1 : currentYear;
+        const prevMonthShort = months[prevMonthIndex];
+        const prevYearShort = String(prevYear).slice(-2);
+
         const currentMonthHeader = sortedBillingHeaders.find(h => h.includes(currentMonthShort) && h.includes(currentYearShort));
+        const prevMonthHeader = sortedBillingHeaders.find(h => h.includes(prevMonthShort) && h.includes(prevYearShort));
+
         let paidThisMonth = 0, unpaidThisMonth = 0;
         if (currentMonthHeader) {
             for (const customer of uniqueCustomers.values()) {
@@ -513,20 +524,62 @@ document.addEventListener('DOMContentLoaded', function () {
                 else if (status === 'unpaid') unpaidThisMonth++;
             }
         }
-        const totalBilled = paidThisMonth + unpaidThisMonth;
+
+        let paidLastMonth = 0, unpaidLastMonth = 0;
+        if (prevMonthHeader) {
+            for (const customer of uniqueCustomers.values()) {
+                const status = (customer[prevMonthHeader] || '').toLowerCase();
+                if (status === 'paid') paidLastMonth++;
+                else if (status === 'unpaid') unpaidLastMonth++;
+            }
+        }
+
+        const totalBilledThisMonth = paidThisMonth + unpaidThisMonth;
+        const totalBilledLastMonth = paidLastMonth + unpaidLastMonth;
+
         return {
             totalPelanggan: uniqueCustomers.size,
-            paidThisMonth, unpaidThisMonth,
-            closingRate: totalBilled > 0 ? Math.round((paidThisMonth / totalBilled) * 100) : 0
+            paidThisMonth,
+            unpaidThisMonth,
+            closingRate: totalBilledThisMonth > 0 ? Math.round((paidThisMonth / totalBilledThisMonth) * 100) : 0,
+            totalPelangganPrev: uniqueCustomers.size, // Assuming total customers is constant for this simple comparison
+            paidLastMonth,
+            unpaidLastMonth,
+            closingRatePrev: totalBilledLastMonth > 0 ? Math.round((paidLastMonth / totalBilledLastMonth) * 100) : 0
         };
     }
 
     function updateStatsCards(stats) {
         const cards = document.querySelector('.stats-cards');
+
+        const getChangeDescription = (current, previous, item) => {
+            const diff = current - previous;
+            if (diff > 0) {
+                return `<i class="fas fa-arrow-up"></i> Increased by ${diff} ${item} from last month`;
+            } else if (diff < 0) {
+                return `<i class="fas fa-arrow-down"></i> Decreased by ${-diff} ${item} from last month`;
+            } else {
+                return `No change in ${item} from last month`;
+            }
+        };
+
+        // Total Pelanggan
         cards.children[0].querySelector('span').textContent = stats.totalPelanggan.toLocaleString('id-ID');
+        // For total customers, a simple month-over-month might not be as relevant, so we keep it simple
+        // or implement a more complex logic if needed, e.g., new vs. churned customers.
+        cards.children[0].querySelector('.card-footer').innerHTML = `<i class="fas fa-chart-line"></i> See customer trends`;
+
+        // Pelanggan Yang Sudah Bayar
         cards.children[1].querySelector('span').textContent = stats.paidThisMonth.toLocaleString('id-ID');
+        cards.children[1].querySelector('.card-footer').innerHTML = getChangeDescription(stats.paidThisMonth, stats.paidLastMonth, 'payments');
+
+        // Pelanggan Yang Belum Bayar
         cards.children[2].querySelector('span').textContent = stats.unpaidThisMonth.toLocaleString('id-ID');
+        cards.children[2].querySelector('.card-footer').innerHTML = getChangeDescription(stats.unpaidThisMonth, stats.unpaidLastMonth, 'unpaid');
+
+        // Closing Rate
         cards.children[3].querySelector('span').textContent = `${stats.closingRate}%`;
+        cards.children[3].querySelector('.card-footer').innerHTML = getChangeDescription(stats.closingRate, stats.closingRatePrev, 'rate');
     }
 
     // --- END: Rendering Logic ---
