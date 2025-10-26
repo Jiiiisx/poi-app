@@ -25,17 +25,10 @@
     padding: 12px 15px;
     border-bottom: 1px solid #f1f1f1;
     word-wrap: break-word;
+    white-space: normal;
 }
 
-.customer-table th:nth-child(1) { width: 15%; }
-.customer-table th:nth-child(2) { width: 20%; }
-.customer-table th:nth-child(3) { width: 10%; }
-.customer-table th:nth-child(4) { width: 10%; }
-.customer-table th:nth-child(5) { width: 10%; }
-.customer-table th:nth-child(6) { width: 5%; }
-.customer-table th:nth-child(7) { width: 10%; }
-.customer-table th:nth-child(8) { width: 15%; }
-.customer-table th:nth-child(9) { width: 5%; }
+
 
 
 .customer-table tbody tr:last-of-type td {
