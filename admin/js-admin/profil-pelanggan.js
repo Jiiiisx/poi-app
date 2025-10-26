@@ -11,14 +11,23 @@ document.addEventListener('DOMContentLoaded', function () {
     const customerNotesEl = document.getElementById('customer-notes');
     const saveNotesBtn = document.getElementById('save-notes-btn');
 
+    const initialPromptView = document.querySelector('.initial-prompt-view');
+    const profileGrid = document.querySelector('.profile-grid');
+
     const urlParams = new URLSearchParams(window.location.search);
     const customerName = urlParams.get('name');
     const salesTeam = urlParams.get('sales'); // New: get sales team from URL
 
     if (!customerName) {
-        customerNameEl.textContent = 'Pelanggan Tidak Ditemukan';
-        return;
+        // No customer specified, show the initial prompt and hide the profile grid
+        profileGrid.style.display = 'none';
+        initialPromptView.style.display = 'block';
+        document.title = 'Profil Pelanggan';
+        return; // Stop further execution
     }
+
+    // If customer IS specified, hide the prompt and proceed
+    initialPromptView.style.display = 'none';
 
     const decodedCustomerName = decodeURIComponent(customerName);
     customerNameEl.textContent = decodedCustomerName;

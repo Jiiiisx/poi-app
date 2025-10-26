@@ -321,6 +321,34 @@ body {
             "details"
             "stats"
             "history"
-            "notes";
     }
+
+/* Initial Prompt View Styles */
+.initial-prompt-view {
+    text-align: center;
+    padding: 80px 40px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-top: 20px;
+}
+
+.initial-prompt-view i {
+    font-size: 4rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    opacity: 0.6;
+}
+
+.initial-prompt-view h2 {
+    font-size: 1.8rem;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.initial-prompt-view p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    max-width: 400px;
+    margin: 0 auto;
 }
