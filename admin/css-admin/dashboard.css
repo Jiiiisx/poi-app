@@ -284,7 +284,6 @@ body {
 
 .chart-container canvas {
     position: relative;
-    height: 400px;
     width: 100%;
 }
 
