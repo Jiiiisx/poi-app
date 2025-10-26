@@ -26,6 +26,8 @@
     border-bottom: 1px solid #f1f1f1;
     word-wrap: break-word;
     white-space: normal;
+    overflow-wrap: break-word;
+    max-width: 200px;
 }
 
 
@@ -78,7 +80,6 @@
 
 .copyable-cell {
     position: relative;
-    display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 8px;

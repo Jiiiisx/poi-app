@@ -68,15 +68,7 @@
     font-weight: 600;
 }
 
-.customer-table th:nth-child(1) { width: 10%; }
-.customer-table th:nth-child(2) { width: 15%; }
-.customer-table th:nth-child(3) { width: 10%; }
-.customer-table th:nth-child(4) { width: 10%; }
-.customer-table th:nth-child(5) { width: 10%; }
-.customer-table th:nth-child(6) { width: 10%; }
-.customer-table th:nth-child(7) { width: 10%; }
-.customer-table th:nth-child(8) { width: 10%; }
-.customer-table th:nth-child(9) { width: 15%; }
+
 
 
 .fup-bar-container {
