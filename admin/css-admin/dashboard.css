@@ -339,6 +339,7 @@ body {
     gap: 20px;
     align-items: center;
     margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
 #searchInput {
@@ -636,4 +637,21 @@ body {
     .menu-toggle {
         display: none;
     }
+}
+
+.overlay {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+.sidebar.active ~ .overlay {
+    display: block;
 }

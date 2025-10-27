@@ -593,6 +593,13 @@ document.addEventListener('DOMContentLoaded', function () {
             menuToggle.addEventListener('click', () => {
                 sidebar.classList.toggle('active');
             });
+
+            const overlay = document.querySelector('.overlay');
+            if (overlay) {
+                overlay.addEventListener('click', () => {
+                    sidebar.classList.remove('active');
+                });
+            }
         }
 
         searchInput.addEventListener('input', () => {
