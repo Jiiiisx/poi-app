@@ -17,7 +17,7 @@ body {
 }
 
 .dashboard-container {
-    display: flex;
+
 }
 
 .sidebar {
@@ -76,10 +76,8 @@ body {
 
 .main-content {
     margin-left: 250px;
-    flex-grow: 1;
     padding: 30px;
     box-sizing: border-box;
-    min-width: 0;
 }
 
 @keyframes fadeIn {
