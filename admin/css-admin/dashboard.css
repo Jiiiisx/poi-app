@@ -18,8 +18,6 @@ body {
 
 .dashboard-container {
     display: flex;
-    max-width: 100vw;
-    overflow-x: hidden;
 }
 
 .sidebar {
@@ -80,7 +78,6 @@ body {
     margin-left: 250px;
     flex-grow: 1;
     padding: 30px;
-    width: calc(100% - 250px);
     box-sizing: border-box;
 }
 
