@@ -125,6 +125,7 @@ body {
 
 .right-column {
     flex-grow: 1;
+    min-width: 0;
 }
 
 .billing-monitoring-area {
