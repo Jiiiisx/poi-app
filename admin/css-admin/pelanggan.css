@@ -239,9 +239,23 @@ body {
 
 .filter-controls {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.filter-controls .global-search-container {
+    width: 350px; /* Or adjust as needed */
+    margin-bottom: 0;
+}
+
+.other-filters {
+    display: flex;
     gap: 20px;
     align-items: center;
-    margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
 .filter-group {

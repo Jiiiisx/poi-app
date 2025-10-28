@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let selectedSales = salesQueryParam || 'Andi'; // Default to param or 'Andi'
 
     const tableContainer = document.getElementById('billing-table-container');
-    const searchInput = document.getElementById('searchInput');
+    const searchInput = document.getElementById('globalSearchInput');
     const prevPageButton = document.getElementById('prevPage');
     const nextPageButton = document.getElementById('nextPage');
     const pageInfo = document.getElementById('pageInfo');
