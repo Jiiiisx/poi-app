@@ -112,12 +112,13 @@ body {
 
 .global-search-container {
     position: relative;
-    width: 300px;
+    width: 500px;
+    margin: 0 auto 30px;
 }
 
 .global-search-container i {
     position: absolute;
-    left: 15px;
+    left: 20px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--text-secondary);
@@ -125,10 +126,10 @@ body {
 
 #globalSearchInput {
     width: 100%;
-    padding: 10px 15px 10px 40px;
+    padding: 15px 20px 15px 45px;
     border: 1px solid var(--border-color);
-    border-radius: 20px;
-    font-size: 0.9rem;
+    border-radius: 25px;
+    font-size: 1.1rem;
 }
 
 .global-search-results {
