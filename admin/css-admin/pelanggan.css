@@ -78,10 +78,6 @@ body {
     margin-left: 250px;
     flex-grow: 1;
     padding: 30px;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow-x: auto;
 }
 
 .main-header {
@@ -129,8 +125,6 @@ body {
 
 .right-column {
     flex-grow: 1;
-    min-width: 0;
-    width: 0;
 }
 
 .billing-monitoring-area {

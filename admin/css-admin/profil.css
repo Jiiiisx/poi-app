@@ -78,7 +78,6 @@ body {
     margin-left: 250px;
     flex-grow: 1;
     padding: 30px;
-    overflow-x: auto;
 }
 
 .main-header {

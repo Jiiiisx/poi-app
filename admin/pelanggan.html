@@ -35,12 +35,6 @@
         <main class="main-content">
             <header class="main-header">
                 <h1>Billing Monitoring</h1>
-                <div class="global-search-container">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="globalSearchInput" placeholder="Search for customers...">
-                    <div id="globalSearchResults" class="global-search-results"></div>
-                </div>
-
             </header>
             <div class="content-area two-column-layout">
                 <div class="left-column">
@@ -56,7 +50,11 @@
                         <div class="table-container">
                             <h2>Billing Monitoring for <span id="selected-sales">All</span></h2>
                             <div class="filter-controls">
-                                <input type="text" id="searchInput" placeholder="Search customer data...">
+                                <div class="global-search-container">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="globalSearchInput" placeholder="Search for customers...">
+                                    <div id="globalSearchResults" class="global-search-results"></div>
+                                </div>
                                 <div class="filter-group">
                                     <label for="month-filter">Bulan:</label>
                                     <select id="month-filter"></select>

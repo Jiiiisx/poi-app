@@ -211,18 +211,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 <h4>${highlightedName}</h4>
                 <p>${item.type}</p>
             `;
-            resultItem.addEventListener('click', () => {
-                if (isProfilePage && item.source === 'billing') {
-                    // On profile page, reload with new customer data
-                    window.location.href = `/admin/profil-pelanggan.html?name=${encodeURIComponent(item.name)}&sales=${encodeURIComponent(item.sales)}`;
-                } else if (item.source === 'billing') {
-                    // On other pages, go to the billing monitoring page
-                    window.location.href = `/admin/pelanggan.html?sales=${encodeURIComponent(item.sales)}&q=${encodeURIComponent(item.name)}`;
-                } else {
-                    // For non-billing customers, go to the main dashboard
-                    window.location.href = `/admin/dashboard.html?q=${encodeURIComponent(item.name)}`;
-                }
-            });
+                resultItem.addEventListener('click', () => {
+                    if (isProfilePage && item.source === 'billing') {
+                        // On profile page, reload with new customer data
+                        window.location.href = `/admin/profil-pelanggan.html?customer=${encodeURIComponent(item.name)}&sales=${encodeURIComponent(item.sales)}`;
+                    } else if (item.source === 'billing') {
+                        // On other pages, go to the profile page directly
+                        window.location.href = `/admin/profil-pelanggan.html?customer=${encodeURIComponent(item.name)}&sales=${encodeURIComponent(item.sales)}`;
+                    } else {
+                        // For non-billing customers, go to the main dashboard with a search query
+                        window.location.href = `/admin/dashboard.html?q=${encodeURIComponent(item.name)}`;
+                    }
+                });
             searchResultsContainer.appendChild(resultItem);
         });
 
