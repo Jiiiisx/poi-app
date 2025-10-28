@@ -78,6 +78,8 @@ body {
     margin-left: 250px;
     padding: 30px;
     box-sizing: border-box;
+    flex-grow: 1;
+    width: 0;
 }
 
 @keyframes fadeIn {

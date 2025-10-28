@@ -1,3 +1,7 @@
+.dashboard-container {
+    display: flex;
+}
+
 /* Styling for the report controls */
 .report-controls {
     display: flex;

@@ -1,3 +1,8 @@
+
+.dashboard-container {
+    display: flex;
+}
+
 /* Existing styles for history.css */
 .filter-controls {
     margin-bottom: 1rem;

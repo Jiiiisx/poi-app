@@ -78,6 +78,7 @@ body {
     margin-left: 250px;
     flex-grow: 1;
     padding: 30px;
+    width: 0;
 }
 
 .main-header {
