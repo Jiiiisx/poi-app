@@ -17,7 +17,7 @@ body {
 }
 
 .dashboard-container {
-
+    display: flex;
 }
 
 .sidebar {
