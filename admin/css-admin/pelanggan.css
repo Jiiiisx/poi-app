@@ -17,7 +17,7 @@ body {
 }
 
 .dashboard-container {
-    display: flex;
+    /* display: flex; */ /* This is no longer needed with absolute positioning */
 }
 
 .sidebar {
@@ -75,9 +75,11 @@ body {
 }
 
 .main-content {
-    margin-left: 250px;
-    flex-grow: 1;
+    position: absolute;
+    left: 250px;
+    right: 0;
     padding: 30px;
+    box-sizing: border-box;
 }
 
 .main-header {
