@@ -74,17 +74,7 @@ body {
     text-decoration: none;
 }
 
-.profile-main-content {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-}
 
-.main-content {
-    margin-left: 250px;
-    flex-grow: 1;
-    padding: 30px;
-}
 
 .main-header {
     display: flex;
@@ -139,23 +129,13 @@ body {
 
 .profile-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 20px;
     width: 100%;
 }
 
-.stats-card {
-    text-align: center;
-}
-.stats-card p {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-top: 10px;
-    color: var(--primary-color);
-}
-
 .table-card {
-    grid-column: 1 / -1;
+    grid-column: span 3;
 }
 
 .notes-card {
