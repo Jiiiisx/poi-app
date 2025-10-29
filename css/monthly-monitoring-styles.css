@@ -312,7 +312,7 @@
 /* Billing History Grid Layout */
 .billing-history-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr); /* Default 3 columns */
     gap: 8px;
 }
 
@@ -323,6 +323,19 @@
     padding: 4px;
     border-radius: 4px;
     background-color: #f8f9fa;
+}
+
+/* Responsive adjustments for the grid */
+@media (max-width: 768px) {
+    .billing-history-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns for tablets and large phones */
+    }
+}
+
+@media (max-width: 480px) {
+    .billing-history-grid {
+        grid-template-columns: 1fr; /* 1 column for small phones */
+    }
 }
 
 /* Sticky Columns for Monitoring Table */
