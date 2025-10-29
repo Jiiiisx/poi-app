@@ -74,6 +74,12 @@ body {
     text-decoration: none;
 }
 
+.profile-main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
 .main-content {
     margin-left: 250px;
     flex-grow: 1;
@@ -148,6 +154,7 @@ body {
 }
 
 .table-card {
+    grid-column: 1 / -1;
 }
 
 .notes-card {
@@ -289,6 +296,8 @@ body {
 .table-card .status-n\/a {
     background-color: #6c757d; /* Gray */
 }
+
+
 
 @media (max-width: 1200px) {
     .profile-grid {
