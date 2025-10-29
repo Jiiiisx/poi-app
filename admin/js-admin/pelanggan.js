@@ -207,6 +207,7 @@ document.addEventListener('DOMContentLoaded', function () {
             option.textContent = header;
             monthFilter.appendChild(option);
         });
+    }
 
 
     function _parseHeaderDate(header) {
