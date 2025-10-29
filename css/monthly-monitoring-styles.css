@@ -309,6 +309,22 @@
     color: #333;
 }
 
+/* Billing History Grid Layout */
+.billing-history-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.billing-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+    padding: 4px;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+}
+
 /* Sticky Columns for Monitoring Table */
 #monitoringTable th:nth-child(-n+3),
 #monitoringTable td:nth-child(-n+3) {

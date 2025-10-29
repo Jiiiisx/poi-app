@@ -930,7 +930,7 @@ class GoogleSheetsIntegration {
 
             let billingStatusHtml;
             if (this.selectedBillingMonth === 'all') {
-                billingStatusHtml = '<div class="monitoring-card-billing-multi">';
+                billingStatusHtml = '<div class="billing-history-grid">';
                 billingHeaders.forEach(header => {
                     const billingStatus = item[header] || 'N/A';
                     const billingStatusClass = this.getBillingStatusClass(billingStatus);
