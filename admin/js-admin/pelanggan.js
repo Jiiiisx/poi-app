@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function ensureDataForSales(salesName) {
-        if (monitoringDataBySales[salesName]) {
+        if (monitoringDataBySales[salesName.toLowerCase()]) {
             return; // Data already loaded
         }
 
@@ -186,8 +186,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         rows.push({ ...rowAsObject, originalSheetRow: headerRow + 1 + i });
                     }
                 });
-                monitoringDataHeadersBySales[salesName] = { headers: headers, sheetName: sheetName };
-                monitoringDataBySales[salesName] = rows;
+                monitoringDataHeadersBySales[salesName.toLowerCase()] = { headers: headers, sheetName: sheetName };
+                monitoringDataBySales[salesName.toLowerCase()] = rows;
             }
         });
     }
@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 function applyFilters() {
         const searchTerm = searchInput.value.toLowerCase();
-        let data = monitoringDataBySales[selectedSales] || [];
+        let data = monitoringDataBySales[selectedSales.toLowerCase()] || [];
 
         // Search filter
         if (searchTerm) {
