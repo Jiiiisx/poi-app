@@ -123,6 +123,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const billingHeaders = headers.filter(h => h.toLowerCase().startsWith('billing')).sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
         
         let paidMonths = 0;
+        let unpaidMonths = 0;
+        let otherMonths = 0;
         let lastPayment = null;
 
         billingHeaders.forEach(header => {
@@ -130,6 +132,10 @@ document.addEventListener('DOMContentLoaded', function () {
             if (status === 'paid') {
                 paidMonths++;
                 lastPayment = header;
+            } else if (status === 'unpaid') {
+                unpaidMonths++;
+            } else {
+                otherMonths++;
             }
             paymentHistory.push({ month: header.replace('Billing ', ''), status });
         });
@@ -144,13 +150,40 @@ document.addEventListener('DOMContentLoaded', function () {
         `).join('');
 
         // Render stats
-        const currentMonthHeader = `Billing ${new Date().toLocaleString('default', { month: 'short' })} '${String(new Date().getFullYear()).slice(-2)}`;
+        const currentMonthHeader = `Billing ${new Date().toLocaleString('default', { month: 'short' })} '%{String(new Date().getFullYear()).slice(-2)}`;
         currentMonthStatusEl.textContent = data[currentMonthHeader] || 'N/A';
         totalPaid12mEl.textContent = `${paidMonths} Bulan`;
         lastPaymentDateEl.textContent = lastPayment ? lastPayment.replace('Billing ', '') : '-';
 
         // Notes - for now, just load from a notes column if it exists
         customerNotesEl.value = data['Catatan'] || '';
+
+        // Render Pie Chart
+        const chartCtx = document.getElementById('payment-summary-chart').getContext('2d');
+        new Chart(chartCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Paid', 'Unpaid', 'Lainnya'],
+                datasets: [{
+                    data: [paidMonths, unpaidMonths, otherMonths],
+                    backgroundColor: [
+                        '#28a745',
+                        '#dc3545',
+                        '#6c757d'
+                    ],
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
     }
 
     function _parseHeaderDate(header) {

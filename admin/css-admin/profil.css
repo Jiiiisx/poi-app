@@ -342,3 +342,151 @@ body {
     margin: 0 auto;
     line-height: 1.6;
 }
+
+/* ========================================= */
+/*          NEW MODERN STYLES              */
+/* ========================================= */
+
+/* General Card Improvements */
+.card {
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* Profile Grid and New Layout */
+.profile-grid {
+    grid-template-columns: repeat(3, 1fr); /* Keep the 3-column layout for stats cards */
+    grid-template-rows: auto;
+    grid-auto-flow: dense;
+}
+
+.profile-card {
+    grid-column: span 3; /* Make profile card span full width */
+    display: flex;
+    flex-direction: column;
+}
+
+.stats-card {
+    text-align: center;
+}
+
+.stats-card p {
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 10px 0 0 0;
+    color: var(--primary-color);
+}
+
+.bottom-grid {
+    grid-column: span 3;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Chart Card */
+.chart-card {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-card h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+#payment-summary-chart {
+    max-height: 250px;
+}
+
+
+/* Profile Card Details */
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.detail-item {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.detail-item i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    background-color: rgba(201, 55, 66, 0.1);
+    padding: 10px;
+    border-radius: 50%;
+}
+
+
+/* Notes Card Improvements */
+.notes-card {
+    display: flex;
+    flex-direction: column;
+}
+.notes-card h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+.notes-card textarea {
+    border-color: #d1d5db;
+}
+.notes-card .btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    align-self: flex-end;
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .bottom-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+    .profile-card, .stats-card, .bottom-grid {
+        grid-column: span 1;
+    }
+    .profile-details {
+        grid-template-columns: 1fr;
+    }
+}

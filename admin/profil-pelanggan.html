@@ -97,30 +97,40 @@
                     <p id="last-payment-date">-</p>
                 </div>
 
-                <!-- Payment History Table -->
-                <div class="card table-card">
-                    <h3>Riwayat Pembayaran</h3>
-                    <div class="table-responsive">
-                        <table class="customer-table">
-                            <thead>
-                                <tr>
-                                    <th>Bulan</th>
-                                    <th>Status</th>
-                                    <th>Tanggal Bayar</th>
-                                </tr>
-                            </thead>
-                            <tbody id="payment-history-body">
-                                <!-- JS will populate this -->
-                            </tbody>
-                        </table>
+                <div class="bottom-grid">
+                    <!-- Payment History Table -->
+                    <div class="card table-card">
+                        <h3>Riwayat Pembayaran</h3>
+                        <div class="table-responsive">
+                            <table class="customer-table">
+                                <thead>
+                                    <tr>
+                                        <th>Bulan</th>
+                                        <th>Status</th>
+                                        <th>Tanggal Bayar</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="payment-history-body">
+                                    <!-- JS will populate this -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Notes Card -->
-                <div class="card notes-card">
-                    <h3>Catatan</h3>
-                    <textarea id="customer-notes" placeholder="Tambahkan catatan untuk pelanggan ini..."></textarea>
-                    <button id="save-notes-btn" class="btn-primary">Simpan Catatan</button>
+                    <div class="right-column">
+                        <!-- Chart Card -->
+                        <div class="card chart-card">
+                            <h4>Ringkasan Pembayaran</h4>
+                            <canvas id="payment-summary-chart"></canvas>
+                        </div>
+
+                        <!-- Notes Card -->
+                        <div class="card notes-card">
+                            <h4>Catatan</h4>
+                            <textarea id="customer-notes" placeholder="Tambahkan catatan untuk pelanggan ini..."></textarea>
+                            <button id="save-notes-btn" class="btn-primary">Simpan Catatan</button>
+                        </div>
+                    </div>
                 </div>
 
 
