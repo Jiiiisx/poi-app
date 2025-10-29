@@ -207,22 +207,7 @@ document.addEventListener('DOMContentLoaded', function () {
             option.textContent = header;
             monthFilter.appendChild(option);
         });
-    }
 
-    function _parseHeaderDate(header) {
-        const monthMap = {
-            'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'mei': 4, 'jun': 5,
-            'jul': 6, 'agu': 7, 'ags': 7, 'agt': 7, 'sep': 8, 'okt': 9, 'nov': 10, 'des': 11
-        };
-        if (typeof header !== 'string') return null;
-        const parts = header.replace(/billing/i, '').trim().split(' ');
-        if (parts.length < 2) return null;
-        const monthName = parts[0].toLowerCase().substring(0, 3);
-        const month = monthMap[monthName];
-        const year = parseInt(parts[1], 10);
-        if (month === undefined || isNaN(year)) { console.warn(`Could not parse date: "${header}"`); return null; }
-        return new Date(year + 2000, month);
-    }
 
     function _parseHeaderDate(header) {
         const monthMap = {
@@ -295,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         } else if (selectedStatus !== 'all') {
             if (selectedMonth !== 'all') {
-                data = data.filter(item => (item[selectedMonth] || '').toLowerCase() === selectedStatus);
+                data = data.filter(item => (item[selectedMonth] || 'n/a').toLowerCase() === selectedStatus);
             } else {
                 const currentMonthColumn = getCurrentMonthColumnName();
                 if (allHeaders.map(h => h.toUpperCase()).includes(currentMonthColumn.toUpperCase())) {
@@ -304,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         return billingStatus === selectedStatus;
                     });
                 } else {
-                    // If the current month's column doesn't exist, don't filter
+                    data = [];
                 }
             }
         }
