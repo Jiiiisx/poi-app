@@ -276,17 +276,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 .filter(header => _parseHeaderDate(header) <= now)
                 .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
 
-            if (sortedBillingHeaders.length < 3) {
+            if (sortedBillingHeaders.length < 2) {
                 data = [];
             } else {
                 data = data.filter(item => {
-                    let unpaidCount = 0;
-                    for (const header of sortedBillingHeaders.slice(-3)) {
-                        if ((item[header] || '').toLowerCase() === 'unpaid') {
-                            unpaidCount++;
+                    for (let i = 0; i <= sortedBillingHeaders.length - 2; i++) {
+                        const header1 = sortedBillingHeaders[i];
+                        const header2 = sortedBillingHeaders[i+1];
+
+                        const isUnpaid1 = (item[header1] || '').toLowerCase() === 'unpaid';
+                        const isUnpaid2 = (item[header2] || '').toLowerCase() === 'unpaid';
+
+                        if (isUnpaid1 && isUnpaid2) {
+                            return true;
                         }
                     }
-                    return unpaidCount >= 3;
+                    return false;
                 });
             }
         } else if (selectedStatus !== 'all') {
@@ -299,8 +304,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         const billingStatus = (item[currentMonthColumn] || 'n/a').toLowerCase();
                         return billingStatus === selectedStatus;
                     });
-                } else {
-                    data = [];
                 }
             }
         }
