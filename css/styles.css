@@ -361,7 +361,6 @@ body {
   background: var(--bg-primary);
   transition: margin-left 0.3s ease;
   min-width: 0;
-  margin-left: 280px;
 }
 
 .sidebar.collapsed ~ .main-content {
