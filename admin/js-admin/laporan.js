@@ -71,13 +71,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (salesName && valueRange.values && valueRange.values.length > 1) {
                     const headers = valueRange.values[0];
+                    const nameIndex = headers.findIndex(h => h.toLowerCase() === 'nama pelanggan');
                     const customers = valueRange.values.slice(1).map(row => {
+                        if (!row[nameIndex] || row[nameIndex].trim() === '') return null;
                         const customerData = {};
                         headers.forEach((header, index) => {
                             customerData[header] = row[index] || '';
                         });
                         return customerData;
-                    });
+                    }).filter(Boolean);
 
                     // --- New logic for acquisitionDate ---
                     const billingColumns = headers.filter(h => h.toLowerCase().startsWith('billing'));
@@ -289,19 +291,48 @@ document.addEventListener('DOMContentLoaded', function () {
         // 1. Update stat cards
         document.getElementById('total-pelanggan-sales').textContent = salesData.totalCustomers;
 
-        const currentMonthColumn = getCurrentMonthColumnName();
         let paidCustomers = 0;
         let unpaidCustomers = 0;
-        if (salesData.customers.length > 0 && salesData.customers[0].hasOwnProperty(currentMonthColumn)) {
+        
+        if (salesData.customers.length > 0) {
+            const headers = Object.keys(salesData.customers[0]);
+            const billingColumns = headers.filter(h => h.toLowerCase().startsWith('billing'));
+            
+            const parseBillingMonth = (billingHeader) => {
+                const parts = billingHeader.split(' ');
+                if (parts.length !== 3) return null;
+                const monthName = parts[1];
+                const year = `20${parts[2]}`;
+                const monthIndex = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'].findIndex(m => m.toLowerCase() === monthName.toLowerCase());
+                if (monthIndex === -1) return null;
+                return new Date(year, monthIndex, 1);
+            };
+
+            billingColumns.sort((a, b) => {
+                const dateA = parseBillingMonth(a);
+                const dateB = parseBillingMonth(b);
+                if (!dateA || !dateB) return 0;
+                return dateA - dateB;
+            });
+
             salesData.customers.forEach(customer => {
-                const status = customer[currentMonthColumn]?.toLowerCase();
-                if (status === 'paid') {
+                let latestStatus = '';
+                for (let i = billingColumns.length - 1; i >= 0; i--) {
+                    const col = billingColumns[i];
+                    if (customer[col] && customer[col].trim() !== '') {
+                        latestStatus = customer[col].toLowerCase();
+                        break;
+                    }
+                }
+
+                if (latestStatus === 'paid') {
                     paidCustomers++;
-                } else if (status === 'unpaid') {
+                } else if (latestStatus === 'unpaid') {
                     unpaidCustomers++;
                 }
             });
         }
+
         document.getElementById('paid-customers-sales').textContent = paidCustomers;
         document.getElementById('unpaid-customers-sales').textContent = unpaidCustomers;
 
