@@ -310,50 +310,31 @@
 }
 
 /* Sticky Columns for Monitoring Table */
-#monitoringTable th:nth-child(1),
-#monitoringTable td:nth-child(1) {
+#monitoringTable th:nth-child(-n+3),
+#monitoringTable td:nth-child(-n+3) {
     position: sticky;
-    left: 0;
     z-index: 2;
 }
 
-#monitoringTable th:nth-child(2),
-#monitoringTable td:nth-child(2) {
-    position: sticky;
-    left: 250px; /* Adjust based on actual width of first column */
-    z-index: 2;
-}
-
-#monitoringTable th:nth-child(3),
-#monitoringTable td:nth-child(3) {
-    position: sticky;
-    left: 400px; /* Adjust based on actual width of first two columns */
-    z-index: 2;
-}
+#monitoringTable th:nth-child(1), #monitoringTable td:nth-child(1) { width: 300px; min-width: 300px; left: 0; }
+#monitoringTable th:nth-child(2), #monitoringTable td:nth-child(2) { width: 180px; min-width: 180px; left: 300px; }
+#monitoringTable th:nth-child(3), #monitoringTable td:nth-child(3) { width: 180px; min-width: 180px; left: 480px; }
 
 /* Background for sticky header cells */
-#monitoringTable th:nth-child(1),
-#monitoringTable th:nth-child(2),
-#monitoringTable th:nth-child(3) {
+#monitoringTable th:nth-child(-n+3) {
     z-index: 3;
     background-color: #f8f9fa; /* Match header background */
 }
 
 /* Background for sticky body cells */
-#monitoringTable td:nth-child(1),
-#monitoringTable td:nth-child(2),
-#monitoringTable td:nth-child(3) {
+#monitoringTable td:nth-child(-n+3) {
     background-color: #fff; /* Default row background */
 }
 
-#monitoringTable tbody tr:nth-child(even) td:nth-child(1),
-#monitoringTable tbody tr:nth-child(even) td:nth-child(2),
-#monitoringTable tbody tr:nth-child(even) td:nth-child(3) {
+#monitoringTable tbody tr:nth-child(even) td:nth-child(-n+3) {
     background-color: #f2f2f2; /* Even row background */
 }
 
-#monitoringTable tbody tr:hover td:nth-child(1),
-#monitoringTable tbody tr:hover td:nth-child(2),
-#monitoringTable tbody tr:hover td:nth-child(3) {
+#monitoringTable tbody tr:hover td:nth-child(-n+3) {
     background-color: #e9ecef; /* Hover row background */
 }
