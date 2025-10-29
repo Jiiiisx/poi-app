@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function populateMonthFilter() {
         monthFilter.innerHTML = '<option value="all">All Months</option>';
-        const headers = (monitoringDataHeadersBySales[selectedSales] || {}).headers || [];
+        const headers = (monitoringDataHeadersBySales[selectedSales.toLowerCase()] || {}).headers || [];
         const billingHeaders = headers.filter(h => h.toLowerCase().startsWith('billing'));
         const sortedBillingHeaders = [...billingHeaders].sort((a, b) => {
             const dateA = _parseHeaderDate(a), dateB = _parseHeaderDate(b);
@@ -320,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const thead = document.createElement('thead'), tbody = document.createElement('tbody');
         const headerRow = document.createElement('tr');
         
-        let headers = (monitoringDataHeadersBySales[selectedSales] || {}).headers || [];
+        let headers = (monitoringDataHeadersBySales[selectedSales.toLowerCase()] || {}).headers || [];
         if (selectedMonth !== 'all') {
             const nonBillingHeaders = headers.filter(h => !h.toLowerCase().startsWith('billing'));
             headers = [...nonBillingHeaders, selectedMonth];
@@ -440,7 +440,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const originalRow = td.dataset.originalRow;
             const header = td.dataset.header;
 
-            const headerInfo = monitoringDataHeadersBySales[selectedSales] || {};
+            const headerInfo = monitoringDataHeadersBySales[selectedSales.toLowerCase()] || {};
             const sheetName = headerInfo.sheetName;
 
             if (!sheetName) {
@@ -449,7 +449,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            const originalData = monitoringDataBySales[selectedSales] || [];
+            const originalData = monitoringDataBySales[selectedSales.toLowerCase()] || [];
             const originalItem = originalData.find(item => item.originalSheetRow == originalRow);
             const oldValue = originalItem ? originalItem[header] : '';
 
