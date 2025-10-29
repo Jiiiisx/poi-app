@@ -130,6 +130,7 @@ body {
     font-weight: 500;
 }
 
+
 .profile-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -292,22 +293,12 @@ body {
 @media (max-width: 1200px) {
     .profile-grid {
         grid-template-columns: 1fr 1fr;
-        grid-template-areas:
-            "details details"
-            "stats stats"
-            "history history"
-            "notes notes";
     }
 }
 
 @media (max-width: 768px) {
     .profile-grid {
         grid-template-columns: 1fr;
-        grid-template-areas:
-            "details"
-            "stats"
-            "history"
-            "notes";
     }
 }
 
