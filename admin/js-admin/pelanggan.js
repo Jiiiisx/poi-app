@@ -239,151 +239,119 @@ document.addEventListener('DOMContentLoaded', function () {
         return new Date(year + 2000, month);
     }
 
-            function applyFilters() {
+                function applyFilters() {
 
-                const searchTerm = searchInput.value.toLowerCase();
+                    const searchTerm = searchInput.value.toLowerCase();
 
-                let data = monitoringDataBySales[selectedSales] || [];
+                    let data = monitoringDataBySales[selectedSales] || [];
 
-        
+            
 
-                // Search filter
+                    // Search filter
 
-                if (searchTerm) {
+                    if (searchTerm) {
 
-                    data = data.filter(item => Object.values(item).some(val => val.toString().toLowerCase().includes(searchTerm)));
-
-                }
-
-        
-
-                const salesName = selectedSales.toLowerCase();
-
-                const allHeaders = (monitoringDataHeadersBySales[salesName] || {}).headers || [];
-
-                const billingHeaders = allHeaders.filter(h => h.toLowerCase().startsWith('billing'));
-
-        
-
-                if (selectedStatus === 'pra npc') {
-
-                    const now = new Date();
-
-                    const sortedBillingHeaders = billingHeaders
-
-                        .filter(header => _parseHeaderDate(header) <= now)
-
-                        .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
-
-        
-
-                    const lastTwoMonthsHeaders = sortedBillingHeaders.slice(-2);
-
-        
-
-                    if (lastTwoMonthsHeaders.length < 2) {
-
-                        data = [];
-
-                    } else {
-
-                        data = data.filter(item => {
-
-                            const isUnpaidLastMonth = (item[lastTwoMonthsHeaders[1]] || '').toLowerCase() === 'unpaid';
-
-                            const isUnpaidTwoMonthsAgo = (item[lastTwoMonthsHeaders[0]] || '').toLowerCase() === 'unpaid';
-
-                            return isUnpaidLastMonth && isUnpaidTwoMonthsAgo;
-
-                        });
+                        data = data.filter(item => Object.values(item).some(val => val.toString().toLowerCase().includes(searchTerm)));
 
                     }
 
-                } else if (selectedStatus === 'ct0') {
+            
 
-                    const now = new Date();
+                    const salesName = selectedSales.toLowerCase();
 
-                    const sortedBillingHeaders = billingHeaders
+                    const allHeaders = (monitoringDataHeadersBySales[salesName] || {}).headers || [];
 
-                        .filter(header => _parseHeaderDate(header) <= now)
+                    const billingHeaders = allHeaders.filter(h => h.toLowerCase().startsWith('billing'));
 
-                        .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
+            
 
-        
-
-                    if (sortedBillingHeaders.length < 2) {
-
-                        data = [];
-
-                    } else {
-
-                        data = data.filter(item => {
-
-                            for (let i = 0; i <= sortedBillingHeaders.length - 2; i++) {
-
-                                const header1 = sortedBillingHeaders[i];
-
-                                const header2 = sortedBillingHeaders[i+1];
-
-        
-
-                                const isUnpaid1 = (item[header1] || '').toLowerCase() === 'unpaid';
-
-                                const isUnpaid2 = (item[header2] || '').toLowerCase() === 'unpaid';
-
-        
-
-                                if (isUnpaid1 && isUnpaid2) {
-
-                                    return true;
-
-                                }
-
-                            }
-
-                            return false;
-
-                        });
-
-                    }
-
-                } else if (selectedStatus !== 'all') {
-
-                    if (selectedMonth !== 'all') {
-
-                        data = data.filter(item => (item[selectedMonth] || '').toLowerCase() === selectedStatus);
-
-                    } else {
+                    if (selectedStatus === 'unpaid') {
 
                         const currentMonthColumn = getCurrentMonthColumnName();
 
                         if (allHeaders.map(h => h.toUpperCase()).includes(currentMonthColumn.toUpperCase())) {
 
+                            data = data.filter(item => (item[currentMonthColumn] || '').toLowerCase() === 'unpaid');
+
+                        }
+
+                    } else if (selectedStatus === 'pra npc') {
+
+                        const now = new Date();
+
+                        const sortedBillingHeaders = billingHeaders
+
+                            .filter(header => _parseHeaderDate(header) <= now)
+
+                            .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
+
+            
+
+                        const lastTwoMonthsHeaders = sortedBillingHeaders.slice(-2);
+
+            
+
+                        if (lastTwoMonthsHeaders.length < 2) {
+
+                            data = [];
+
+                        } else {
+
                             data = data.filter(item => {
 
-                                const billingStatus = (item[currentMonthColumn] || 'n/a').toLowerCase();
+                                const isUnpaidLastMonth = (item[lastTwoMonthsHeaders[1]] || '').toLowerCase() === 'unpaid';
 
-                                return billingStatus === selectedStatus;
+                                const isUnpaidTwoMonthsAgo = (item[lastTwoMonthsHeaders[0]] || '').toLowerCase() === 'unpaid';
+
+                                return isUnpaidLastMonth && isUnpaidTwoMonthsAgo;
 
                             });
 
                         }
 
+                    } else if (selectedStatus === 'ct0') {
+
+                        data = data.filter(item => {
+
+                            let unpaidCount = 0;
+
+                            billingHeaders.forEach(header => {
+
+                                if ((item[header] || '').toLowerCase() === 'unpaid') {
+
+                                    unpaidCount++;
+
+                                }
+
+                            });
+
+                            return unpaidCount >= 3;
+
+                        });
+
+                    } else if (selectedStatus === 'paid') {
+
+                        const currentMonthColumn = getCurrentMonthColumnName();
+
+                        if (allHeaders.map(h => h.toUpperCase()).includes(currentMonthColumn.toUpperCase())) {
+
+                            data = data.filter(item => (item[currentMonthColumn] || '').toLowerCase() === 'paid');
+
+                        }
+
                     }
 
+            
+
+                    filteredData = data;
+
+                    currentPage = 1;
+
+                    renderBillingTable();
+
+                    updatePagination();
+
                 }
-
-        
-
-                filteredData = data;
-
-                currentPage = 1;
-
-                renderBillingTable();
-
-                updatePagination();
-
-            }
 
     function getCurrentMonthColumnName() {
         const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
