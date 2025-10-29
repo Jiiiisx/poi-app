@@ -132,15 +132,8 @@ body {
 
 .profile-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-areas:
-        "details stats stats"
-        "history notes notes";
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
-}
-
-.profile-card {
-    grid-area: details;
 }
 
 .stats-card {
@@ -153,17 +146,10 @@ body {
     color: var(--primary-color);
 }
 
-
 .table-card {
-    grid-area: history;
-    grid-column: span 1;
 }
 
 .notes-card {
-    grid-area: notes;
-    grid-column: span 2;
-    display: flex;
-    flex-direction: column;
 }
 
 .profile-header {
