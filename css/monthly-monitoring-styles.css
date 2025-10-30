@@ -348,7 +348,7 @@
 
     #monitoringTable th:nth-child(1), #monitoringTable td:nth-child(1) { width: 300px; min-width: 300px; left: 0; }
     #monitoringTable th:nth-child(2), #monitoringTable td:nth-child(2) { width: 180px; min-width: 180px; left: 300px; }
-    #monitoringTable th:nth-child(3), #monitoringTable td:nh-child(3) { width: 180px; min-width: 180px; left: 480px; }
+    #monitoringTable th:nth-child(3), #monitoringTable td:nth-child(3) { width: 180px; min-width: 180px; left: 480px; }
 
     /* Background for sticky header cells */
     #monitoringTable th:nth-child(-n+3) {
