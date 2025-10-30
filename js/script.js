@@ -607,7 +607,7 @@ function initializeUIComponents() {
     // Show all data when overview is clicked
     if (overviewBtn) {
       overviewBtn.addEventListener('click', () => {
-        googleSheetsIntegration.filterBySales('All');
+        googleSheetsIntegration.filterBySales('Home');
         document.querySelectorAll('.sales-item').forEach(i => i.classList.remove('active'));
         overviewBtn.classList.add('active');
       });
@@ -782,7 +782,7 @@ function populateSalesDropdown() {
     const salesItems = document.querySelectorAll('.sales-item');
     salesItems.forEach(item => {
       const salesName = item.textContent.trim();
-      if (salesName && salesName !== 'All') {
+      if (salesName && salesName !== 'Home') {
         const option1 = new Option(salesName, salesName);
         const option2 = new Option(salesName, salesName);
         salesSelect.add(option1);

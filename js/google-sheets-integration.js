@@ -32,7 +32,7 @@ class GoogleSheetsIntegration {
         this.totalPages = 1;
 
         this.currentSchoolFilter = 'all';
-        this.currentSalesFilter = 'All';
+        this.currentSalesFilter = 'Home';
         this.currentDataView = 'customer'; 
         this.currentTeam = 'telda';
         this.nonTeldaSales = [
@@ -718,7 +718,7 @@ class GoogleSheetsIntegration {
     toggleActionsColumn() {
         const actionsHeader = document.getElementById('actionsHeader');
         if (actionsHeader) {
-            actionsHeader.style.display = this.currentSalesFilter === 'All' ? 'none' : '';
+            actionsHeader.style.display = this.currentSalesFilter === 'Home' ? 'none' : '';
         }
     }
 
@@ -1349,8 +1349,8 @@ class GoogleSheetsIntegration {
 
         const activeFilterDisplay = document.getElementById('active-filter-display');
         if (activeFilterDisplay) {
-            if (salesName && salesName !== 'All') {
-                activeFilterDisplay.innerHTML = `Filter: ${salesName} <button class="btn-remove-filter" onclick="googleSheetsIntegration.filterBySales('All')">&times;</button>`;
+            if (salesName && salesName !== 'Home') {
+                activeFilterDisplay.innerHTML = `Filter: ${salesName} <button class="btn-remove-filter" onclick="googleSheetsIntegration.filterBySales('Home')">&times;</button>`;
                 activeFilterDisplay.style.display = 'inline-flex';
             } else {
                 activeFilterDisplay.style.display = 'none';
@@ -1363,7 +1363,7 @@ class GoogleSheetsIntegration {
         const salesSummarySection = document.getElementById('salesSummarySection');
         const tabNavigation = document.querySelector('.tab-navigation');
 
-        if (salesName && salesName !== 'All') {
+        if (salesName && salesName !== 'Home') {
             // Only show tabs for the 'telda' team view
             if (tabNavigation && this.currentTeam === 'telda') {
                 tabNavigation.style.display = 'flex'; // Show tabs
@@ -1473,7 +1473,7 @@ class GoogleSheetsIntegration {
                 );
             }
 
-            if (this.currentSalesFilter && this.currentSalesFilter !== 'All') {
+            if (this.currentSalesFilter && this.currentSalesFilter !== 'Home') {
                 const currentFilter = this.currentSalesFilter.toLowerCase();
                 filteredData = filteredData.filter(row => row.sales && row.sales.toLowerCase() === currentFilter);
             }
@@ -1514,7 +1514,7 @@ class GoogleSheetsIntegration {
                 filteredData = filteredData.filter(row => !window.schoolDataFilter.isSchoolData(row));
             }
 
-            if (this.currentSalesFilter && this.currentSalesFilter !== 'All') {
+            if (this.currentSalesFilter && this.currentSalesFilter !== 'Home') {
                 const currentFilter = this.currentSalesFilter.toLowerCase();
                 filteredData = filteredData.filter(row => row.nama_sales && row.nama_sales.toLowerCase() === currentFilter);
             }
@@ -1747,7 +1747,7 @@ class GoogleSheetsIntegration {
             }
         });
 
-        const salesNames = ['All', ...Array.from(salesNamesSet).sort()];
+        const salesNames = ['Home', ...Array.from(salesNamesSet).sort()];
 
         salesList.innerHTML = '';
         const self = this;
@@ -1755,7 +1755,7 @@ class GoogleSheetsIntegration {
         salesNames.forEach(name => {
             const li = document.createElement('li');
             li.className = 'sales-item';
-            if (name === 'All') li.classList.add('active');
+            if (name === 'Home') li.classList.add('active');
             li.dataset.salesName = name;
             li.innerHTML = `<span>${name}</span>`;
             li.onclick = function() {
@@ -1858,7 +1858,7 @@ class GoogleSheetsIntegration {
             this.updateNonTeldaSalesListActiveState('TRI SUSANTOHADI');
         } else {
             this.updateSalesList();
-            this.filterBySales('All');
+            this.filterBySales('Home');
         }
     }
 
