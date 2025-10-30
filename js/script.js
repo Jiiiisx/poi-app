@@ -981,6 +981,10 @@ function renderSalesPerformanceChart() {
 }
 
 function renderAllSalesChart() {
+    const chartTitle = document.getElementById('chart-title');
+    if (chartTitle) {
+        chartTitle.textContent = 'Jumlah Pelanggan Per Sales';
+    }
     const currentTeam = googleSheetsIntegration.currentTeam;
     const nonTeldaSales = googleSheetsIntegration.nonTeldaSales.map(s => s.toLowerCase());
 
@@ -1047,6 +1051,10 @@ function renderAllSalesChart() {
 }
 
 function renderSingleSalesChart(salesName) {
+    const chartTitle = document.getElementById('chart-title');
+    if (chartTitle) {
+        chartTitle.textContent = `Jumlah Pelanggan Per Sales (${salesName})`;
+    }
     const salesData = googleSheetsIntegration.monitoringDataBySales[salesName.toLowerCase()];
     if (!salesData) return;
 
