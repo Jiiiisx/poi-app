@@ -1403,6 +1403,14 @@ class GoogleSheetsIntegration {
                 window.switchToTab('monitoring');
             }
 
+            // Destroy and hide the main chart
+            if (window.salesPerformanceChart) {
+                window.salesPerformanceChart.destroy();
+            }
+            if (chartSection) {
+                chartSection.style.display = 'none';
+            }
+
             this.renderMonitoringView();
 
             salesNameDisplay.textContent = `untuk: ${salesName}`;
@@ -1433,6 +1441,11 @@ class GoogleSheetsIntegration {
         } else {
             if (tabNavigation) tabNavigation.style.display = 'none'; // Hide tabs
             if (chartSection) chartSection.style.display = 'block'; // Show chart for home
+
+            // Re-render the main chart
+            if (typeof window.renderSalesPerformanceChart === 'function') {
+                window.renderSalesPerformanceChart();
+            }
 
             const contentGrid = document.querySelector('.content-grid');
             const monitoringSection = document.getElementById('monthlyMonitoringSection');
