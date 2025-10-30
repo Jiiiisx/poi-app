@@ -84,6 +84,22 @@ function getUserEmailFromToken(token) {
     }
 }
 
+function checkNetworkSpeed() {
+    try {
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (connection) {
+            const effectiveType = connection.effectiveType;
+            const saveData = connection.saveData;
+
+            if (saveData || effectiveType.includes('2g')) {
+                NotificationHandler.show('Koneksi internet Anda lambat. Beberapa fitur mungkin tidak berfungsi dengan baik.', 'warning');
+            }
+        }
+    } catch (error) {
+        ErrorHandler.handleError(error, 'checkNetworkSpeed');
+    }
+}
+
 // Add event listener for manual sign-in button
 document.addEventListener('DOMContentLoaded', () => {
   const manualSignInBtn = document.getElementById('manualSignInBtn');
@@ -167,6 +183,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Check network speed
+  checkNetworkSpeed();
 });
 
 function handleSignoutClick() {
@@ -372,6 +391,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize UI components
     initializeUIComponents();
+
+    // Check network speed
+    checkNetworkSpeed();
 
     // Accordion functionality for customer cards
     const customerTableBody = document.querySelector('#customerTable tbody');
