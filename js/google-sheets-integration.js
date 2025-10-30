@@ -1446,6 +1446,7 @@ class GoogleSheetsIntegration {
         if (typeof renderSalesPerformanceChart === 'function') {
             renderSalesPerformanceChart();
         }
+    }
 
     updateSalesListActiveState(salesName) {
         const salesListItems = document.querySelectorAll('.sales-list .sales-item');
