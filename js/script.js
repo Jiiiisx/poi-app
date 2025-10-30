@@ -257,11 +257,11 @@ function updateSigninStatus(isSignedIn, userName = '', userPicture = '') {
         wavyLines.style.display = 'none';
       }
       
-      function setupDashboard() {
+      document.addEventListener('googleSheetsIntegrationReady', () => {
           if (window.googleSheetsIntegration) {
               window.googleSheetsIntegration.setup().then(() => {
                 console.log('Dashboard initialized successfully');
-                renderSalesPerformanceChart(); // Call the new function here
+                renderSalesPerformanceChart();
                 const elapsedTime = Date.now() - startTime;
                 const timeToWait = Math.max(0, MIN_LOADING_TIME - elapsedTime);
 
@@ -281,12 +281,8 @@ function updateSigninStatus(isSignedIn, userName = '', userPicture = '') {
                   }
                   mainContent.style.display = 'block';
               });
-          } else {
-              console.log('Waiting for googleSheetsIntegration to load...');
-              setTimeout(setupDashboard, 100);
           }
-      }
-      setupDashboard();
+      });
       
       localStorage.setItem('isLoggedIn', 'true');
     } else {
