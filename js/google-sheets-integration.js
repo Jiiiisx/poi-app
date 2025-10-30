@@ -1347,10 +1347,6 @@ class GoogleSheetsIntegration {
             }
         }, 0);
 
-        if (typeof renderSalesPerformanceChart === 'function') {
-            renderSalesPerformanceChart();
-        }
-
         const activeFilterDisplay = document.getElementById('active-filter-display');
         if (activeFilterDisplay) {
             if (salesName && salesName !== 'Home') {
@@ -1446,7 +1442,10 @@ class GoogleSheetsIntegration {
             if(monitoringSection) monitoringSection.style.display = 'none';
             if(salesSummarySection) salesSummarySection.style.display = 'none';
         }
-    }
+
+        if (typeof renderSalesPerformanceChart === 'function') {
+            renderSalesPerformanceChart();
+        }
 
     updateSalesListActiveState(salesName) {
         const salesListItems = document.querySelectorAll('.sales-list .sales-item');
