@@ -168,9 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const nameIndex = headers.findIndex(h => h.toLowerCase() === 'nama pelanggan');
                 const range = valueRange.range;
 
-                // Extract sheet name from range like ''Sheet Name'!A1:Z100'
-                const sheetNameMatch = range.match(/^'([^']*)'/);
-                const sheetName = sheetNameMatch ? sheetNameMatch[1] : range.split('!')[0];
+                const sheetName = salesName;
 
                 const startRowMatch = range.match(/(\d+)/);
                 if (!startRowMatch) { console.error('Could not parse start row from range:', range); return; }
