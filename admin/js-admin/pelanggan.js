@@ -168,7 +168,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 const nameIndex = headers.findIndex(h => h.toLowerCase() === 'nama pelanggan');
                 const range = valueRange.range;
 
-                const sheetName = salesName;
+                // Extract sheet name from range like ''Sheet Name''!A1:Z100''
+                const sheetNameMatch = range.match(/^\'([^\']*)\'/);
+                const sheetName = sheetNameMatch ? sheetNameMatch[1] : range.split('!')[0];
+
+                const startColMatch = range.match(/!([A-Z]+)/);
+                const startCol = startColMatch ? startColMatch[1] : 'A';
 
                 const startRowMatch = range.match(/(\d+)/);
                 if (!startRowMatch) { console.error('Could not parse start row from range:', range); return; }
@@ -184,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         rows.push({ ...rowAsObject, originalSheetRow: headerRow + 1 + i });
                     }
                 });
-                monitoringDataHeadersBySales[salesName.toLowerCase()] = { headers: headers, sheetName: sheetName };
+                monitoringDataHeadersBySales[salesName.toLowerCase()] = { headers: headers, sheetName: sheetName, startCol: startCol };
                 monitoringDataBySales[salesName.toLowerCase()] = rows;
             }
         });
@@ -388,6 +393,14 @@ document.addEventListener('DOMContentLoaded', function () {
         updatePagination();
     }
 
+    function letterToColumnIndex(letter) {
+        let column = 0, length = letter.length;
+        for (let i = 0; i < length; i++) {
+            column += (letter.charCodeAt(i) - 64) * Math.pow(26, length - i - 1);
+        }
+        return column - 1;
+    }
+
     function columnIndexToLetter(index) {
         let temp, letter = '';
         while (index >= 0) {
@@ -462,7 +475,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            const colLetter = columnIndexToLetter(colIndex);
+            const startCol = headerInfo.startCol || 'A';
+            const startColIndex = letterToColumnIndex(startCol);
+            const finalColIndex = startColIndex + colIndex;
+            const colLetter = columnIndexToLetter(finalColIndex);
+
             const range = `'${sheetName}'!${colLetter}${originalRow}`;
 
             td.style.backgroundColor = '#fdffab'; // Saving...
