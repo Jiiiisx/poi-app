@@ -1033,10 +1033,18 @@ function renderSingleSalesChart(salesName) {
     const salesData = googleSheetsIntegration.monitoringDataBySales[salesName.toLowerCase()];
     if (!salesData) return;
 
+    const chartContainer = document.querySelector('.chart-container');
+    chartContainer.style.height = '400px';
+
     const headerInfo = googleSheetsIntegration.monitoringDataHeadersBySales[salesName.toLowerCase()];
-    if (!headerInfo || !headerInfo.headers) return;
+    console.log('headerInfo:', headerInfo);
+    if (!headerInfo || !headerInfo.headers) {
+        console.error('headerInfo or headerInfo.headers is not available.');
+        return;
+    }
 
     const headers = headerInfo.headers;
+    console.log('headers:', headers);
     const billingColumns = headers.filter(h => h.toLowerCase().startsWith('billing'));
 
     const parseBillingMonth = (billingHeader) => {
