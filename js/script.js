@@ -23,35 +23,30 @@ function initializeGsi() {
 
 
 
+
+
 window.handleCredentialResponse = function(response) {
   console.log('handleCredentialResponse called');
   try {
-    ErrorHandler.log("Credential response received");
-    console.log('Response object:', response);
-
     if (response.credential) {
-      currentIdToken = response.credential;
-      const userPayload = getUserEmailFromToken(currentIdToken);
-      console.log('DEBUG: User Payload:', userPayload);
+      const userPayload = getUserEmailFromToken(response.credential);
       if (userPayload) {
-          currentUserEmail = userPayload.email;
-          window.currentUserEmail = currentUserEmail; 
-          window.googleSheetsIntegration.currentUserEmail = currentUserEmail;
-          const userName = userPayload.name;
-          const userPicture = userPayload.picture;
-          console.log('DEBUG: userName:', userName, 'userPicture:', userPicture);
-
-          // Save authentication data for persistence
           const userInfo = {
             email: userPayload.email,
             name: userPayload.name,
-            picture: userPayload.picture
+            picture: userPayload.picture,
+            token: response.credential
           };
+          // The reload was causing a login loop.
+          // Instead, we save the definitive user info and call updateSigninStatus directly.
           localStorage.setItem('userInfo', JSON.stringify(userInfo));
-          localStorage.setItem('id_token', currentIdToken);
+          localStorage.setItem('isLoggedIn', 'true');
+          
+          currentIdToken = userInfo.token;
+          currentUserEmail = userInfo.email;
+          window.currentUserEmail = currentUserEmail;
 
-          updateSigninStatus(true, userName, userPicture);
-          ErrorHandler.log("Login successful. User email: " + currentUserEmail);
+          updateSigninStatus(true, userInfo.name, userInfo.picture);
       } else {
           throw new Error("Failed to decode user credential");
       }
@@ -60,7 +55,6 @@ window.handleCredentialResponse = function(response) {
     }
   } catch (error) {
     console.error('Error in handleCredentialResponse:', error);
-    ErrorHandler.handleError(error, 'handleCredentialResponse');
     updateSigninStatus(false);
   }
 };
@@ -253,28 +247,31 @@ function updateSigninStatus(isSignedIn, userName = '', userPicture = '') {
         wavyLines.style.display = 'none';
       }
       
-      // Directly call setup and handle UI
-      window.googleSheetsIntegration.setup().then(() => {
-        console.log('Dashboard initialized successfully');
-        renderSalesPerformanceChart(); // Call the new function here
-        const elapsedTime = Date.now() - startTime;
-        const timeToWait = Math.max(0, MIN_LOADING_TIME - elapsedTime);
+      document.addEventListener('googleSheetsIntegrationReady', () => {
+          if (window.googleSheetsIntegration) {
+              window.googleSheetsIntegration.setup().then(() => {
+                console.log('Dashboard initialized successfully');
+                renderSalesPerformanceChart();
+                const elapsedTime = Date.now() - startTime;
+                const timeToWait = Math.max(0, MIN_LOADING_TIME - elapsedTime);
 
-        setTimeout(() => {
-            if (skeletonLoader) {
-                skeletonLoader.style.display = 'none';
-            }
-            mainContent.style.display = 'block';
-            if (typeof playDashboardEntranceAnimation === 'function') {
-                playDashboardEntranceAnimation();
-            }
-        }, timeToWait);
-      }).catch(error => {
-          console.error('Dashboard display error:', error);
-          if (skeletonLoader) {
-              skeletonLoader.style.display = 'none';
+                setTimeout(() => {
+                    if (skeletonLoader) {
+                        skeletonLoader.style.display = 'none';
+                    }
+                    mainContent.style.display = 'block';
+                    if (typeof playDashboardEntranceAnimation === 'function') {
+                        playDashboardEntranceAnimation();
+                    }
+                }, timeToWait);
+              }).catch(error => {
+                  console.error('Dashboard display error:', error);
+                  if (skeletonLoader) {
+                      skeletonLoader.style.display = 'none';
+                  }
+                  mainContent.style.display = 'block';
+              });
           }
-          mainContent.style.display = 'block';
       });
       
       localStorage.setItem('isLoggedIn', 'true');
@@ -976,6 +973,16 @@ function renderSalesPerformanceChart() {
         return;
     }
 
+    const selectedSales = googleSheetsIntegration.currentSalesFilter;
+
+    if (selectedSales && selectedSales !== 'Home') {
+        renderSingleSalesChart(selectedSales);
+    } else {
+        renderAllSalesChart();
+    }
+}
+
+function renderAllSalesChart() {
     const currentTeam = googleSheetsIntegration.currentTeam;
     const nonTeldaSales = googleSheetsIntegration.nonTeldaSales.map(s => s.toLowerCase());
 
@@ -1002,13 +1009,6 @@ function renderSalesPerformanceChart() {
         totalCustomers: salesPerformance[name].totalCustomers
     })).sort((a, b) => b.totalCustomers - a.totalCustomers);
 
-    const numBars = salesData.length;
-    const chartHeight = numBars * 30 + 50; // 30px per bar + 50px for padding
-
-    const chartContainer = document.querySelector('.chart-container');
-    chartContainer.style.height = `${chartHeight}px`;
-
-    // --- Chart ---
     const chartLabels = salesData.map(s => s.name);
     const chartData = salesData.map(s => s.totalCustomers);
 
@@ -1021,7 +1021,6 @@ function renderSalesPerformanceChart() {
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
     gradient.addColorStop(0, primaryColor);
     gradient.addColorStop(1, '#ff7e5f');
-
 
     salesPerformanceChart = new Chart(ctx, {
         type: 'bar',
@@ -1042,45 +1041,108 @@ function renderSalesPerformanceChart() {
             plugins: {
                 legend: {
                     display: false
-                },
-                tooltip: {
-                    backgroundColor: '#fff',
-                    titleColor: '#333',
-                    bodyColor: '#666',
-                    borderColor: '#ddd',
-                    borderWidth: 1,
-                    padding: 10,
-                    callbacks: {
-                        label: (context) => ` ${context.raw} Pelanggan`
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    grid: {
-                        drawBorder: false,
-                    },
-                    ticks: {
-                        font: {
-                            family: "'Inter', sans-serif"
-                        }
-                    }
-                },
-                y: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        font: {
-                            family: "'Inter', sans-serif"
-                        }
-                    }
                 }
             }
         }
     });
     document.querySelector('.chart-section').style.display = 'block';
+}
+
+function renderSingleSalesChart(salesName) {
+    const salesData = googleSheetsIntegration.monitoringDataBySales[salesName.toLowerCase()];
+    if (!salesData) return;
+
+    const chartContainer = document.querySelector('.chart-container');
+    chartContainer.style.height = '400px';
+
+    const headerInfo = googleSheetsIntegration.monitoringDataHeadersBySales[salesName.toLowerCase()];
+    console.log('headerInfo:', headerInfo);
+    if (!headerInfo || !headerInfo.headers) {
+        console.error('headerInfo or headerInfo.headers is not available.');
+        return;
+    }
+
+    const headers = headerInfo.headers;
+    console.log('headers:', headers);
+    const billingColumns = headers.filter(h => h.toLowerCase().startsWith('billing'));
+
+    const parseBillingMonth = (billingHeader) => {
+        const parts = billingHeader.split(' ');
+        if (parts.length !== 3) return null;
+        const monthName = parts[1];
+        const year = `20${parts[2]}`;
+        const monthIndex = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'].findIndex(m => m.toLowerCase() === monthName.toLowerCase());
+        if (monthIndex === -1) return null;
+        return new Date(year, monthIndex, 1);
+    };
+
+    billingColumns.sort((a, b) => {
+        const dateA = parseBillingMonth(a);
+        const dateB = parseBillingMonth(b);
+        if (!dateA || !dateB) return 0;
+        return dateA - dateB;
+    });
+
+    const monthlyAcquisitions = {};
+    salesData.forEach(customer => {
+        for (const col of billingColumns) {
+            if (customer[col]) {
+                const acquisitionDate = parseBillingMonth(col);
+                if (acquisitionDate) {
+                    const monthYear = `${acquisitionDate.getMonth() + 1}/${acquisitionDate.getFullYear()}`;
+                    monthlyAcquisitions[monthYear] = (monthlyAcquisitions[monthYear] || 0) + 1;
+                    break;
+                }
+            }
+        }
+    });
+
+    const sortedMonths = Object.keys(monthlyAcquisitions).sort((a, b) => {
+        const [m1, y1] = a.split('/');
+        const [m2, y2] = b.split('/');
+        return new Date(y1, m1 - 1) - new Date(y2, m2 - 1);
+    });
+
+    const chartLabels = sortedMonths;
+    const chartData = sortedMonths.map(month => monthlyAcquisitions[month]);
+
+    const ctx = document.getElementById('salesPerformanceChart').getContext('2d');
+    if (salesPerformanceChart) {
+        salesPerformanceChart.destroy();
+    }
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(40, 167, 69, 0.6)');
+    gradient.addColorStop(1, 'rgba(40, 167, 69, 0)');
+
+    salesPerformanceChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Akuisisi per Bulan',
+                data: chartData,
+                backgroundColor: gradient,
+                borderColor: '#28a745',
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#fff',
+                pointBorderColor: '#28a745',
+                pointHoverRadius: 7,
+                pointRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
 }
 
 // --- START TAB NAVIGATION LOGIC ---
