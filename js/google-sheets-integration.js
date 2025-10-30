@@ -1434,10 +1434,13 @@ class GoogleSheetsIntegration {
             if (tabNavigation) tabNavigation.style.display = 'none'; // Hide tabs
             if (chartSection) chartSection.style.display = 'block'; // Show chart for home
 
-            // Switch back to the customer list tab
-            if (window.switchToTab) {
-                window.switchToTab('pelanggan');
-            }
+            const contentGrid = document.querySelector('.content-grid');
+            const monitoringSection = document.getElementById('monthlyMonitoringSection');
+            const salesSummarySection = document.getElementById('salesSummarySection');
+
+            if(contentGrid) contentGrid.style.display = 'block';
+            if(monitoringSection) monitoringSection.style.display = 'none';
+            if(salesSummarySection) salesSummarySection.style.display = 'none';
         }
     }
 
