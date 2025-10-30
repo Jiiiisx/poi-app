@@ -1033,7 +1033,10 @@ function renderSingleSalesChart(salesName) {
     const salesData = googleSheetsIntegration.monitoringDataBySales[salesName.toLowerCase()];
     if (!salesData) return;
 
-    const headers = googleSheetsIntegration.monitoringDataHeadersBySales[salesName.toLowerCase()].headers;
+    const headerInfo = googleSheetsIntegration.monitoringDataHeadersBySales[salesName.toLowerCase()];
+    if (!headerInfo || !headerInfo.headers) return;
+
+    const headers = headerInfo.headers;
     const billingColumns = headers.filter(h => h.toLowerCase().startsWith('billing'));
 
     const parseBillingMonth = (billingHeader) => {
