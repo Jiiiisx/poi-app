@@ -949,29 +949,27 @@ function updateWelcomeMessage(userName) {
 document.addEventListener('DOMContentLoaded', displayCurrentDate);
 
 function renderSalesPerformanceChart() {
-    if (typeof googleSheetsIntegration === 'undefined' || !googleSheetsIntegration.originalData) {
+    if (typeof googleSheetsIntegration === 'undefined' || !googleSheetsIntegration.monitoringDataBySales) {
         console.warn('Sales data not available for chart rendering.');
         return;
     }
 
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
     const salesPerformance = {};
-    googleSheetsIntegration.originalData.forEach(row => {
-        const salesName = row.nama_sales;
-        if (salesName) {
-            if (!salesPerformance[salesName]) {
-                salesPerformance[salesName] = {
-                    customers: [],
-                    totalCustomers: 0
-                };
-            }
-            salesPerformance[salesName].customers.push(row);
-            salesPerformance[salesName].totalCustomers++;
-        }
-    });
+    for (const salesName in googleSheetsIntegration.monitoringDataBySales) {
+        const customers = googleSheetsIntegration.monitoringDataBySales[salesName];
+        salesPerformance[salesName] = {
+            customers: customers,
+            totalCustomers: customers.length
+        };
+    }
 
     const salesNames = Object.keys(salesPerformance);
     const salesData = salesNames.map(name => ({
-        name: name,
+        name: capitalizeFirstLetter(name),
         totalCustomers: salesPerformance[name].totalCustomers
     })).sort((a, b) => b.totalCustomers - a.totalCustomers);
 
