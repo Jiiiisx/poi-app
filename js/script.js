@@ -26,36 +26,17 @@ function initializeGsi() {
 window.handleCredentialResponse = function(response) {
   console.log('handleCredentialResponse called');
   try {
-    ErrorHandler.log("Credential response received");
-    console.log('Response object:', response);
-
     if (response.credential) {
-      currentIdToken = response.credential;
-      const userPayload = getUserEmailFromToken(currentIdToken);
-      console.log('DEBUG: User Payload:', userPayload);
+      const userPayload = getUserEmailFromToken(response.credential);
       if (userPayload) {
-          currentUserEmail = userPayload.email;
-          window.currentUserEmail = currentUserEmail; 
-          if (window.googleSheetsIntegration) {
-              window.googleSheetsIntegration.currentUserEmail = currentUserEmail;
-          } else {
-              console.warn('googleSheetsIntegration not ready, will set currentUserEmail later.');
-          }
-          const userName = userPayload.name;
-          const userPicture = userPayload.picture;
-          console.log('DEBUG: userName:', userName, 'userPicture:', userPicture);
-
-          // Save authentication data for persistence
           const userInfo = {
             email: userPayload.email,
             name: userPayload.name,
-            picture: userPayload.picture
+            picture: userPayload.picture,
+            token: response.credential
           };
-          localStorage.setItem('userInfo', JSON.stringify(userInfo));
-          localStorage.setItem('id_token', currentIdToken);
-
-          updateSigninStatus(true, userName, userPicture);
-          ErrorHandler.log("Login successful. User email: " + currentUserEmail);
+          localStorage.setItem('pendingUserInfo', JSON.stringify(userInfo));
+          window.location.reload(); // Reload the page to ensure scripts load in order
       } else {
           throw new Error("Failed to decode user credential");
       }
@@ -64,10 +45,27 @@ window.handleCredentialResponse = function(response) {
     }
   } catch (error) {
     console.error('Error in handleCredentialResponse:', error);
-    ErrorHandler.handleError(error, 'handleCredentialResponse');
     updateSigninStatus(false);
   }
 };
+
+document.addEventListener('DOMContentLoaded', () => {
+    const pendingUserInfo = localStorage.getItem('pendingUserInfo');
+
+    if (pendingUserInfo) {
+        localStorage.removeItem('pendingUserInfo');
+        const userInfo = JSON.parse(pendingUserInfo);
+        
+        currentIdToken = userInfo.token;
+        currentUserEmail = userInfo.email;
+        window.currentUserEmail = currentUserEmail;
+
+        document.addEventListener('googleSheetsIntegrationReady', () => {
+            console.log('googleSheetsIntegration is ready, proceeding with sign-in status update.');
+            updateSigninStatus(true, userInfo.name, userInfo.picture);
+        });
+    }
+});
 
 
 
