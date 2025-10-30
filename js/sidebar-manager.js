@@ -136,8 +136,8 @@ class SidebarManager {
 
         this.salesList.innerHTML = '';
         
-        // Add "All Sales" option
-        const allSalesItem = this.createSalesItem('All Sales', 'all', true);
+        // Add "Home" option
+        const allSalesItem = this.createSalesItem('Home', 'all', true);
         this.salesList.appendChild(allSalesItem);
 
         // Load dynamic sales
@@ -149,8 +149,9 @@ class SidebarManager {
         li.className = `sales-item ${isActive ? 'active' : ''}`;
         li.dataset.salesId = id;
         li.dataset.salesName = name;
+        const iconClass = name === 'Home' ? 'fa-home' : 'fa-user-tie';
         li.innerHTML = `
-            <i class="fas fa-user-tie"></i>
+            <i class="fas ${iconClass}"></i>
             <span>${name}</span>
         `;
         
