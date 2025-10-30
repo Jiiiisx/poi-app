@@ -7,9 +7,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-        const blob = new Blob([JSON.stringify({ page })], { type: 'application/json' });
-        navigator.sendBeacon('/api/log-view', blob);
+        fetch('/api/log-view', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ page }),
+            keepalive: true
+        });
     } catch (error) {
-        console.error('Error sending analytics beacon:', error);
+        console.error('Error sending analytics:', error);
     }
 });
