@@ -247,32 +247,30 @@ function updateSigninStatus(isSignedIn, userName = '', userPicture = '') {
         wavyLines.style.display = 'none';
       }
       
-      document.addEventListener('googleSheetsIntegrationReady', () => {
-          if (window.googleSheetsIntegration) {
-              window.googleSheetsIntegration.setup().then(() => {
-                console.log('Dashboard initialized successfully');
-                renderSalesPerformanceChart();
-                const elapsedTime = Date.now() - startTime;
-                const timeToWait = Math.max(0, MIN_LOADING_TIME - elapsedTime);
+      if (window.googleSheetsIntegration) {
+          window.googleSheetsIntegration.setup().then(() => {
+            console.log('Dashboard initialized successfully');
+            renderSalesPerformanceChart();
+            const elapsedTime = Date.now() - startTime;
+            const timeToWait = Math.max(0, MIN_LOADING_TIME - elapsedTime);
 
-                setTimeout(() => {
-                    if (skeletonLoader) {
-                        skeletonLoader.style.display = 'none';
-                    }
-                    mainContent.style.display = 'block';
-                    if (typeof playDashboardEntranceAnimation === 'function') {
-                        playDashboardEntranceAnimation();
-                    }
-                }, timeToWait);
-              }).catch(error => {
-                  console.error('Dashboard display error:', error);
-                  if (skeletonLoader) {
-                      skeletonLoader.style.display = 'none';
-                  }
-                  mainContent.style.display = 'block';
-              });
-          }
-      });
+            setTimeout(() => {
+                if (skeletonLoader) {
+                    skeletonLoader.style.display = 'none';
+                }
+                mainContent.style.display = 'block';
+                if (typeof playDashboardEntranceAnimation === 'function') {
+                    playDashboardEntranceAnimation();
+                }
+            }, timeToWait);
+          }).catch(error => {
+              console.error('Dashboard display error:', error);
+              if (skeletonLoader) {
+                  skeletonLoader.style.display = 'none';
+              }
+              mainContent.style.display = 'block';
+          });
+      }
       
       localStorage.setItem('isLoggedIn', 'true');
     } else {
