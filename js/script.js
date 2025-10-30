@@ -23,6 +23,23 @@ function initializeGsi() {
 
 
 
+document.addEventListener('googleSheetsIntegrationReady', () => {
+    console.log('googleSheetsIntegration is ready, checking for pending user info.');
+    const pendingUserInfo = localStorage.getItem('pendingUserInfo');
+
+    if (pendingUserInfo) {
+        localStorage.removeItem('pendingUserInfo');
+        const userInfo = JSON.parse(pendingUserInfo);
+        
+        currentIdToken = userInfo.token;
+        currentUserEmail = userInfo.email;
+        window.currentUserEmail = currentUserEmail;
+
+        console.log('Proceeding with sign-in status update from pending info.');
+        updateSigninStatus(true, userInfo.name, userInfo.picture);
+    }
+});
+
 window.handleCredentialResponse = function(response) {
   console.log('handleCredentialResponse called');
   try {
@@ -48,24 +65,6 @@ window.handleCredentialResponse = function(response) {
     updateSigninStatus(false);
   }
 };
-
-document.addEventListener('DOMContentLoaded', () => {
-    const pendingUserInfo = localStorage.getItem('pendingUserInfo');
-
-    if (pendingUserInfo) {
-        localStorage.removeItem('pendingUserInfo');
-        const userInfo = JSON.parse(pendingUserInfo);
-        
-        currentIdToken = userInfo.token;
-        currentUserEmail = userInfo.email;
-        window.currentUserEmail = currentUserEmail;
-
-        document.addEventListener('googleSheetsIntegrationReady', () => {
-            console.log('googleSheetsIntegration is ready, proceeding with sign-in status update.');
-            updateSigninStatus(true, userInfo.name, userInfo.picture);
-        });
-    }
-});
 
 
 
