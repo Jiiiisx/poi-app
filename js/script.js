@@ -1053,14 +1053,12 @@ function renderSingleSalesChart(salesName) {
     const chartContainer = document.querySelector('.chart-container');
     chartContainer.style.height = '400px';
 
-    const headerInfo = googleSheetsIntegration.monitoringDataHeadersBySales[salesName.toLowerCase()];
-    console.log('headerInfo:', headerInfo);
-    if (!headerInfo || !headerInfo.headers) {
-        console.error('headerInfo or headerInfo.headers is not available.');
+    const headers = googleSheetsIntegration.monitoringDataHeadersBySales[salesName.toLowerCase()];
+    console.log('headers:', headers);
+    if (!headers) {
+        console.error('headers is not available.');
         return;
     }
-
-    const headers = headerInfo.headers;
     console.log('headers:', headers);
     const billingColumns = headers.filter(h => h.toLowerCase().startsWith('billing'));
 
