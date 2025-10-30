@@ -512,6 +512,28 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Sidebar toggle is now handled by SidebarManager
     // No need for duplicate initialization
+
+    // Listen for sales view changes to control chart visibility
+    document.addEventListener('salesViewChanged', (e) => {
+        const salesName = e.detail.salesName;
+        const chartSection = document.querySelector('.chart-section');
+
+        if (!chartSection) return;
+
+        if (salesName && salesName !== 'Home') {
+            // Individual sales view: destroy chart and hide section
+            if (window.salesPerformanceChart) {
+                window.salesPerformanceChart.destroy();
+            }
+            chartSection.style.display = 'none';
+        } else {
+            // Home view: show section and re-render chart
+            chartSection.style.display = 'block';
+            if (typeof window.renderSalesPerformanceChart === 'function') {
+                window.renderSalesPerformanceChart();
+            }
+        }
+    });
     
   } catch (error) {
     ErrorHandler.handleError(error, 'DOMContentLoaded');

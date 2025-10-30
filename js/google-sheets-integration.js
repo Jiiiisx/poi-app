@@ -1339,6 +1339,9 @@ class GoogleSheetsIntegration {
         this.toggleActionsColumn();
         this.applyCombinedFilters();
 
+        // Dispatch an event to notify other parts of the app about the view change
+        document.dispatchEvent(new CustomEvent('salesViewChanged', { detail: { salesName: salesName } }));
+
         setTimeout(() => {
             if (isNonTelda) {
                 this.updateNonTeldaSalesListActiveState(salesName);
@@ -1362,7 +1365,6 @@ class GoogleSheetsIntegration {
         const monthFilterContainer = document.querySelector('.month-filter-container');
         const salesSummarySection = document.getElementById('salesSummarySection');
         const tabNavigation = document.querySelector('.tab-navigation');
-        const chartSection = document.querySelector('.chart-section');
 
         if (salesName && salesName !== 'Home') {
             // Only show tabs for the 'telda' team view
@@ -1388,7 +1390,7 @@ class GoogleSheetsIntegration {
                     const dateA = this._parseHeaderDate(a);
                     const dateB = this._parseHeaderDate(b);
                     if (!dateA && !dateB) return 0;
-                    if (!dateA) return 1; // Put invalid dates at the end
+                    if (!dateA) return 1;
                     if (!dateB) return -1;
                     return dateB - dateA; // Descending sort
                 });
@@ -1432,7 +1434,6 @@ class GoogleSheetsIntegration {
 
         } else {
             if (tabNavigation) tabNavigation.style.display = 'none'; // Hide tabs
-            if (chartSection) chartSection.style.display = 'block'; // Show chart for home
 
             const contentGrid = document.querySelector('.content-grid');
             const monitoringSection = document.getElementById('monthlyMonitoringSection');
