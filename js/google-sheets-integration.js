@@ -1347,6 +1347,10 @@ class GoogleSheetsIntegration {
             }
         }, 0);
 
+        if (typeof renderSalesPerformanceChart === 'function') {
+            renderSalesPerformanceChart();
+        }
+
         const activeFilterDisplay = document.getElementById('active-filter-display');
         if (activeFilterDisplay) {
             if (salesName && salesName !== 'Home') {
