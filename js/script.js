@@ -1095,7 +1095,7 @@ function setupTabNavigation() {
             // Explicitly show the monitoring sections when switching to the tab
             monitoringSection.style.display = 'block';
             salesSummarySection.style.display = 'block';
-            if (chartSection) chartSection.style.display = 'block';
+            if (chartSection) chartSection.style.display = 'none'; // Hide chart in monitoring view
         }
     };
 
