@@ -1442,6 +1442,10 @@ class GoogleSheetsIntegration {
             if(monitoringSection) monitoringSection.style.display = 'none';
             if(salesSummarySection) salesSummarySection.style.display = 'none';
         }
+
+        if (typeof renderSalesPerformanceChart === 'function') {
+            renderSalesPerformanceChart();
+        }
     }
 
     updateSalesListActiveState(salesName) {
@@ -2396,6 +2400,9 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM loaded, initializing Google Sheets Integration...');
     googleSheetsIntegration = new GoogleSheetsIntegration();
     window.googleSheetsIntegration = googleSheetsIntegration;
+    if (window.currentUserEmail) {
+        googleSheetsIntegration.currentUserEmail = window.currentUserEmail;
+    }
     const event = new CustomEvent('googleSheetsIntegrationReady');
     document.dispatchEvent(event);
 });
