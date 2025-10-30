@@ -36,7 +36,11 @@ window.handleCredentialResponse = function(response) {
       if (userPayload) {
           currentUserEmail = userPayload.email;
           window.currentUserEmail = currentUserEmail; 
-          window.googleSheetsIntegration.currentUserEmail = currentUserEmail;
+          if (window.googleSheetsIntegration) {
+              window.googleSheetsIntegration.currentUserEmail = currentUserEmail;
+          } else {
+              console.warn('googleSheetsIntegration not ready, will set currentUserEmail later.');
+          }
           const userName = userPayload.name;
           const userPicture = userPayload.picture;
           console.log('DEBUG: userName:', userName, 'userPicture:', userPicture);
