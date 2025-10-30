@@ -255,6 +255,7 @@ function updateSigninStatus(isSignedIn, userName = '', userPicture = '') {
       // Directly call setup and handle UI
       window.googleSheetsIntegration.setup().then(() => {
         console.log('Dashboard initialized successfully');
+        renderSalesPerformanceChart(); // Call the new function here
         const elapsedTime = Date.now() - startTime;
         const timeToWait = Math.max(0, MIN_LOADING_TIME - elapsedTime);
 
@@ -945,6 +946,108 @@ function updateWelcomeMessage(userName) {
 }
 
 document.addEventListener('DOMContentLoaded', displayCurrentDate);
+
+function renderSalesPerformanceChart() {
+    if (typeof googleSheetsIntegration === 'undefined' || !googleSheetsIntegration.originalData) {
+        console.warn('Sales data not available for chart rendering.');
+        return;
+    }
+
+    const salesPerformance = {};
+    googleSheetsIntegration.originalData.forEach(row => {
+        const salesName = row.nama_sales;
+        if (salesName) {
+            if (!salesPerformance[salesName]) {
+                salesPerformance[salesName] = {
+                    customers: [],
+                    totalCustomers: 0
+                };
+            }
+            salesPerformance[salesName].customers.push(row);
+            salesPerformance[salesName].totalCustomers++;
+        }
+    });
+
+    const salesNames = Object.keys(salesPerformance);
+    const salesData = salesNames.map(name => ({
+        name: name,
+        totalCustomers: salesPerformance[name].totalCustomers
+    })).sort((a, b) => b.totalCustomers - a.totalCustomers);
+
+    // --- Chart ---
+    const chartLabels = salesData.map(s => s.name);
+    const chartData = salesData.map(s => s.totalCustomers);
+
+    const ctx = document.getElementById('salesPerformanceChart').getContext('2d');
+    if (window.salesPerformanceChart) {
+        window.salesPerformanceChart.destroy();
+    }
+
+    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#d9363e';
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, primaryColor);
+    gradient.addColorStop(1, '#ff7e5f');
+
+
+    window.salesPerformanceChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Jumlah Pelanggan',
+                data: chartData,
+                backgroundColor: gradient,
+                borderRadius: 4,
+                borderWidth: 0
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: '#fff',
+                    titleColor: '#333',
+                    bodyColor: '#666',
+                    borderColor: '#ddd',
+                    borderWidth: 1,
+                    padding: 10,
+                    callbacks: {
+                        label: (context) => ` ${context.raw} Pelanggan`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: {
+                        drawBorder: false,
+                    },
+                    ticks: {
+                        font: {
+                            family: "'Inter', sans-serif"
+                        }
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            family: "'Inter', sans-serif"
+                        }
+                    }
+                }
+            }
+        }
+    });
+    document.querySelector('.chart-section').style.display = 'block';
+}
 
 // --- START TAB NAVIGATION LOGIC ---
 function setupTabNavigation() {

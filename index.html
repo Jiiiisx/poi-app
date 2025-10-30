@@ -168,6 +168,14 @@
         text-decoration: none;
     }
 
+    .chart-section {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        margin-bottom: 20px;
+    }
+
   </style>
 
 
@@ -449,6 +457,16 @@
               <div class="stat-number" id="totalPemerintahan">Memuat...</div>
             </div>
           </div>
+        </section>
+
+        <!-- Sales Performance Chart -->
+        <section class="chart-section">
+            <div class="section-header">
+                <h3>Jumlah Pelanggan per Sales</h3>
+            </div>
+            <div class="chart-container" style="height:400px">
+                <canvas id="salesPerformanceChart"></canvas>
+            </div>
         </section>
         
         <!-- Tab Navigation -->
