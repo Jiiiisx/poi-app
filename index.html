@@ -19,6 +19,12 @@
   <link rel="stylesheet" href="css/custom-notifications.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+  crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+  integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+  crossorigin=""></script>
   <meta name="google-site-verification" content="qnpRH9xhfD37zmmVaWbxUWHyfAs7DVt1aMDfI18qi_I" />
   <script src="/_vercel/insights/script.js" defer></script>
   <style>
@@ -570,6 +576,13 @@
           </form>
         </section>
         
+        <section class="map-section" id="map-section">
+          <div class="section-header">
+            <h3>Peta Sebaran Pelanggan</h3>
+          </div>
+          <div id="customer-map" style="height: 400px; width: 100%;"></div>
+        </section>
+
         <section class="content-grid">
           <div class="table-section">
             <div class="section-header">
@@ -1003,6 +1016,7 @@
     <!-- Load Main Script Last (as it depends on the above) -->
     <script src="js/summary-charts.js"></script>
     <script src="js/script.js?v=1.1"></script>
+    <script src="js/customer-map.js"></script>
 
     <script src="js/analytics-tracker.js" defer></script>
 
