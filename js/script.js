@@ -1083,15 +1083,19 @@ function setupTabNavigation() {
             link.classList.toggle('active', link.dataset.tab === tabName);
         });
 
+        const chartSection = document.querySelector('.chart-section');
+
         if (tabName === 'pelanggan') {
             contentGrid.style.display = 'block';
             monitoringSection.style.display = 'none';
             salesSummarySection.style.display = 'none';
+            if (chartSection) chartSection.style.display = 'none';
         } else if (tabName === 'monitoring') {
             contentGrid.style.display = 'none';
             // Explicitly show the monitoring sections when switching to the tab
             monitoringSection.style.display = 'block';
             salesSummarySection.style.display = 'block';
+            if (chartSection) chartSection.style.display = 'block';
         }
     };
 

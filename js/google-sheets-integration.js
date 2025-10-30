@@ -1362,6 +1362,7 @@ class GoogleSheetsIntegration {
         const monthFilterContainer = document.querySelector('.month-filter-container');
         const salesSummarySection = document.getElementById('salesSummarySection');
         const tabNavigation = document.querySelector('.tab-navigation');
+        const chartSection = document.querySelector('.chart-section');
 
         if (salesName && salesName !== 'Home') {
             // Only show tabs for the 'telda' team view
@@ -1431,6 +1432,7 @@ class GoogleSheetsIntegration {
 
         } else {
             if (tabNavigation) tabNavigation.style.display = 'none'; // Hide tabs
+            if (chartSection) chartSection.style.display = 'block'; // Show chart for home
 
             // Switch back to the customer list tab
             if (window.switchToTab) {
