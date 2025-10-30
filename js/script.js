@@ -23,22 +23,7 @@ function initializeGsi() {
 
 
 
-document.addEventListener('googleSheetsIntegrationReady', () => {
-    console.log('googleSheetsIntegration is ready, checking for pending user info.');
-    const pendingUserInfo = localStorage.getItem('pendingUserInfo');
 
-    if (pendingUserInfo) {
-        localStorage.removeItem('pendingUserInfo');
-        const userInfo = JSON.parse(pendingUserInfo);
-        
-        currentIdToken = userInfo.token;
-        currentUserEmail = userInfo.email;
-        window.currentUserEmail = currentUserEmail;
-
-        console.log('Proceeding with sign-in status update from pending info.');
-        updateSigninStatus(true, userInfo.name, userInfo.picture);
-    }
-});
 
 window.handleCredentialResponse = function(response) {
   console.log('handleCredentialResponse called');
@@ -52,8 +37,16 @@ window.handleCredentialResponse = function(response) {
             picture: userPayload.picture,
             token: response.credential
           };
-          localStorage.setItem('pendingUserInfo', JSON.stringify(userInfo));
-          window.location.reload(); // Reload the page to ensure scripts load in order
+          // The reload was causing a login loop.
+          // Instead, we save the definitive user info and call updateSigninStatus directly.
+          localStorage.setItem('userInfo', JSON.stringify(userInfo));
+          localStorage.setItem('isLoggedIn', 'true');
+          
+          currentIdToken = userInfo.token;
+          currentUserEmail = userInfo.email;
+          window.currentUserEmail = currentUserEmail;
+
+          updateSigninStatus(true, userInfo.name, userInfo.picture);
       } else {
           throw new Error("Failed to decode user credential");
       }
