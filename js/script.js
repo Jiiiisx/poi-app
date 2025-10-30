@@ -250,7 +250,6 @@ function updateSigninStatus(isSignedIn, userName = '', userPicture = '') {
       if (window.googleSheetsIntegration) {
           window.googleSheetsIntegration.setup().then(() => {
             console.log('Dashboard initialized successfully');
-            renderSalesPerformanceChart();
             const elapsedTime = Date.now() - startTime;
             const timeToWait = Math.max(0, MIN_LOADING_TIME - elapsedTime);
 
@@ -259,6 +258,7 @@ function updateSigninStatus(isSignedIn, userName = '', userPicture = '') {
                     skeletonLoader.style.display = 'none';
                 }
                 mainContent.style.display = 'block';
+                renderSalesPerformanceChart();
                 if (typeof playDashboardEntranceAnimation === 'function') {
                     playDashboardEntranceAnimation();
                 }
