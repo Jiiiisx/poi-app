@@ -1852,6 +1852,9 @@ class GoogleSheetsIntegration {
     handleTeamChange(newTeam) {
         this.currentTeam = newTeam;
         this.updateUIVisibility();
+        if (typeof renderSalesPerformanceChart === 'function') {
+            renderSalesPerformanceChart();
+        }
         if (newTeam === 'non-telda') {
             this.updateNonTeldaSalesList();
             this.filterBySales('TRI SUSANTOHADI', true);

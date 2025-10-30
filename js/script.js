@@ -954,17 +954,24 @@ function renderSalesPerformanceChart() {
         return;
     }
 
+    const currentTeam = googleSheetsIntegration.currentTeam;
+    const nonTeldaSales = googleSheetsIntegration.nonTeldaSales.map(s => s.toLowerCase());
+
     function capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
     const salesPerformance = {};
     for (const salesName in googleSheetsIntegration.monitoringDataBySales) {
-        const customers = googleSheetsIntegration.monitoringDataBySales[salesName];
-        salesPerformance[salesName] = {
-            customers: customers,
-            totalCustomers: customers.length
-        };
+        const isNonTelda = nonTeldaSales.includes(salesName.toLowerCase());
+
+        if ((currentTeam === 'telda' && !isNonTelda) || (currentTeam === 'non-telda' && isNonTelda)) {
+            const customers = googleSheetsIntegration.monitoringDataBySales[salesName];
+            salesPerformance[salesName] = {
+                customers: customers,
+                totalCustomers: customers.length
+            };
+        }
     }
 
     const salesNames = Object.keys(salesPerformance);
