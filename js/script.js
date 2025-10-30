@@ -517,8 +517,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (salesName && salesName !== 'Home') {
             // Individual sales view: destroy chart and hide section
-            if (window.salesPerformanceChart) {
-                window.salesPerformanceChart.destroy();
+            if (salesPerformanceChart) {
+                salesPerformanceChart.destroy();
             }
             chartSection.style.display = 'none';
         } else {
