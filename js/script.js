@@ -980,6 +980,12 @@ function renderSalesPerformanceChart() {
         totalCustomers: salesPerformance[name].totalCustomers
     })).sort((a, b) => b.totalCustomers - a.totalCustomers);
 
+    const numBars = salesData.length;
+    const chartHeight = numBars * 30 + 50; // 30px per bar + 50px for padding
+
+    const chartContainer = document.querySelector('.chart-container');
+    chartContainer.style.height = `${chartHeight}px`;
+
     // --- Chart ---
     const chartLabels = salesData.map(s => s.name);
     const chartData = salesData.map(s => s.totalCustomers);
