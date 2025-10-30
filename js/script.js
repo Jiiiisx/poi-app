@@ -1,4 +1,5 @@
 const CLIENT_ID = '167078370634-de0ou8c3hikdba9pq6evimmfekbkk9o6.apps.googleusercontent.com';
+let salesPerformanceChart = null;
 
 // Simple Error Handler
 const ErrorHandler = {
@@ -979,8 +980,8 @@ function renderSalesPerformanceChart() {
     const chartData = salesData.map(s => s.totalCustomers);
 
     const ctx = document.getElementById('salesPerformanceChart').getContext('2d');
-    if (window.salesPerformanceChart) {
-        window.salesPerformanceChart.destroy();
+    if (salesPerformanceChart) {
+        salesPerformanceChart.destroy();
     }
 
     const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#d9363e';
@@ -989,7 +990,7 @@ function renderSalesPerformanceChart() {
     gradient.addColorStop(1, '#ff7e5f');
 
 
-    window.salesPerformanceChart = new Chart(ctx, {
+    salesPerformanceChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: chartLabels,
