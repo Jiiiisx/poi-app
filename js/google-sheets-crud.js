@@ -2,7 +2,6 @@ class GoogleSheetsCRUD {
     constructor() {
         this.spreadsheetId = '15Yu8_PcUFvrQFIL3qy7TfvDJNg4XPSbqPJOU6Wh8Q1A';
         this.sheetName = 'REKAP CALON PELANGGAN BY SPARTA';
-        console.log('🚀 Google Sheets CRUD instance created');
     }
 
     // CREATE - Menambah data baru via backend
@@ -46,7 +45,6 @@ class GoogleSheetsCRUD {
             }
 
             const result = await response.json();
-            console.log('Customer added successfully:', result);
             NotificationHandler.show('Customer added successfully!', 'success');
             return result;
 

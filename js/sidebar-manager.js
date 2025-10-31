@@ -31,7 +31,6 @@ class SidebarManager {
         this.setupResponsiveBehavior();
         
         this.isInitialized = true;
-        console.log('SidebarManager initialized successfully');
     }
 
     validateElements() {
@@ -207,7 +206,6 @@ class SidebarManager {
     }
 
     switchView(view) {
-        console.log(`Switching to view: ${view}`);
         // Implement view switching logic here
     }
 

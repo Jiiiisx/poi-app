@@ -128,12 +128,10 @@ class GoogleSheetsIntegration {
 
             const { timestamp, data } = JSON.parse(cacheEntry);
             if (Date.now() - timestamp > ttl) {
-                console.log(`Cache for ${key} is stale.`);
                 localStorage.removeItem(key);
                 return null;
             }
 
-            console.log(`Using cached data for ${key}.`);
             return data;
         } catch (e) {
             console.warn("Could not read from localStorage:", e);
@@ -278,7 +276,6 @@ class GoogleSheetsIntegration {
 
         try {
             this.showLoading(true);
-            console.log('Loading main data from backend...');
             const response = await fetch('/api/customer-data');
             
             if (!response.ok) {
@@ -326,7 +323,6 @@ class GoogleSheetsIntegration {
         while (attempt < MAX_RETRIES) {
             try {
                 this.showLoading(true);
-                console.log(`(Attempt ${attempt + 1}) Loading monitoring data from backend...`);
                 
                 const namedRanges = Object.values(this.salesDataRanges).filter(range => range !== '');
                 const rangesString = namedRanges.join(',');
@@ -444,7 +440,6 @@ class GoogleSheetsIntegration {
             }
         });
 
-        console.log('Processed monitoring data by sales:', Object.keys(this.monitoringDataBySales));
     }
 
     async loadGovernmentData() {
@@ -458,7 +453,6 @@ class GoogleSheetsIntegration {
 
         try {
             this.showLoading(true);
-            console.log('Loading government data from backend...');
             const response = await fetch('/api/government-data');
 
             if (!response.ok) {
@@ -504,7 +498,6 @@ class GoogleSheetsIntegration {
             };
         });
         this.governmentData = [...this.originalGovernmentData];
-        console.log('Processed government data:', this.governmentData.length, 'rows');
     }
 
     processData(rawData) {
@@ -534,7 +527,6 @@ class GoogleSheetsIntegration {
             };
         }).filter(row => row.nama || row.no_telepon);
 
-        console.log('Processed main data:', this.originalData.length, 'valid rows');
         this.renderTable();
         this.updateSalesList();
         this.updateSalesDropdown();
