@@ -1053,25 +1053,22 @@ function renderAllSalesChart() {
 function renderSingleSalesChart(salesName) {
     const chartTitle = document.getElementById('chart-title');
     if (chartTitle) {
-        chartTitle.textContent = `Jumlah Pelanggan Per Sales (${salesName})`;
+        chartTitle.textContent = `Akuisisi Pelanggan Bulanan: ${salesName}`;
     }
     const salesData = googleSheetsIntegration.monitoringDataBySales[salesName.toLowerCase()];
     if (!salesData) return;
 
-    const chartContainer = document.querySelector('.chart-container');
-
     const headers = googleSheetsIntegration.monitoringDataHeadersBySales[salesName.toLowerCase()];
-    console.log('headers:', headers);
     if (!headers) {
-        console.error('headers is not available.');
+        console.error('Headers not available for single sales chart.');
         return;
     }
-    console.log('headers:', headers);
-    const billingColumns = headers.filter(h => h.toLowerCase().startsWith('billing'));
+
+    const billingColumns = headers.filter(h => h.toLowerCase().startsWith('billing '));
 
     const parseBillingMonth = (billingHeader) => {
         const parts = billingHeader.split(' ');
-        if (parts.length !== 3) return null;
+        if (parts.length < 3) return null;
         const monthName = parts[1];
         const year = `20${parts[2]}`;
         const monthIndex = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'].findIndex(m => m.toLowerCase() === monthName.toLowerCase());
@@ -1082,8 +1079,7 @@ function renderSingleSalesChart(salesName) {
     billingColumns.sort((a, b) => {
         const dateA = parseBillingMonth(a);
         const dateB = parseBillingMonth(b);
-        if (!dateA || !dateB) return 0;
-        return dateA - dateB;
+        return (dateA && dateB) ? dateA - dateB : 0;
     });
 
     const monthlyAcquisitions = {};
@@ -1092,18 +1088,20 @@ function renderSingleSalesChart(salesName) {
             if (customer[col]) {
                 const acquisitionDate = parseBillingMonth(col);
                 if (acquisitionDate) {
-                    const monthYear = `${acquisitionDate.getMonth() + 1}/${acquisitionDate.getFullYear()}`;
+                    const monthYear = acquisitionDate.toLocaleDateString('id-ID', { month: 'short', year: 'numeric' });
                     monthlyAcquisitions[monthYear] = (monthlyAcquisitions[monthYear] || 0) + 1;
-                    break;
+                    break; 
                 }
             }
         }
     });
 
     const sortedMonths = Object.keys(monthlyAcquisitions).sort((a, b) => {
-        const [m1, y1] = a.split('/');
-        const [m2, y2] = b.split('/');
-        return new Date(y1, m1 - 1) - new Date(y2, m2 - 1);
+        const [m1, y1] = a.split(' ');
+        const [m2, y2] = b.split(' ');
+        const dateA = new Date(y1, ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'].findIndex(m => m === m1));
+        const dateB = new Date(y2, ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'].findIndex(m => m === m2));
+        return dateA - dateB;
     });
 
     const chartLabels = sortedMonths;
@@ -1114,26 +1112,23 @@ function renderSingleSalesChart(salesName) {
         salesPerformanceChart.destroy();
     }
 
+    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(40, 167, 69, 0.6)');
-    gradient.addColorStop(1, 'rgba(40, 167, 69, 0)');
+    gradient.addColorStop(0, primaryColor);
+    gradient.addColorStop(1, 'rgba(255, 255, 255, 0.1)');
 
     salesPerformanceChart = new Chart(ctx, {
-        type: 'line',
+        type: 'bar',
         data: {
             labels: chartLabels,
             datasets: [{
                 label: 'Akuisisi per Bulan',
                 data: chartData,
                 backgroundColor: gradient,
-                borderColor: '#28a745',
-                borderWidth: 3,
-                tension: 0.4,
-                fill: true,
-                pointBackgroundColor: '#fff',
-                pointBorderColor: '#28a745',
-                pointHoverRadius: 7,
-                pointRadius: 5
+                borderColor: primaryColor,
+                borderWidth: 2,
+                borderRadius: 8,
+                hoverBackgroundColor: primaryColor,
             }]
         },
         options: {
@@ -1142,7 +1137,40 @@ function renderSingleSalesChart(salesName) {
             plugins: {
                 legend: {
                     display: false
+                },
+                tooltip: {
+                    enabled: true,
+                    backgroundColor: '#111',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderRadius: 10,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return ` ${context.parsed.y} pelanggan baru`;
+                        }
+                    }
                 }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        drawBorder: false,
+                    },
+                    ticks: {
+                        stepSize: 1
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            animation: {
+                duration: 1000,
+                easing: 'easeOutBounce'
             }
         }
     });
