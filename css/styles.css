@@ -478,6 +478,10 @@ body {
   margin-bottom: var(--spacing-2xl);
 }
 
+.chart-container {
+    height: 400px;
+}
+
 .stat-card {
   background-color: var(--bg-secondary);
   background-image: radial-gradient(var(--border-color) 1px, transparent 1px);

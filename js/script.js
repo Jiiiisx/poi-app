@@ -1059,7 +1059,6 @@ function renderSingleSalesChart(salesName) {
     if (!salesData) return;
 
     const chartContainer = document.querySelector('.chart-container');
-    chartContainer.style.height = '400px';
 
     const headers = googleSheetsIntegration.monitoringDataHeadersBySales[salesName.toLowerCase()];
     console.log('headers:', headers);
