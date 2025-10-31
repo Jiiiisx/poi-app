@@ -22,6 +22,7 @@ class SchoolDataFilter {
             'INSTITUT AGAMA ISLAM', 'INSTITUT TEKNOLOGI', 'INSTITUT SENI', 'ROUDHOTUL', 'GLORIA 2', 'YAYASAN', 'SDIT', 'KINDERGROW', 'SLB', 'KELOMPOK BERMAIN', 'BERKLEE AZRA' ,
             'EDUCATION', 'LEARNING', 'ACADEMI', 'FITSTEP', 'TAHFIDZ', 'DRIVING', 'THERESIA', 'BIMBA', 'ROBOTICS'
         ];
+        this.schoolKeywordRegexes = this.schoolKeywords.map(keyword => new RegExp('\\b' + keyword.toLowerCase() + '\\b', 'i'));
         
         this.isActive = false;
         this.filteredData = {
@@ -112,32 +113,14 @@ class SchoolDataFilter {
 
     isSchoolData(row) {
         const searchText = `${row.nama || ''}`.toLowerCase();
-        let isSchool = false; // Initialize to false
         
-        // Limit logging to first few rows to avoid console spam
-
         const cleanedSearchText = searchText.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g," ").replace(/\s{2,}/g," ");
 
         if (cleanedSearchText.includes('.com')) {
             return false;
         }
 
-        const matchedKeywords = [];
-
-        isSchool = this.schoolKeywords.some(keyword => {
-            const lowerCaseKeyword = keyword.toLowerCase();
-            const regex = new RegExp('\\b' + lowerCaseKeyword + '\\b', 'i'); // Word boundaries on both sides, case-insensitive
-            
-            const testResult = regex.test(cleanedSearchText);
-            
-            if (testResult) {
-                matchedKeywords.push(lowerCaseKeyword);
-            }
-            
-            return testResult;
-        });
-
-        return isSchool;
+        return this.schoolKeywordRegexes.some(regex => regex.test(cleanedSearchText));
     }
 
 filterData() {

@@ -218,7 +218,7 @@ function updateSigninStatus(isSignedIn, userName = '', userPicture = '') {
     }
 
     if (isSignedIn) {
-      const MIN_LOADING_TIME = 2000; 
+      const MIN_LOADING_TIME = 0; 
       const startTime = Date.now();
 
       signInWrapper.style.display = 'none';
