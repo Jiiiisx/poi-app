@@ -1030,6 +1030,11 @@
     <script src="js/analytics-tracker.js" defer></script>
 
     <!-- The GSI client is still needed for Sign-In, but the GAPI client is not -->
-    <script src="https://accounts.google.com/gsi/client" onload="initializeGsi()"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+      window.addEventListener('DOMContentLoaded', (event) => {
+        initializeGsi();
+      });
+    </script>
 </body>
 </html>
