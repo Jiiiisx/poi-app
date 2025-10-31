@@ -135,14 +135,15 @@ tr.details-expanded .btn-toggle-details i {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 2rem 1rem 1.5rem 1rem; /* Adjust padding */
+    padding: 2rem 1rem 1.5rem 4rem; /* Adjust padding */
     gap: 0.5rem;
   }
 
   .header .sidebar-toggle {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 1rem;
   }
 
   .header-left {
