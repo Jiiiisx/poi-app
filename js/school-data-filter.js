@@ -1,4 +1,4 @@
-console.log("DEBUG: school-data-filter.js START");
+
 class SchoolDataFilter {
     constructor(googleSheetsIntegration) {
         this.googleSheets = googleSheetsIntegration;
@@ -38,19 +38,14 @@ class SchoolDataFilter {
         // Hook into googleSheetsIntegration refreshData to update filtered data after data load
         const originalRefreshData = this.googleSheets.refreshData.bind(this.googleSheets);
         this.googleSheets.refreshData = async () => {
-            console.log('SchoolDataFilter: Overridden refreshData called.');
             await originalRefreshData();
             this.filterData();
-            console.log(`SchoolDataFilter: isActive: ${this.isActive}, activeFilter: ${this.activeFilter}`);
             if (this.isActive) {
                 if (this.activeFilter === 'school') {
-                    console.log('SchoolDataFilter: Rendering school data after refreshData.');
                     this.googleSheets.renderTable(this.filteredData.school);
                 } else if (this.activeFilter === 'nonSchool') {
-                    console.log('SchoolDataFilter: Rendering non-school data after refreshData.');
                     this.googleSheets.renderTable(this.filteredData.nonSchool);
                 } else {
-                    console.log('SchoolDataFilter: Rendering all data after refreshData (activeFilter is all).');
                     this.googleSheets.renderTable();
                 }
             }
@@ -61,8 +56,6 @@ class SchoolDataFilter {
     }
 
     bindEvents() {
-        console.log('Binding filter button events...');
-        
         const btnTableShowAll = document.getElementById('btnTableShowAll');
         const btnTableShowSchool = document.getElementById('btnTableShowSchool');
         const btnTableShowNonSchool = document.getElementById('btnTableShowNonSchool');
@@ -70,48 +63,39 @@ class SchoolDataFilter {
 
         if (btnTableShowAll) {
             btnTableShowAll.addEventListener('click', () => {
-                console.log('btnTableShowAll clicked');
                 if (window.googleSheetsIntegration) {
                     window.googleSheetsIntegration.currentDataView = 'customer';
                     window.googleSheetsIntegration.applyCombinedFilters();
                 }
                 this.showAll();
             });
-            console.log('btnTableShowAll event bound');
         }
         if (btnTableShowSchool) {
             btnTableShowSchool.addEventListener('click', () => {
-                console.log('btnTableShowSchool clicked');
                 if (window.googleSheetsIntegration) {
                     window.googleSheetsIntegration.currentDataView = 'customer';
                     window.googleSheetsIntegration.applyCombinedFilters();
                 }
                 this.showSchoolOnly();
             });
-            console.log('btnTableShowSchool event bound');
         }
         if (btnTableShowNonSchool) {
             btnTableShowNonSchool.addEventListener('click', () => {
-                console.log('btnTableShowNonSchool clicked');
                 if (window.googleSheetsIntegration) {
                     window.googleSheetsIntegration.currentDataView = 'customer';
                     window.googleSheetsIntegration.applyCombinedFilters();
                 }
                 this.showNonSchoolOnly();
             });
-            console.log('btnTableShowNonSchool event bound');
         }
         if (btnTableShowGoverment) {
             btnTableShowGoverment.addEventListener('click', () => {
-                console.log('btnTableShowGoverment clicked');
                 this.showGovernmentOnly();
             });
-            console.log('btnTableShowGoverment event bound');
         }
     }
 
     showGovernmentOnly() {
-        console.log('showGovernmentOnly called');
         this.isActive = true;
         this.activeFilter = 'government';
 
@@ -131,17 +115,10 @@ class SchoolDataFilter {
         let isSchool = false; // Initialize to false
         
         // Limit logging to first few rows to avoid console spam
-        if (this.googleSheets.originalData.indexOf(row) < 10) { // Log for first 10 rows
-            console.log(`SchoolDataFilter: Debugging isSchoolData for row ${this.googleSheets.originalData.indexOf(row)}`);
-            console.log(`SchoolDataFilter: SearchText for current row: "${searchText}"`);
-        }
 
         const cleanedSearchText = searchText.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g," ").replace(/\s{2,}/g," ");
 
         if (cleanedSearchText.includes('.com')) {
-            if (this.googleSheets.originalData.indexOf(row) < 10) {
-                console.log(`SchoolDataFilter: Excluding row due to .com in text: "${cleanedSearchText}"`);
-            }
             return false;
         }
 
@@ -157,34 +134,14 @@ class SchoolDataFilter {
                 matchedKeywords.push(lowerCaseKeyword);
             }
             
-            if (this.googleSheets.originalData.indexOf(row) < 10 || testResult) { // Log for first 10 rows or if matched
-                console.log(`SchoolDataFilter: Testing keyword "${lowerCaseKeyword}" with regex /\\b${lowerCaseKeyword}\\b/i against "${cleanedSearchText}". Result: ${testResult}`);
-            }
-            
             return testResult;
         });
 
-        if (matchedKeywords.length > 0) {
-            console.log(`SchoolDataFilter: Matched keywords for row: ${matchedKeywords.join(', ')}`);
-        }
-
-        if (isSchool && !this.schoolKeywords.some(keyword => {
-            const lowerCaseKeyword = keyword.toLowerCase();
-            return cleanedSearchText.includes(lowerCaseKeyword);
-        })) {
-            console.warn(`SchoolDataFilter: Warning - Row classified as school but no keyword found in text: "${cleanedSearchText}"`);
-        }
-        
-        if (this.googleSheets.originalData.indexOf(row) < 10) { // Log for first 10 rows
-            console.log(`SchoolDataFilter: Final IsSchool for current row: ${isSchool}`);
-        }
-        
         return isSchool;
     }
 
 filterData() {
     if (!this.googleSheets.originalData) {
-        console.log('SchoolDataFilter: originalData is not available for filtering.');
         return;
     }
     
@@ -198,10 +155,8 @@ filterData() {
         } else {
             this.filteredData.nonSchool.push(row);
         }
-        console.log(`SchoolDataFilter: Row classified as ${isSchool ? 'school' : 'non-school'} - Name: "${row.nama}", Address: "${row.alamat}"`);
     });
-    
-    console.log(`SchoolDataFilter: filterData results - Original: ${this.googleSheets.originalData.length}, School: ${this.filteredData.school.length}, Non-School: ${this.filteredData.nonSchool.length}`);
+
 }
 
     updateStats() {
@@ -212,7 +167,6 @@ filterData() {
     }
 
     showAll() {
-        console.log('showAll called');
         this.isActive = false;
         this.activeFilter = 'all';
 
@@ -228,7 +182,6 @@ filterData() {
     }
 
     showSchoolOnly() {
-        console.log('showSchoolOnly called');
         this.isActive = true;
         this.activeFilter = 'school';
 
@@ -244,7 +197,6 @@ filterData() {
     }
 
     showNonSchoolOnly() {
-        console.log('showNonSchoolOnly called');
         this.isActive = true;
         this.activeFilter = 'nonSchool';
 
@@ -379,12 +331,11 @@ const schoolFilterCSS = `
 // Inject CSS
 document.head.insertAdjacentHTML('beforeend', schoolFilterCSS);
 
-console.log('DEBUG: school-data-filter.js loaded (self-init removed)');
+
 
 // Instantiate SchoolDataFilter with googleSheetsIntegration when available
 document.addEventListener('googleSheetsIntegrationReady', function() {
     if (window.googleSheetsIntegration && !window.schoolDataFilter) {
         window.schoolDataFilter = new SchoolDataFilter(window.googleSheetsIntegration);
-        console.log('SchoolDataFilter instance created and linked to googleSheetsIntegration');
     }
 });

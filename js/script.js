@@ -3,7 +3,7 @@ let salesPerformanceChart = null;
 
 // Simple Error Handler
 const ErrorHandler = {
-  log: console.log,
+  log: () => {},
   handleError: (error, context) => {
     console.error(`ERROR in ${context}:`, error);
   }
@@ -26,7 +26,6 @@ function initializeGsi() {
 
 
 window.handleCredentialResponse = function(response) {
-  console.log('handleCredentialResponse called');
   try {
     if (response.credential) {
       const userPayload = getUserEmailFromToken(response.credential);
@@ -101,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (manualSignInBtn) {
     manualSignInBtn.addEventListener('click', async () => {
       try {
-        console.log('Manual sign-in button clicked');
         const authError = document.getElementById('authError');
         const authInfo = document.getElementById('authInfo');
         
