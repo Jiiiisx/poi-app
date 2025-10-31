@@ -1113,6 +1113,7 @@ function renderSingleSalesChart(salesName) {
     }
 
     const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+    const primaryDarkColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-dark').trim();
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
     gradient.addColorStop(0, primaryColor);
     gradient.addColorStop(1, 'rgba(255, 255, 255, 0.1)');
@@ -1128,12 +1129,23 @@ function renderSingleSalesChart(salesName) {
                 borderColor: primaryColor,
                 borderWidth: 2,
                 borderRadius: 8,
-                hoverBackgroundColor: primaryColor,
+                hoverBackgroundColor: primaryDarkColor,
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            transitions: {
+                active: {
+                    animation: {
+                        duration: 200
+                    }
+                }
+            },
             plugins: {
                 legend: {
                     display: false
