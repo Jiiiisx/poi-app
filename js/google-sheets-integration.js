@@ -371,6 +371,8 @@ class GoogleSheetsIntegration {
     }
     
     processMonitoringData(data, requestedRanges) {
+        console.log("processMonitoringData called with:", { data, requestedRanges });
+
         this.monitoringDataBySales = {};
         this.monitoringDataHeadersBySales = {};
 
@@ -384,10 +386,15 @@ class GoogleSheetsIntegration {
         for (const key in this.salesDataRanges) {
             rangeToSalesKey[this.salesDataRanges[key]] = key;
         }
+        console.log("rangeToSalesKey map:", rangeToSalesKey);
+
+
 
         data.valueRanges.forEach((valueRange, index) => {
             const requestedRangeName = requestedRanges[index];
             const salesName = rangeToSalesKey[requestedRangeName];
+
+            console.log(`Processing index ${index}: range=${requestedRangeName}, salesName=${salesName}`);
 
             if (!salesName) {
                 console.warn(`Could not find sales name for range: ${requestedRangeName} at index ${index}`);
@@ -397,6 +404,9 @@ class GoogleSheetsIntegration {
             if (valueRange.values && valueRange.values.length > 1) {
                 const rawData = valueRange.values;
                 const headers = rawData[0].map(cell => cell.toString().trim());
+                console.log(`Processing data for ${salesName}`, { headers, rowCount: rawData.length - 1 });
+
+
 
                 const rangeAddress = valueRange.range.split('!')[1];
                 const startRowMatch = rangeAddress ? rangeAddress.match(/(\d+)/) : null;

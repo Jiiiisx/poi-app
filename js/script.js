@@ -1012,6 +1012,8 @@ function renderAllSalesChart() {
     const chartLabels = salesData.map(s => s.name);
     const chartData = salesData.map(s => s.totalCustomers);
 
+    console.log("Rendering chart with:", { chartLabels, chartData });
+
     const ctx = document.getElementById('salesPerformanceChart').getContext('2d');
     if (salesPerformanceChart) {
         salesPerformanceChart.destroy();
