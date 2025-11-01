@@ -131,19 +131,21 @@ tr.details-expanded .btn-toggle-details i {
 
   /* --- Header Redesign --- */
   .header {
+    display: flex; /* Add this */
     position: relative; /* Needed for absolute positioning of the button */
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 2rem 1rem 1.5rem 4rem; /* Adjust padding */
+    padding: 2rem 5%; /* Adjust padding to be responsive */
     gap: 0.5rem;
   }
 
   .header .sidebar-toggle {
+    display: flex; /* Add this to override display:none */
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 1rem;
+    top: 2rem; /* Adjust to vertically align with title */
+    right: 1.5rem; /* Move to the right */
+    transform: none; /* Remove previous transform */
   }
 
   .header-left {
