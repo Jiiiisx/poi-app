@@ -141,11 +141,7 @@ tr.details-expanded .btn-toggle-details i {
   }
 
   .header .sidebar-toggle {
-    display: flex; /* Add this to override display:none */
-    position: absolute;
-    top: 2rem; /* Adjust to vertically align with title */
-    right: 1.5rem; /* Move to the right */
-    transform: none; /* Remove previous transform */
+    display: none !important;
   }
 
   .header-left {
@@ -271,6 +267,9 @@ tr.details-expanded .btn-toggle-details i {
 
 @media (min-width: 769px) {
     #fab-add-customer {
+        display: none !important; /* Hide on desktop */
+    }
+    #fab-toggle-sidebar {
         display: none !important; /* Hide on desktop */
     }
 }
