@@ -419,6 +419,22 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function setupEventListeners() {
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.overlay');
+
+        if (menuToggle && sidebar && overlay) {
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+                overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
+            });
+
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+                overlay.style.display = 'none';
+            });
+        }
+
         searchInput.addEventListener('input', applyFilters);
         monthFilter.addEventListener('change', (e) => { selectedMonth = e.target.value; applyFilters(); });
         statusFilters.addEventListener('click', (e) => { if (e.target.tagName === 'BUTTON') { statusFilters.querySelector('.active').classList.remove('active'); e.target.classList.add('active'); selectedStatus = e.target.dataset.status; applyFilters(); } });

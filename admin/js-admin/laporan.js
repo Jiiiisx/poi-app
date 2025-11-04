@@ -419,7 +419,24 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- START: Event Listeners ---
-    salesFilter.addEventListener('change', updateView);
+    function setupEventListeners() {
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.overlay');
+
+        if (menuToggle && sidebar && overlay) {
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+                overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
+            });
+
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+                overlay.style.display = 'none';
+            });
+        }
+        salesFilter.addEventListener('change', updateView);
+    }
 
     // --- Initial Load ---
     async function init() {
@@ -429,6 +446,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (success) {
             populateSalesFilter();
             updateView();
+            setupEventListeners();
             document.dispatchEvent(new Event('page-rendered'));
         } else {
             // Optionally handle the error case, e.g., show an error message
