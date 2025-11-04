@@ -17,7 +17,7 @@ body {
 }
 
 .dashboard-container {
-    /* display: flex; */ /* This is no longer needed with absolute positioning */
+    display: flex;
 }
 
 .sidebar {
@@ -28,6 +28,7 @@ body {
     flex-direction: column;
     height: 100vh;
     position: fixed;
+    flex-shrink: 0;
 }
 
 .sidebar-header {
@@ -75,11 +76,11 @@ body {
 }
 
 .main-content {
-    position: absolute;
-    left: 250px;
-    right: 0;
+    flex-grow: 1;
     padding: 30px;
+    margin-left: 250px;
     box-sizing: border-box;
+    transition: margin-left 0.3s ease;
 }
 
 .main-header {
@@ -411,4 +412,71 @@ body {
     100% {
         background-position: -200% 0;
     }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .main-header {
+        flex-wrap: wrap;
+    }
+
+    .global-search-container {
+        width: 100%;
+        margin-top: 15px;
+        order: 3;
+    }
+
+    .menu-toggle {
+        display: block;
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+
+    .two-column-layout {
+        flex-direction: column;
+    }
+
+    .left-column {
+        width: 100%;
+    }
+}
+
+@media (min-width: 769px) {
+    .menu-toggle {
+        display: none;
+    }
+}
+
+.overlay {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+.sidebar.active ~ .overlay {
+    display: block;
 }

@@ -22,7 +22,7 @@ body {
 }
 
 .dashboard-container {
-
+    display: flex;
 }
 
 .sidebar {
@@ -33,6 +33,7 @@ body {
     flex-direction: column;
     height: 100vh;
     position: fixed;
+    flex-shrink: 0;
 }
 
 .sidebar-header {
@@ -80,11 +81,11 @@ body {
 }
 
 .main-content {
-    position: absolute;
-    left: 250px;
-    right: 0;
+    flex-grow: 1;
     padding: 30px;
+    margin-left: 250px;
     box-sizing: border-box;
+    transition: margin-left 0.3s ease;
 }
 
 @keyframes fadeIn {
@@ -613,7 +614,6 @@ body {
 
     .main-content {
         margin-left: 0;
-        width: 100%;
     }
 
     .main-header {
