@@ -60,7 +60,8 @@
 }
 
 .payment-date-select {
-    width: 58px;
+    width: auto;
+    min-width: 60px;
     padding: 8px 12px;
     border-radius: var(--radius-md, 6px);
     border: 1px solid var(--border-color, #ccc);
@@ -72,6 +73,7 @@
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+    text-align: center;
 }
 
 .payment-date-select:hover {
@@ -272,12 +274,7 @@
     font-size: 0.9em;
 }
 
-/* Override for the payment date select to fit */
-.card-info-row .payment-date-select {
-    padding: 4px 25px 4px 8px;
-    font-size: 1em;
-    max-width: 100px; /* Prevent it from being too wide */
-}
+
 
 /* Copy Button Styles */
 .copyable-cell {
