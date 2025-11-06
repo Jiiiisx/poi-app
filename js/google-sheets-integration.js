@@ -1962,34 +1962,34 @@ class GoogleSheetsIntegration {
 
         if (directImageUrl && typeof directImageUrl === 'string' && directImageUrl.startsWith('http')) {
             imageContainer.innerHTML = '<div class="image-loading-spinner"></div>';
-            imageContainer.dataset.src = directImageUrl;
 
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const container = entry.target;
-                        const imageUrl = container.dataset.src;
-                        
-                        const img = new Image();
-                        img.src = imageUrl;
-                        img.alt = placeName;
-                        img.className = 'place-image';
-                        
-                        img.onload = () => {
-                            container.innerHTML = '';
-                            container.appendChild(img);
-                        };
-                        
-                        img.onerror = () => {
-                            container.innerHTML = '<div class="no-image-placeholder">Gagal memuat</div>';
-                        };
+            const maxRetries = 3;
+            let retryCount = 0;
 
-                        observer.unobserve(container);
+            const loadImage = () => {
+                const img = new Image();
+                img.src = directImageUrl;
+                img.alt = placeName;
+                img.className = 'place-image';
+
+                img.onload = () => {
+                    imageContainer.innerHTML = '';
+                    imageContainer.appendChild(img);
+                };
+
+                img.onerror = () => {
+                    retryCount++;
+                    if (retryCount < maxRetries) {
+                        console.log(`Retrying image load for ${placeName} (${retryCount}/${maxRetries})...`);
+                        setTimeout(loadImage, 1000 * retryCount); // Wait longer each time
+                    } else {
+                        console.error(`Failed to load image for ${placeName} after ${maxRetries} attempts.`);
+                        imageContainer.innerHTML = '<div class="no-image-placeholder">Gagal memuat</div>';
                     }
-                });
-            });
+                };
+            };
 
-            observer.observe(imageContainer);
+            loadImage();
 
         } else {
             imageContainer.innerHTML = '<div class="no-image-placeholder no-image-placeholder-enhanced"><i class="fas fa-image"></i><br>Tidak ada gambar</div>';
