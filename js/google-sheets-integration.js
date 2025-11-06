@@ -966,7 +966,7 @@ class GoogleSheetsIntegration {
 
                     <div class="card-section">
                         <div class="card-info-row"><strong>Histori Gangguan:</strong> <span>${this.escapeHtml(item['Histori Gangguan'] || 'N/A')}</span></div>
-                        <div class="card-info-row"><strong>Tgl. Bayar:</strong> <span>${tanggalPembayaranHtml}</span></div>
+                        <div class="card-info-row"><strong>Tgl. Bayar:</strong> ${tanggalPembayaranHtml}</div>
                     </div>
 
                     <div class="card-section fup-section">
