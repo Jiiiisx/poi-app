@@ -63,6 +63,13 @@ class SidebarManager {
         } else {
             this.closeSidebar();
         }
+
+        // Resize charts after sidebar animation
+        setTimeout(() => {
+            if (typeof resizeAllCharts === 'function') {
+                resizeAllCharts();
+            }
+        }, 300);
     }
 
     openSidebar() {

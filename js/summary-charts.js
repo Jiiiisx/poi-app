@@ -93,3 +93,15 @@ function createSummaryCharts(chartData) {
     },
   });
 }
+
+function resizeAllCharts() {
+  if (totalCustomersChart) {
+    totalCustomersChart.resize();
+  }
+  if (avgRedamanLossChart) {
+    avgRedamanLossChart.resize();
+  }
+  if (billingStatusChart) {
+    billingStatusChart.resize();
+  }
+}
