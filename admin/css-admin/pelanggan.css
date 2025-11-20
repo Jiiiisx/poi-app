@@ -56,7 +56,11 @@ body {
 .menu-toggle { display: none; } /* Add responsive later if needed */
 
 /* --- Main Content Layout --- */
-.two-column-layout { display: flex; gap: 20px; }
+.two-column-layout {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 20px;
+}
 .left-column { width: 250px; flex-shrink: 0; }
 .right-column { flex-grow: 1; min-width: 0; overflow: hidden; } /* min-width: 0 and overflow:hidden are crucial for flex children */
 
