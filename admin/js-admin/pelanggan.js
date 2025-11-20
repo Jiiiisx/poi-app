@@ -376,20 +376,6 @@ document.addEventListener('DOMContentLoaded', function () {
         table.appendChild(thead); table.appendChild(tbody);
         tableContainer.innerHTML = ''; tableContainer.appendChild(table);
 
-        // Freeze column logic
-        const firstColWidth = table.querySelector('.sticky-col-1').offsetWidth;
-        const secondColWidth = table.querySelector('.sticky-col-2').offsetWidth;
-
-        const stickyCol2s = table.querySelectorAll('.sticky-col-2');
-        stickyCol2s.forEach(cell => {
-            cell.style.left = `${firstColWidth}px`;
-        });
-
-        const stickyCol3s = table.querySelectorAll('.sticky-col-3');
-        stickyCol3s.forEach(cell => {
-            cell.style.left = `${firstColWidth + secondColWidth}px`;
-        });
-
         updatePagination();
     }
 

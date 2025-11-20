@@ -175,24 +175,30 @@ body {
     font-weight: 600;
 }
 
+html, body {
+    overflow-x: hidden;
+}
+
 .table-responsive {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    overflow-y: auto;
 }
 
 .customer-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     margin-top: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Poppins', sans-serif;
     background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    border-radius: 10px;
+    overflow: hidden;
+    table-layout: fixed;
 }
 
 .customer-table thead tr {
-    background-color: #f8f9fa; /* Light grey background */
+    background-color: #f8f9fa; /* Light grey background from original pelanggan.css */
     color: #495057; /* Darker text for contrast */
     text-align: left;
     font-size: 0.8rem;
@@ -201,9 +207,11 @@ body {
 }
 
 .customer-table th, .customer-table td {
-    padding: 1rem; /* Increased padding */
+    padding: 1rem;
     border-bottom: 1px solid #f1f1f1;
     word-wrap: break-word;
+    white-space: normal;
+    overflow-wrap: break-word;
     transition: background-color 0.2s ease-in-out;
 }
 
