@@ -224,23 +224,38 @@ document.addEventListener('DOMContentLoaded', function () {
             data = data.filter(item => Object.values(item).some(val => val.toString().toLowerCase().includes(searchTerm)));
         }
         
-        // This is a simplified filter logic. The original had complex 'pra npc' and 'ct0' logic
-        // which can be re-added if necessary. For now, focus on basic status filtering.
         if (selectedStatus !== 'all') {
              if (selectedMonth !== 'all') {
+                // Filter by a specific selected month
                 data = data.filter(item => (item[selectedMonth] || 'n/a').toLowerCase() === selectedStatus);
             } else {
-                 data = data.filter(item => 
-                    Object.keys(item)
-                          .filter(key => key.toLowerCase().startsWith('billing'))
-                          .some(key => (item[key] || '').toLowerCase() === selectedStatus)
-                );
+                // When "All Months" is selected, filter by the CURRENT month's status
+                const allHeaders = (monitoringDataHeadersBySales[selectedSales.toLowerCase()] || {}).headers || [];
+                const currentMonthColumn = getCurrentMonthColumnName();
+                
+                if (allHeaders.map(h => h.toUpperCase()).includes(currentMonthColumn.toUpperCase())) {
+                    data = data.filter(item => {
+                        const billingStatus = (item[currentMonthColumn] || 'n/a').toLowerCase();
+                        return billingStatus === selectedStatus;
+                    });
+                } else {
+                    // If current month column doesn't exist, show no results for status filters
+                    data = [];
+                }
             }
         }
 
         filteredData = data;
         currentPage = 1;
         renderBillingTable();
+    }
+
+    function getCurrentMonthColumnName() {
+        const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+        const d = new Date();
+        const month = months[d.getMonth()];
+        const year = String(d.getFullYear()).slice(-2);
+        return `Billing ${month} ${year}`;
     }
 
     // --- Pagination ---
