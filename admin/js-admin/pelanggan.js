@@ -224,13 +224,54 @@ document.addEventListener('DOMContentLoaded', function () {
             data = data.filter(item => Object.values(item).some(val => val.toString().toLowerCase().includes(searchTerm)));
         }
         
-        if (selectedStatus !== 'all') {
+        const allHeaders = (monitoringDataHeadersBySales[selectedSales.toLowerCase()] || {}).headers || [];
+        const billingHeaders = allHeaders.filter(h => h.toLowerCase().startsWith('billing'));
+
+        if (selectedStatus === 'pra npc') {
+            const now = new Date();
+            const sortedBillingHeaders = billingHeaders
+                .filter(header => _parseHeaderDate(header) <= now)
+                .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
+
+            const lastTwoMonthsHeaders = sortedBillingHeaders.slice(-2);
+
+            if (lastTwoMonthsHeaders.length < 2) {
+                data = [];
+            } else {
+                data = data.filter(item => {
+                    const isUnpaidLastMonth = (item[lastTwoMonthsHeaders[1]] || '').toLowerCase() === 'unpaid';
+                    const isUnpaidTwoMonthsAgo = (item[lastTwoMonthsHeaders[0]] || '').toLowerCase() === 'unpaid';
+                    return isUnpaidLastMonth && isUnpaidTwoMonthsAgo;
+                });
+            }
+        } else if (selectedStatus === 'ct0') {
+            const now = new Date();
+            const sortedBillingHeaders = billingHeaders
+                .filter(header => _parseHeaderDate(header) <= now)
+                .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
+
+            if (sortedBillingHeaders.length < 2) {
+                data = [];
+            } else {
+                data = data.filter(item => {
+                    for (let i = 0; i <= sortedBillingHeaders.length - 2; i++) {
+                        const header1 = sortedBillingHeaders[i];
+                        const header2 = sortedBillingHeaders[i+1];
+                        const isUnpaid1 = (item[header1] || '').toLowerCase() === 'unpaid';
+                        const isUnpaid2 = (item[header2] || '').toLowerCase() === 'unpaid';
+                        if (isUnpaid1 && isUnpaid2) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+            }
+        } else if (selectedStatus !== 'all') {
              if (selectedMonth !== 'all') {
                 // Filter by a specific selected month
                 data = data.filter(item => (item[selectedMonth] || 'n/a').toLowerCase() === selectedStatus);
             } else {
                 // When "All Months" is selected, filter by the CURRENT month's status
-                const allHeaders = (monitoringDataHeadersBySales[selectedSales.toLowerCase()] || {}).headers || [];
                 const currentMonthColumn = getCurrentMonthColumnName();
                 
                 if (allHeaders.map(h => h.toUpperCase()).includes(currentMonthColumn.toUpperCase())) {
@@ -239,7 +280,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         return billingStatus === selectedStatus;
                     });
                 } else {
-                    // If current month column doesn't exist, show no results for status filters
                     data = [];
                 }
             }
@@ -248,6 +288,21 @@ document.addEventListener('DOMContentLoaded', function () {
         filteredData = data;
         currentPage = 1;
         renderBillingTable();
+    }
+
+    function _parseHeaderDate(header) {
+        const monthMap = {
+            'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'mei': 4, 'jun': 5,
+            'jul': 6, 'agu': 7, 'ags': 7, 'agt': 7, 'sep': 8, 'okt': 9, 'nov': 10, 'des': 11
+        };
+        if (typeof header !== 'string') return null;
+        const parts = header.replace(/billing/i, '').trim().split(' ');
+        if (parts.length < 2) return null;
+        const monthName = parts[0].toLowerCase().substring(0, 3);
+        const month = monthMap[monthName];
+        const year = parseInt(parts[1], 10);
+        if (month === undefined || isNaN(year)) { console.warn(`Could not parse date: "${header}"`); return null; }
+        return new Date(year + 2000, month);
     }
 
     function getCurrentMonthColumnName() {
