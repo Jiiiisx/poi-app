@@ -51,31 +51,31 @@
                 </div>
                 <div class="right-column">
                     <div class="billing-monitoring-area">
-                        <div class="table-container">
-                            <h2>Billing Monitoring for <span id="selected-sales">All</span></h2>
-                            <div class="filter-controls">
-                                <div class="global-search-container">
-                                    <i class="fas fa-search"></i>
-                                    <input type="text" id="globalSearchInput" placeholder="Search customer data...">
-                                    <div id="globalSearchResults" class="global-search-results"></div>
+                        <h2>Billing Monitoring for <span id="selected-sales">All</span></h2>
+                        <div class="filter-controls">
+                            <div class="global-search-container">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="globalSearchInput" placeholder="Search customer data...">
+                                <div id="globalSearchResults" class="global-search-results"></div>
+                            </div>
+                            <div class="other-filters">
+                                <div class="filter-group">
+                                    <label for="month-filter">Bulan:</label>
+                                    <select id="month-filter"></select>
                                 </div>
-                                <div class="other-filters">
-                                    <div class="filter-group">
-                                        <label for="month-filter">Bulan:</label>
-                                        <select id="month-filter"></select>
-                                    </div>
-                                    <div class="filter-group">
-                                        <label>Status:</label>
-                                        <div id="status-filters" class="status-filters">
-                                            <button class="btn active" data-status="all">All</button>
-                                            <button class="btn" data-status="paid">Paid</button>
-                                            <button class="btn" data-status="unpaid">Unpaid</button>
-                                            <button class="btn" data-status="pra npc">Pra NPC</button>
-                                            <button class="btn" data-status="ct0">CT0</button>
-                                        </div>
+                                <div class="filter-group">
+                                    <label>Status:</label>
+                                    <div id="status-filters" class="status-filters">
+                                        <button class="btn active" data-status="all">All</button>
+                                        <button class="btn" data-status="paid">Paid</button>
+                                        <button class="btn" data-status="unpaid">Unpaid</button>
+                                        <button class="btn" data-status="pra npc">Pra NPC</button>
+                                        <button class="btn" data-status="ct0">CT0</button>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="table-container">
                             <div class="table-responsive">
                                 <div id="billing-table-container">
                                     <p>Loading billing data...</p>

@@ -346,12 +346,21 @@ body {
 .sticky-col-1,
 .sticky-col-2,
 .sticky-col-3 {
+    position: -webkit-sticky; /* For Safari */
     position: sticky;
-    z-index: 1;
+    z-index: 2;
 }
 
 .sticky-col-1 {
     left: 0;
+}
+
+.sticky-col-2 {
+    left: 120px; /* Approximate width of the first column */
+}
+
+.sticky-col-3 {
+    left: 280px; /* Approximate width of the first two columns */
 }
 
 /* Ensure backgrounds are correct for sticky columns */
