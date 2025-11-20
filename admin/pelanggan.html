@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="../assets/favicon.ico" type="image/x-icon">
     <title>Billing Monitoring</title>
-
     <link rel="stylesheet" href="css-admin/pelanggan.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -22,7 +20,7 @@
             <nav class="sidebar-nav">
                 <ul>
                     <li><a href="Internal.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-                    <li><a href="pelanggan.html"><i class="fas fa-file-invoice-dollar"></i> Billing Monitoring</a></li>
+                    <li class="active"><a href="pelanggan.html"><i class="fas fa-file-invoice-dollar"></i> Billing Monitoring</a></li>
                     <li><a href="laporan.html"><i class="fas fa-chart-bar"></i> Laporan</a></li>
                     <li><a href="history.html"><i class="fas fa-history"></i> History</a></li>
                     <li><a href="profil-pelanggan.html"><i class="fas fa-user-alt"></i> Profil Pelanggan</a></li>
@@ -42,53 +40,51 @@
             </header>
             <div class="content-area two-column-layout">
                 <div class="left-column">
-                    <div id="sales-performance-summary"></div>
-                    <div class="sales-list-container">
+                    <div class="sales-list-container card">
                         <h3>Sales Team</h3>
                         <ul id="sales-list"></ul>
                     </div>
-                    <div class="skeleton-sales-list"></div>
                 </div>
                 <div class="right-column">
-                    <div class="billing-monitoring-area">
-                        <h2>Billing Monitoring for <span id="selected-sales">All</span></h2>
-                        <div class="filter-controls">
-                            <div class="global-search-container">
-                                <i class="fas fa-search"></i>
-                                <input type="text" id="globalSearchInput" placeholder="Search customer data...">
-                                <div id="globalSearchResults" class="global-search-results"></div>
+                    <div class="billing-monitoring-container card">
+                        <div class="billing-header">
+                            <div class="billing-title">
+                                <h2>Billing Monitoring for <span id="selected-sales">All</span></h2>
                             </div>
-                            <div class="other-filters">
-                                <div class="filter-group">
-                                    <label for="month-filter">Bulan:</label>
-                                    <select id="month-filter"></select>
+                            <div class="billing-filters">
+                                <div class="global-search-container">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="globalSearchInput" placeholder="Search customer data...">
                                 </div>
-                                <div class="filter-group">
-                                    <label>Status:</label>
-                                    <div id="status-filters" class="status-filters">
-                                        <button class="btn active" data-status="all">All</button>
-                                        <button class="btn" data-status="paid">Paid</button>
-                                        <button class="btn" data-status="unpaid">Unpaid</button>
-                                        <button class="btn" data-status="pra npc">Pra NPC</button>
-                                        <button class="btn" data-status="ct0">CT0</button>
+                                <div class="other-filters">
+                                    <div class="filter-group">
+                                        <label for="month-filter">Bulan:</label>
+                                        <select id="month-filter"></select>
+                                    </div>
+                                    <div class="filter-group">
+                                        <label>Status:</label>
+                                        <div id="status-filters" class="status-filters">
+                                            <button class="btn active" data-status="all">All</button>
+                                            <button class="btn" data-status="paid">Paid</button>
+                                            <button class="btn" data-status="unpaid">Unpaid</button>
+                                            <button class="btn" data-status="pra npc">Pra NPC</button>
+                                            <button class="btn" data-status="ct0">CT0</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="table-container">
-                            <div class="table-responsive">
-                                <div id="billing-table-container">
-                                    <p>Loading billing data...</p>
-                                </div>
-                            </div>
-                            <div class="pagination-controls">
-                                <button id="prevPage" disabled><i class="fas fa-arrow-left"></i> Previous</button>
-                                <span id="pageInfo">Page 1 of 1</span>
-                                <button id="nextPage" disabled>Next <i class="fas fa-arrow-right"></i></button>
+                        <div class="table-responsive">
+                            <div id="billing-table-container">
+                                <p>Loading billing data...</p>
                             </div>
                         </div>
+                        <div class="pagination-controls">
+                            <button id="prevPage" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+                            <span id="pageInfo">Page 1 of 1</span>
+                            <button id="nextPage" disabled>Next <i class="fas fa-arrow-right"></i></button>
+                        </div>
                     </div>
-                    <div class="skeleton-table-area"></div>
                 </div>
             </div>
         </main>

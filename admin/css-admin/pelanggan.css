@@ -1,5 +1,4 @@
-/* pelanggan.css */
-
+/* Global Layout & Variables */
 :root {
     --primary-color: #c93742;
     --secondary-color: #f4f6f9;
@@ -7,6 +6,10 @@
     --text-secondary: #777;
     --border-color: #e0e0e0;
     --font-family: 'Poppins', sans-serif;
+}
+
+html, body {
+    overflow-x: hidden; /* Prevent horizontal scroll on the whole page */
 }
 
 body {
@@ -20,6 +23,14 @@ body {
     display: flex;
 }
 
+.card {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* --- Sidebar & Header (Copied for consistency) --- */
 .sidebar {
     width: 250px;
     background-color: var(--primary-color);
@@ -29,469 +40,118 @@ body {
     height: 100vh;
     position: fixed;
     flex-shrink: 0;
+    z-index: 100;
 }
 
-.sidebar-header {
-    padding: 20px;
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: 600;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
+.sidebar-header { padding: 20px; text-align: center; font-size: 1.5rem; font-weight: 600; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.sidebar-nav ul { list-style: none; padding: 0; margin: 20px 0; }
+.sidebar-nav li a { display: flex; align-items: center; gap: 15px; padding: 15px 20px; color: #fff; text-decoration: none; font-weight: 500; transition: background-color 0.3s; }
+.sidebar-nav li a:hover, .sidebar-nav li.active a { background-color: rgba(0, 0, 0, 0.2); }
+.sidebar-footer { margin-top: auto; padding: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+.sidebar-footer a { display: flex; align-items: center; gap: 15px; color: #fff; text-decoration: none; }
 
-.sidebar-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 20px 0;
-}
+.main-content { flex-grow: 1; padding: 30px; margin-left: 250px; }
+.main-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.main-header h1 { margin: 0; font-size: 1.8rem; }
+.menu-toggle { display: none; } /* Add responsive later if needed */
 
-.sidebar-nav li a {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 15px 20px;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-    transition: background-color 0.3s;
-}
+/* --- Main Content Layout --- */
+.two-column-layout { display: flex; gap: 20px; }
+.left-column { width: 250px; flex-shrink: 0; }
+.right-column { flex-grow: 1; min-width: 0; } /* min-width: 0 is crucial for flex children */
 
-.sidebar-nav li a:hover,
-.sidebar-nav li.active a {
-    background-color: rgba(0, 0, 0, 0.2);
-}
+.sales-list-container h3 { font-size: 1.2rem; margin-bottom: 15px; margin-top: 0; }
+#sales-list { list-style: none; padding: 0; margin: 0; }
+#sales-list li { padding: 12px 15px; cursor: pointer; border-radius: 8px; transition: background-color 0.3s, color 0.3s; font-weight: 500; }
+#sales-list li:hover { background-color: #f0f0f0; }
+#sales-list li.active { background-color: var(--primary-color); color: white; font-weight: 600; }
 
-.sidebar-footer {
-    margin-top: auto;
-    padding: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.sidebar-footer a {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    color: #fff;
-    text-decoration: none;
-}
-
-.main-content {
-    flex-grow: 1;
-    padding: 30px;
-    margin-left: 250px;
-    box-sizing: border-box;
-    transition: margin-left 0.3s ease;
-}
-
-.main-header {
+/* --- Filters & Header --- */
+.billing-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-}
-
-.main-header h1 {
-    margin: 0;
-    font-size: 1.8rem;
-}
-
-.global-search-container {
-    position: relative;
-    width: 300px;
-}
-
-.global-search-container i {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-secondary);
-}
-
-#globalSearchInput {
-    width: 100%;
-    padding: 10px 15px 10px 40px;
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    font-size: 0.9rem;
-}
-
-.two-column-layout {
-    display: flex;
+    flex-wrap: wrap;
     gap: 20px;
+    margin-bottom: 20px;
 }
+.billing-title h2 { margin: 0; font-size: 1.5rem; }
+.billing-filters { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+.global-search-container { position: relative; }
+.global-search-container i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); }
+#globalSearchInput { width: 300px; padding: 10px 15px 10px 40px; border: 1px solid var(--border-color); border-radius: 20px; font-size: 0.9rem; }
 
-.left-column {
-    width: 250px;
-    flex-shrink: 0;
-}
+.filter-group { display: flex; gap: 10px; align-items: center; }
+#month-filter { padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.9rem; }
+.status-filters { display: flex; gap: 5px; }
+.status-filters .btn { padding: 8px 16px; border: 1px solid var(--border-color); border-radius: 8px; background-color: #fff; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: all 0.2s ease-in-out; }
+.status-filters .btn.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
 
-.right-column {
-    flex-grow: 1;
-    min-width: 0;
-}
-
-.billing-monitoring-area {
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-.sales-list-container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 12px; /* Updated border-radius */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Added box-shadow */
-}
-
-.sales-list-container h3 {
-    font-size: 1.2rem;
-    margin-bottom: 15px;
-    margin-top: 0;
-}
-
-#sales-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-#sales-list li {
-    padding: 12px 15px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s, color 0.3s;
-    font-weight: 500;
-}
-
-#sales-list li:hover {
-    background-color: #f0f0f0;
-}
-
-#sales-list li.active {
-    background-color: var(--primary-color);
-    color: white;
-    font-weight: 600;
-}
-
-html, body {
-    overflow-x: hidden;
-}
-
+/* --- THE CRUCIAL TABLE STYLES --- */
 .table-responsive {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow-x: auto; /* This enables horizontal scrolling */
+    width: 100%;
 }
 
 .customer-table {
-    border-collapse: separate;
-    border-spacing: 0;
-    margin-top: 20px;
-    font-family: 'Poppins', sans-serif;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-    border-radius: 10px;
-    overflow: hidden;
+    border-collapse: collapse; /* Use collapse for clean lines */
 }
 
-.customer-table thead tr {
-    background-color: #f8f9fa; /* Light grey background from original pelanggan.css */
-    color: #495057; /* Darker text for contrast */
+.customer-table th,
+.customer-table td {
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    white-space: nowrap; /* Prevent text from wrapping */
     text-align: left;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
 }
 
-.customer-table th, .customer-table td {
-    padding: 1rem;
-    border-bottom: 1px solid #f1f1f1;
-    word-wrap: break-word;
-    white-space: normal;
-    overflow-wrap: break-word;
-    transition: background-color 0.2s ease-in-out;
-}
-
-.customer-table tbody tr:last-of-type td {
-    border-bottom: none;
+.customer-table thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
 }
 
 .customer-table tbody tr:hover {
     background-color: #f5f5f5;
 }
 
-.customer-link {
-    cursor: pointer;
-    color: var(--primary-color);
-    font-weight: 500;
-}
+/* --- STICKY COLUMN IMPLEMENTATION --- */
+/* 1. Define fixed widths for the columns that will be sticky */
+.customer-table th.sticky-col-1, .customer-table td.sticky-col-1 { width: 150px; }
+.customer-table th.sticky-col-2, .customer-table td.sticky-col-2 { width: 200px; }
+.customer-table th.sticky-col-3, .customer-table td.sticky-col-3 { width: 150px; }
 
-.customer-link:hover {
-    text-decoration: underline;
-}
-
-#searchInput {
-    padding: 12px 20px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px; /* Consistent border-radius */
-    font-size: 0.9rem;
-    font-family: var(--font-family);
-    transition: all 0.3s ease;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-
-#searchInput:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(201, 55, 66, 0.2);
-}
-
-.filter-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
-    gap: 20px;
-    margin-bottom: 20px;
-}
-
-.filter-controls .global-search-container {
-    width: 350px; /* Or adjust as needed */
-    margin-bottom: 0;
-}
-
-.other-filters {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.filter-group {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-#month-filter {
-    padding: 8px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px; /* Consistent border-radius */
-    font-size: 0.9rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-
-.status-filters {
-    display: flex;
-    gap: 5px;
-}
-
-.status-filters .btn {
-    padding: 8px 16px; /* Increased padding */
-    border: 1px solid var(--border-color);
-    border-radius: 8px; /* Consistent border-radius */
-    background-color: #fff;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.2s ease-in-out;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-
-.status-filters .btn.active {
-    background-color: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-}
-
-.pagination-controls {
-    display: flex;
-    justify-content: center; /* Centered pagination */
-    align-items: center;
-    margin-top: 1.5rem;
-}
-
-.pagination-controls button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem; /* Space between icon and text */
-    padding: 0.6rem 1.2rem;
-    margin: 0 0.25rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background-color: #fff;
-    color: var(--text-primary);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-}
-
-.pagination-controls button:hover {
-    background-color: #f0f0f0;
-    border-color: #ccc;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-}
-
-.pagination-controls button:disabled {
-    background-color: #f9f9f9;
-    color: #aaa;
-    cursor: not-allowed;
-    border-color: var(--border-color);
-}
-
-#pageInfo {
-    margin: 0 1rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-}
-
-/* Styles for sticky columns */
-.sticky-col-1,
-.sticky-col-2,
-.sticky-col-3 {
-    position: -webkit-sticky; /* For Safari */
+/* 2. Apply sticky positioning */
+.sticky-col-1, .sticky-col-2, .sticky-col-3 {
+    position: -webkit-sticky;
     position: sticky;
-    z-index: 2;
+    background-color: white; /* Has to be solid, not transparent */
 }
 
-.sticky-col-1 {
-    left: 0;
+.customer-table thead .sticky-col-1,
+.customer-table thead .sticky-col-2,
+.customer-table thead .sticky-col-3 {
+    background-color: #f8f9fa; /* Match header background */
+    z-index: 3;
 }
 
-.sticky-col-2 {
-    left: 120px; /* Approximate width of the first column */
+.customer-table tbody tr:hover .sticky-col-1,
+.customer-table tbody tr:hover .sticky-col-2,
+.customer-table tbody tr:hover .sticky-col-3 {
+    background-color: #f5f5f5; /* Match row hover background */
 }
 
-.sticky-col-3 {
-    left: 280px; /* Approximate width of the first two columns */
-}
+/* 3. Define the cascade left-offset */
+.sticky-col-1 { left: 0; z-index: 2; }
+.sticky-col-2 { left: 150px; z-index: 2; } /* Must be width of col 1 */
+.sticky-col-3 { left: 350px; z-index: 2; } /* Must be width of col 1 + col 2 */
 
-/* Ensure backgrounds are correct for sticky columns */
-.customer-table th.sticky-col-1,
-.customer-table th.sticky-col-2,
-.customer-table th.sticky-col-3 {
-    background-color: #f8f9fa;
-    z-index: 3; /* Above other header cells */
-}
 
-.customer-table td.sticky-col-1,
-.customer-table td.sticky-col-2,
-.customer-table td.sticky-col-3 {
-    background-color: #fff;
-}
+/* --- Pagination --- */
+.pagination-controls { display: flex; justify-content: center; align-items: center; margin-top: 1.5rem; }
+.pagination-controls button { padding: 0.6rem 1.2rem; margin: 0 0.25rem; border-radius: 8px; border: 1px solid var(--border-color); background-color: #fff; cursor: pointer; transition: background-color 0.2s; }
+.pagination-controls button:hover { background-color: #f0f0f0; }
+.pagination-controls button:disabled { background-color: #f9f9f9; color: #aaa; cursor: not-allowed; }
+#pageInfo { margin: 0 1rem; font-weight: 500; }
 
-.customer-table tbody tr:hover td.sticky-col-1,
-.customer-table tbody tr:hover td.sticky-col-2,
-.customer-table tbody tr:hover td.sticky-col-3 {
-    background-color: #f5f5f5; /* Match hover background */
-}
-
-/* Skeleton Loader Styles */
-.skeleton-sales-list, .skeleton-table-area {
-    display: none; /* Hidden by default */
-}
-
-.skeleton-sales-list .skeleton-item {
-    height: 45px;
-    margin-bottom: 10px;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    border-radius: 5px;
-    animation: shimmer 1.5s infinite linear;
-}
-
-.skeleton-table-area .skeleton-filters {
-    height: 60px;
-    margin-bottom: 20px;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    border-radius: 8px;
-    animation: shimmer 1.5s infinite linear;
-}
-
-.skeleton-table-area .skeleton-row {
-    height: 50px;
-    margin-bottom: 1px;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite linear;
-}
-
-@keyframes shimmer {
-    0% {
-        background-position: 200% 0;
-    }
-    100% {
-        background-position: -200% 0;
-    }
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-    .sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-        z-index: 1000;
-    }
-
-    .sidebar.active {
-        transform: translateX(0);
-    }
-
-    .main-content {
-        margin-left: 0;
-    }
-
-    .main-header {
-        flex-wrap: wrap;
-    }
-
-    .global-search-container {
-        width: 100%;
-        margin-top: 15px;
-        order: 3;
-    }
-
-    .menu-toggle {
-        display: block;
-        background: none;
-        border: none;
-        color: var(--text-primary);
-        font-size: 1.5rem;
-        cursor: pointer;
-    }
-
-    .two-column-layout {
-        flex-direction: column;
-    }
-
-    .left-column {
-        width: 100%;
-    }
-}
-
-@media (min-width: 769px) {
-    .menu-toggle {
-        display: none;
-    }
-}
-
-.overlay {
-    position: fixed;
-    display: none;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0,0,0,0.5);
-    z-index: 999;
-}
-
-.sidebar.active ~ .overlay {
-    display: block;
-}
+.customer-link { cursor: pointer; color: var(--primary-color); font-weight: 500; }
+.customer-link:hover { text-decoration: underline; }
