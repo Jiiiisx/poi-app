@@ -194,7 +194,6 @@ html, body {
     box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     border-radius: 10px;
     overflow: hidden;
-    table-layout: fixed;
 }
 
 .customer-table thead tr {
