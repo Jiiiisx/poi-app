@@ -350,6 +350,7 @@ module.exports = async (req, res) => {
     const { action } = req.query;
 
     switch (action) {
+<<<<<<< HEAD
         case 'login': return handleLogin(req, res);
         case 'add-customer': return handleAddCustomer(req, res);
         case 'customer-data': return handleCustomerData(req, res);
@@ -362,6 +363,32 @@ module.exports = async (req, res) => {
         case 'update-cell': return handleUpdateCell(req, res);
         case 'admin-update-cell': return handleAdminUpdateCell(req, res);
         case 'update-customer': return handleUpdateCustomer(req, res);
+=======
+        case 'login':
+            return handleLogin(req, res);
+        case 'add-customer':
+            return handleAddCustomer(req, res);
+        case 'customer-data':
+            return handleCustomerData(req, res);
+        case 'delete-row':
+            return handleDeleteRow(req, res);
+        case 'fetch-analytics':
+            return handleFetchAnalytics(req, res);
+        case 'fetch-history':
+            return handleFetchHistory(req, res);
+        case 'fetch-monitoring':
+            return handleFetchMonitoring(req, res);
+        case 'government-data':
+            return handleGovernmentData(req, res);
+        case 'log-view':
+            return handleLogView(req, res);
+        case 'update-cell':
+            return handleUpdateCell(req, res);
+        case 'admin-update-cell':
+            return handleAdminUpdateCell(req, res);
+        case 'update-customer':
+            return handleUpdateCustomer(req, res);
+>>>>>>> 143db7fae345427646d74314349df97d50486534
         
 default:
             return res.status(404).json({ message: `API action not found for action: ${action}` });
