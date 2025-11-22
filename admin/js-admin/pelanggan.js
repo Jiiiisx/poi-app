@@ -30,6 +30,14 @@ document.addEventListener('DOMContentLoaded', function () {
     let selectedMonth = 'all';
     let selectedStatus = 'all';
 
+    function letterToColumnIndex(letter) {
+        let column = 0, length = letter.length;
+        for (let i = 0; i < length; i++) {
+            column += (letter.charCodeAt(i) - 64) * Math.pow(26, length - i - 1);
+        }
+        return column - 1;
+    }
+
     // --- Main Initialization ---
     async function initialize() {
         populateSalesList();
@@ -84,18 +92,25 @@ document.addEventListener('DOMContentLoaded', function () {
             const rangeName = requestedRanges[index];
             const salesName = rangeToSalesKey[rangeName];
             
-            console.log(`[DEBUG] Processing data for sales: ${salesName}. Raw range from API: ${valueRange.range}`); // Log tambahan
+            console.log(`[DEBUG] Processing data for sales: ${salesName}. Raw range from API: ${valueRange.range}`);
 
             if (!salesName || !valueRange.values || valueRange.values.length < 2) return;
 
             const headers = valueRange.values[0].map(h => h.trim());
-            const nameIndex = headers.findIndex(h => h.toLowerCase() === 'nama pelanggan');
             const range = valueRange.range;
+
             const sheetNameMatch = range.match(/^\'([^\']*)\'/);
             const sheetName = sheetNameMatch ? sheetNameMatch[1] : range.split('!')[0];
-            const startRowMatch = range.match(/(\d+)/);
-            if (!startRowMatch) return;
-            const headerRow = parseInt(startRowMatch[0], 10);
+            
+            const rangePartsMatch = range.match(/!([A-Z]+)(\d+):/);
+            let startColIndex = 0;
+            if (rangePartsMatch && rangePartsMatch[1]) {
+                startColIndex = letterToColumnIndex(rangePartsMatch[1]);
+            }
+
+            const headerRowMatch = range.match(/!([A-Z]+)(\d+)/);
+            if (!headerRowMatch) return;
+            const headerRow = parseInt(headerRowMatch[2], 10);
 
             const rows = valueRange.values.slice(1).map((row, i) => {
                 const rowAsObject = {};
@@ -105,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return { ...rowAsObject, originalSheetRow: headerRow + 1 + i };
             }).filter(item => item['Nama Pelanggan'] && item['Nama Pelanggan'].trim() !== '');
             
-            monitoringDataHeadersBySales[salesName.toLowerCase()] = { headers, sheetName };
+            monitoringDataHeadersBySales[salesName.toLowerCase()] = { headers, sheetName, startColIndex };
             monitoringDataBySales[salesName.toLowerCase()] = rows;
         });
     }
@@ -380,43 +395,26 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.location.href = 'login.html';
                 return;
             }
-
-            console.log('--- START DEBUGGING INLINE EDIT ---');
             
             const newValue = td.textContent.trim();
             const originalRow = td.dataset.originalRow;
-            const header = td.dataset.header;
-            const colIndex = parseInt(td.dataset.colIndex, 10);
+            const localColIndex = parseInt(td.dataset.colIndex, 10);
             
             const headerInfo = monitoringDataHeadersBySales[selectedSales.toLowerCase()] || {};
             const sheetName = headerInfo.sheetName;
+            const startColIndex = headerInfo.startColIndex || 0;
             
             const originalData = (monitoringDataBySales[selectedSales.toLowerCase()] || []).find(item => item.originalSheetRow == originalRow);
-            const oldValue = originalData ? originalData[header] : '';
+            const header = headerInfo.headers ? headerInfo.headers[localColIndex] : null;
+            const oldValue = originalData && header ? originalData[header] : '';
 
-            console.log('DEBUG: Selected Sales:', selectedSales);
-            console.log('DEBUG: Sheet Name:', sheetName);
-            console.log('DEBUG: Original Row:', originalRow);
-            console.log('DEBUG: Header:', header);
-            console.log('DEBUG: Column Index:', colIndex);
-
-            if (newValue === oldValue || !sheetName) {
-                console.log('DEBUG: No change or no sheet name. Aborting.');
-                console.log('--- END DEBUGGING ---');
+            if (newValue === oldValue || !sheetName || header === null || isNaN(localColIndex)) {
                 return;
             }
 
-            if (isNaN(colIndex)) {
-                console.error('DEBUG: colIndex is NaN. Aborting.');
-                console.log('--- END DEBUGGING ---');
-                return;
-            }
-
-            const colLetter = columnIndexToLetter(colIndex); // Menggunakan fungsi baru yang benar
+            const globalColIndex = startColIndex + localColIndex;
+            const colLetter = columnIndexToLetter(globalColIndex);
             const range = `'${sheetName}'!${colLetter}${originalRow}`;
-
-            console.log('DEBUG: Final Range:', range);
-            console.log('--- END DEBUGGING ---');
 
             td.style.backgroundColor = '#fdffab'; // Indicate saving
             try {
@@ -435,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 if (!response.ok) throw new Error('Failed to update sheet');
 
-                if (originalData) originalData[header] = newValue; // Update local data
+                if (originalData) originalData[header] = newValue;
                 td.style.backgroundColor = '#d4edda'; // Success
             } catch (error) {
                 console.error('Error updating cell:', error);
