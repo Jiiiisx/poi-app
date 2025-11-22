@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/index.js": {
+    "backend/index.js": {
       "memory": 1024
     }
   }
