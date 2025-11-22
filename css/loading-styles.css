@@ -45,17 +45,17 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #f0f2f5; /* Light background for the loader */
-    z-index: 9999; /* Ensure it's on top of everything */
+    background-color: #f0f2f5;
+    z-index: 9999;
     display: flex;
     box-sizing: border-box;
-    overflow: hidden; /* Hide overflow from shimmer effect */
+    overflow: hidden;
 }
 
 #skeleton-loader .skeleton-sidebar {
-    width: 250px; /* Match actual sidebar width */
+    width: 250px;
     height: 100%;
-    background-color: #2c2c2c; /* Match actual sidebar background */
+    background-color: #2c2c2c;
     position: relative;
     overflow: hidden;
     padding: 20px 0;
@@ -100,8 +100,8 @@
 }
 
 #skeleton-loader .skeleton-header {
-    height: 80px; /* Match actual header height */
-    background-color: #d9534f; /* Match actual header background */
+    height: 80px;
+    background-color: #d9534f;
     border-radius: 8px;
     width: 100%;
     position: relative;
@@ -179,13 +179,13 @@
 
 .skeleton-table-row {
     height: 40px;
-    background-color: transparent; /* The row itself is just a container */
+    background-color: transparent;
     border-radius: 4px;
     margin-bottom: 8px;
     position: relative;
     overflow: hidden;
     display: flex;
-    gap: 8px; /* Space between cells */
+    gap: 8px;
 }
 
 .skeleton-cell {
@@ -209,7 +209,6 @@
     margin-top: 10px;
 }
 
-/* Shimmer Effect */
 #skeleton-loader div::after {
     content: '';
     position: absolute;
@@ -225,7 +224,6 @@
     }
 }
 
-/* Responsive adjustments for skeleton loader */
 @media (max-width: 768px) {
     #skeleton-loader {
         flex-direction: column;
@@ -325,7 +323,6 @@
     }
 }
 
-/* Sales Summary Section Styles */
 .sales-summary-section {
     background-color: var(--bg-primary);
     border-radius: var(--radius-lg);
@@ -388,7 +385,6 @@
     border-radius: var(--radius-md);
 }
 
-/* Responsive adjustments for Sales Summary Section */
 @media (max-width: 768px) {
     .sales-summary-section {
         padding: 15px;
@@ -398,23 +394,23 @@
         margin-bottom: 15px;
     }
     .summary-cards-grid {
-        grid-template-columns: 1fr; /* Revert to single column for stability */
+        grid-template-columns: 1fr;
         gap: 15px;
     }
     .summary-card {
         padding: 15px;
-        flex-direction: row; /* Align content and icon horizontally */
+        flex-direction: row;
         justify-content: space-between;
         align-items: center;
     }
     .summary-icon {
         font-size: 1.5em;
-        order: 2; /* Move icon to the right */
+        order: 2;
     }
     .summary-content p {
         font-size: 1.5em;
     }
     .summary-graph {
-        display: none; /* Hide graph on mobile to save space */
+        display: none;
     }
 }

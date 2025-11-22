@@ -1,4 +1,28 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // --- Helper function for authenticated API calls ---
+    async function fetchWithAuth(url, options = {}) {
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+            console.warn('No authentication token found. Redirecting to login.');
+            window.location.href = 'login.html';
+            return new Promise(() => {}); // Return a promise that never resolves to stop execution
+        }
+    
+        const headers = {
+            ...options.headers,
+            'Authorization': `Bearer ${token}`
+        };
+    
+        const response = await fetch(url, { ...options, headers });
+    
+        if (response.status === 401) {
+            console.warn('Unauthorized (401) response from API. Redirecting to login.');
+            window.location.href = 'login.html';
+            throw new Error('Unauthorized');
+        }
+        return response;
+    }
+
     // --- Existing variables for history table ---
     let allHistoryData = [];
     let filteredHistoryData = [];
@@ -44,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
     async function loadAnalyticsData() {
         try {
             console.log('Fetching analytics data...');
-            const response = await fetch('/api/fetch-analytics');
+            const response = await fetchWithAuth('/api/fetch-analytics');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -213,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Existing functions for history table (from original file) ---
     async function loadHistoryData() {
         try {
-            const response = await fetch('/api/fetch-history');
+            const response = await fetchWithAuth('/api/fetch-history');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

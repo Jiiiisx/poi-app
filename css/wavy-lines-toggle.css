@@ -1,4 +1,3 @@
-/* CSS untuk toggle visibility wavy lines berdasarkan login state */
 .wavy-lines-hidden {
   display: none !important;
 }
@@ -7,7 +6,6 @@
   display: block !important;
 }
 
-/* Transisi smooth untuk wavy lines */
 .wavy-lines {
   transition: opacity 0.3s ease-in-out;
 }

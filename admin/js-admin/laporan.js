@@ -1,6 +1,26 @@
 document.addEventListener('DOMContentLoaded', function () {
     console.log('laporan.js loaded');
 
+    // --- Helper function for authenticated API calls ---
+    async function fetchWithAuth(url, options = {}) {
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+            console.warn('No authentication token found. Redirecting to login.');
+            window.location.href = 'login.html';
+            return new Promise(() => {}); // Return a promise that never resolves
+        }
+    
+        const headers = { ...options.headers, 'Authorization': `Bearer ${token}` };
+        const response = await fetch(url, { ...options, headers });
+    
+        if (response.status === 401) {
+            console.warn('Unauthorized (401) response. Redirecting to login.');
+            window.location.href = 'login.html';
+            throw new Error('Unauthorized');
+        }
+        return response;
+    }
+
     // --- START: State and Variables ---
     let salesPerformance = {};
     let allSalesChart = null;
@@ -127,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const requestedRanges = Object.values(salesDataRanges);
         const ranges = requestedRanges.join(',');
         try {
-            const response = await fetch(`/api/fetch-monitoring?ranges=${ranges}`);
+            const response = await fetchWithAuth(`/api/fetch-monitoring?ranges=${ranges}`);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
             salesPerformance = processApiResponse(data);

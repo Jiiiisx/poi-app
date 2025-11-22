@@ -1,5 +1,4 @@
 
-/* General Wizard Styling */
 .wizard-container {
     display: flex;
     gap: 40px;
@@ -9,7 +8,6 @@
     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
 }
 
-/* Progress Bar */
 .progress-bar {
     display: flex;
     flex-direction: column;
@@ -62,7 +60,6 @@
     transition: all 0.4s ease;
 }
 
-/* Active and Completed States */
 .progress-bar-item.active .step-number {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
@@ -77,7 +74,7 @@
 }
 
 .progress-bar-item.completed .step-number {
-    background-color: #28a745; /* Green for completed */
+    background-color: #28a745;
     border-color: #28a745;
     color: #fff;
 }
@@ -87,7 +84,7 @@
 }
 
 .progress-bar-item.completed::after {
-    content: '\f00c'; /* Font Awesome check icon */
+    content: '\f00c';
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
     position: absolute;
@@ -97,8 +94,6 @@
     font-size: 1rem;
 }
 
-
-/* Form Steps */
 .form-steps {
     flex: 1;
 }
@@ -127,7 +122,6 @@
     gap: 10px;
 }
 
-/* Form Group */
 .form-group {
     margin-bottom: 20px;
 }
@@ -172,11 +166,10 @@
     margin-top: 6px;
 }
 
-/* Form Actions */
 .form-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 10px; /* Add space between buttons */
+    gap: 10px;
     margin-top: 30px;
     padding-top: 20px;
     border-top: 1px solid #e0e0e0;
@@ -217,7 +210,6 @@
     border-color: #ccc;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .wizard-container {
         flex-direction: column;

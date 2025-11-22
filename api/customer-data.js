@@ -1,6 +1,12 @@
-const { getSheetsClient, SPREADSHEET_ID } = require('./google-sheets-client');
+import { authenticate } from './authMiddleware.js';
+import { getSheetsClient, SPREADSHEET_ID } from './google-sheets-client.js';
 
 export default async function handler(req, res) {
+    const user = authenticate(req, res);
+    if (!user) {
+        return;
+    }
+
     if (req.method !== 'GET') {
         return res.status(405).json({ message: 'Only GET requests are allowed' });
     }
@@ -14,7 +20,6 @@ export default async function handler(req, res) {
             range,
         });
         
-        // Add caching headers
         res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
         res.status(200).json(response.data);
     } catch (error) {

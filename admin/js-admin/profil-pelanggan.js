@@ -1,4 +1,23 @@
 document.addEventListener('DOMContentLoaded', function () {
+    async function fetchWithAuth(url, options = {}) {
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+            console.warn('No authentication token found. Redirecting to login.');
+            window.location.href = 'login.html';
+            return new Promise(() => {}); // Return a promise that never resolves
+        }
+    
+        const headers = { ...options.headers, 'Authorization': `Bearer ${token}` };
+        const response = await fetch(url, { ...options, headers });
+    
+        if (response.status === 401) {
+            console.warn('Unauthorized (401) response. Redirecting to login.');
+            window.location.href = 'login.html';
+            throw new Error('Unauthorized');
+        }
+        return response;
+    }
+
     const customerNameEl = document.getElementById('customer-name');
     const customerStatusEl = document.getElementById('customer-status');
     const customerNoInternetEl = document.getElementById('customer-no-internet');
@@ -57,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ranges = Object.values(salesDataRanges).join(',');
             }
 
-            const response = await fetch(`/api/fetch-monitoring?ranges=${ranges}`);
+            const response = await fetchWithAuth(`/api/fetch-monitoring?ranges=${ranges}`);
 
             if (!response.ok) {
                 throw new Error('Failed to load monitoring data.');

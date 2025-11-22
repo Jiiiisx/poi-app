@@ -15,7 +15,6 @@ export default async function handler(req, res) {
         const sheetName = 'Analytics';
         const timestamp = new Date().toISOString();
 
-        // Check if sheet exists, create if not
         const spreadsheetInfo = await sheets.spreadsheets.get({ spreadsheetId: SPREADSHEET_ID });
         const sheetExists = spreadsheetInfo.data.sheets.some(s => s.properties.title === sheetName);
 
@@ -32,7 +31,6 @@ export default async function handler(req, res) {
                     }]
                 }
             });
-            // Add headers to the new sheet
             await sheets.spreadsheets.values.append({
                 spreadsheetId: SPREADSHEET_ID,
                 range: `${sheetName}!A1`,

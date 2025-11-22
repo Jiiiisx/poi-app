@@ -10,7 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
-    "googleapis": "^164.0.0"
+    "googleapis": "^164.0.0",
+    "jsonwebtoken": "^9.0.2"
   }
 }

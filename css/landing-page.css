@@ -1,5 +1,4 @@
 
-/* General Body Styles */
 body {
     font-family: 'Inter', sans-serif;
     background-color: var(--bg-primary);
@@ -15,7 +14,6 @@ body {
     padding: 0 2rem;
 }
 
-/* Header & Navbar */
 .landing-header {
     background-color: #ffffff; /* Solid white background */
     border-bottom: 1px solid var(--border-color);
@@ -66,7 +64,6 @@ body {
     text-decoration: none;
 }
 
-/* Hero Section */
 .hero-section {
     position: relative;
     background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../assets/Citylights-background.jpeg');

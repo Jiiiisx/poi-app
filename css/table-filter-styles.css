@@ -87,7 +87,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  flex-grow: 1; /* Allow search bar to take available space */
+  flex-grow: 1;
 }
 
 .search-container .fa-search {
@@ -99,7 +99,7 @@
 
 #searchInput {
   width: 100%;
-  padding: 9px 15px 9px 40px; /* Adjusted padding */
+  padding: 9px 15px 9px 40px;
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 14px;

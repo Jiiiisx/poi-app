@@ -18,6 +18,34 @@ document.addEventListener('DOMContentLoaded', function () {
         'Fini Fadilah Handayani': 'FiniFadilahHandayaniData', 'Hinduntomy Wijaya': 'HinduntomyWijayaData'
     };
 
+    // --- Helper function for authenticated API calls ---
+    async function fetchWithAuth(url, options = {}) {
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+            console.warn('No authentication token found. Redirecting to login.');
+            window.location.href = 'login.html';
+            return new Promise(() => {}); // Return a promise that never resolves to stop execution
+        }
+    
+        const headers = {
+            ...options.headers,
+            'Authorization': `Bearer ${token}`
+        };
+
+        if (options.body && !headers['Content-Type']) {
+            headers['Content-Type'] = 'application/json';
+        }
+    
+        const response = await fetch(url, { ...options, headers });
+    
+        if (response.status === 401) {
+            console.warn('Unauthorized (401) response from API. Redirecting to login.');
+            window.location.href = 'login.html';
+            throw new Error('Unauthorized');
+        }
+        return response;
+    }
+
     // --- DOM Elements ---
     const tableContainer = document.getElementById('customer-table-container');
     const searchInput = document.getElementById('searchInput');
@@ -121,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
     async function loadAndProcessMonitoringData() {
         const requestedRanges = Object.values(salesDataRanges);
         const ranges = requestedRanges.join(',');
-        const response = await fetch(`/api/fetch-monitoring?ranges=${ranges}`);
+        const response = await fetchWithAuth(`/api/fetch-monitoring?ranges=${ranges}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         const { uniqueCustomers, sortedBillingHeaders } = deDuplicateAndProcessData(data);
@@ -134,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function loadCustomerData() {
-        const response = await fetch('/api/customer-data');
+        const response = await fetchWithAuth('/api/customer-data');
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         if (!data.values || data.values.length < 1) {
@@ -153,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function loadGovernmentData() {
-        const response = await fetch('/api/government-data');
+        const response = await fetchWithAuth('/api/government-data');
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         if (!data.values || data.values.length < 1) {
@@ -663,9 +691,8 @@ document.addEventListener('DOMContentLoaded', function () {
             td.style.backgroundColor = '#fdffab'; // Saving...
 
             try {
-                const response = await fetch('/api/update-cell', {
+                const response = await fetchWithAuth('/api/update-cell', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ range, value: newValue }),
                 });
 

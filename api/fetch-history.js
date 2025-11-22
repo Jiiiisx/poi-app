@@ -1,6 +1,12 @@
-const { getSheetsClient, SPREADSHEET_ID } = require('./google-sheets-client');
+import { authenticate } from './authMiddleware.js';
+import { getSheetsClient, SPREADSHEET_ID } from './google-sheets-client.js';
 
 export default async function handler(req, res) {
+    const user = authenticate(req, res);
+    if (!user) {
+        return;
+    }
+
     if (req.method !== 'GET') {
         return res.status(405).json({ message: 'Only GET requests are allowed' });
     }

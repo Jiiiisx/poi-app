@@ -39,7 +39,7 @@ const namedRangesCache = {
     timestamp: 0,
     data: null,
 };
-const NAMED_RANGES_CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
+const NAMED_RANGES_CACHE_DURATION = 10 * 60 * 1000;
 
 async function getNamedRangesMap() {
     const now = Date.now();
@@ -88,7 +88,6 @@ async function logActivity(userEmail, action, details) {
         });
     } catch (error) {
         console.error('CRITICAL: Failed to log activity:', error);
-        // We don't re-throw the error, as logging failure should not break the main operation.
     }
 }
 

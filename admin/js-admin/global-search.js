@@ -5,6 +5,18 @@ document.addEventListener('DOMContentLoaded', function () {
     let allSearchableData = [];
     let isDataLoaded = false;
 
+    async function fetchWithAuth(url, options = {}) {
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+            // Don't redirect, just fail silently for search
+            console.warn('No auth token for global search, requests will fail.');
+            return Promise.reject(new Error('No auth token'));
+        }
+    
+        const headers = { ...options.headers, 'Authorization': `Bearer ${token}` };
+        return fetch(url, { ...options, headers });
+    }
+
     const salesDataRanges = {
         'Andi': 'AndiData', 'April': 'AprilData', 'Nandi': 'NandiData', 'Octa': 'OctaData',
         'Yandi': 'YandiData', 'Totong': 'TotongData', 'Yusdhi': 'YusdhiData', 'Nursyarif': 'NursyarifData',
@@ -23,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             if (isProfilePage) {
                 // On profile page, only load billing data
-                const monitoringRes = await fetch(`/api/fetch-monitoring?ranges=${Object.values(salesDataRanges).join(',')}`);
+                const monitoringRes = await fetchWithAuth(`/api/fetch-monitoring?ranges=${Object.values(salesDataRanges).join(',')}`);
                 if (monitoringRes.ok) {
                     const monitoringData = await monitoringRes.json();
                     const rangeToSalesKey = Object.fromEntries(Object.entries(salesDataRanges).map(a => a.reverse()));
@@ -55,9 +67,9 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 // On other pages, load all data
                 const [customerRes, governmentRes, monitoringRes] = await Promise.all([
-                    fetch('/api/customer-data'),
-                    fetch('/api/government-data'),
-                    fetch(`/api/fetch-monitoring?ranges=${Object.values(salesDataRanges).join(',')}`)
+                    fetchWithAuth('/api/customer-data'),
+                    fetchWithAuth('/api/government-data'),
+                    fetchWithAuth(`/api/fetch-monitoring?ranges=${Object.values(salesDataRanges).join(',')}`)
                 ]);
 
                 // Process Customer Data

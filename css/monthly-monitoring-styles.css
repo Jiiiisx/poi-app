@@ -5,7 +5,7 @@
 .table-filter-controls .view-toggle {
     display: flex;
     gap: 5px;
-    margin-left: auto; /* Push toggle to the right */
+    margin-left: auto;
 }
 
 .btn-view-toggle {
@@ -112,7 +112,7 @@
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
     padding: 20px 0;
-    align-items: stretch; /* Make cards in a row equal height */
+    align-items: stretch;
 }
 
 .monitoring-card {
@@ -124,7 +124,7 @@
     flex-direction: column;
     gap: 10px;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    justify-content: space-between; /* Distribute content vertically */
+    justify-content: space-between;
 }
 
 .monitoring-card:hover {
@@ -140,9 +140,9 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 2; /* Limit to 2 lines */
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    height: 3.2em; /* Fixed height for 2 lines of text */
+    height: 3.2em;
 }
 
 .monitoring-card-db-value {
@@ -152,15 +152,15 @@
 }
 
 .db-value-green {
-    color: var(--success-color); /* Green */
+    color: var(--success-color);
 }
 
 .db-value-blue {
-    color: var(--info-color); /* Blue */
+    color: var(--info-color);
 }
 
 .db-value-red {
-    color: var(--danger-color); /* Red */
+    color: var(--danger-color);
 }
 
 .monitoring-card-fup-progress {
@@ -214,14 +214,14 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .monitoring-cards-grid {
-        grid-template-columns: 1fr; /* Single column on small screens */
+        grid-template-columns: 1fr;
     }
 }
 
 /* New Card Layout Styles */
 .monitoring-card {
-    gap: 0; /* Remove main gap, control spacing with sections */
-    justify-content: flex-start; /* Align content to top */
+    gap: 0;
+    justify-content: flex-start;
 }
 
 .card-section {
@@ -259,7 +259,6 @@
     text-align: right;
 }
 
-/* Specific section styling */
 .fup-section .card-info-row {
     margin-bottom: 5px;
 }
@@ -268,18 +267,14 @@
     padding-top: 15px;
 }
 
-/* Override for the WA button to fit in the row */
 .card-info-row .btn-whatsapp {
     padding: 2px 8px;
     font-size: 0.9em;
 }
 
-
-
-/* Copy Button Styles */
 .copyable-cell {
     position: relative;
-    padding-right: 30px !important; /* Add space for the button */
+    padding-right: 30px !important;
 }
 
 .copyable-cell .btn-copy {
@@ -293,7 +288,7 @@
     cursor: pointer;
     padding: 4px;
     border-radius: 4px;
-    opacity: 0; /* Initially hidden */
+    opacity: 0;
     transition: opacity 0.2s ease-in-out;
 }
 
@@ -309,7 +304,7 @@
 /* Billing History Grid Layout */
 .billing-history-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Default 3 columns */
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
 }
 
@@ -325,17 +320,16 @@
 /* Responsive adjustments for the grid */
 @media (max-width: 768px) {
     .billing-history-grid {
-        grid-template-columns: repeat(2, 1fr); /* 2 columns for tablets and large phones */
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 480px) {
     .billing-history-grid {
-        grid-template-columns: 1fr; /* 1 column for small phones */
+        grid-template-columns: 1fr;
     }
 }
 
-/* Sticky Columns for Monitoring Table - Only on Desktop */
 @media (min-width: 769px) {
     #monitoringTable th:nth-child(-n+3),
     #monitoringTable td:nth-child(-n+3) {
@@ -347,22 +341,20 @@
     #monitoringTable th:nth-child(2), #monitoringTable td:nth-child(2) { width: 180px; min-width: 180px; left: 300px; }
     #monitoringTable th:nth-child(3), #monitoringTable td:nth-child(3) { width: 180px; min-width: 180px; left: 480px; }
 
-    /* Background for sticky header cells */
     #monitoringTable th:nth-child(-n+3) {
         z-index: 3;
-        background-color: #f8f9fa; /* Match header background */
+        background-color: #f8f9fa;
     }
 
-    /* Background for sticky body cells */
     #monitoringTable td:nth-child(-n+3) {
-        background-color: #fff; /* Default row background */
+        background-color: #fff;
     }
 
     #monitoringTable tbody tr:nth-child(even) td:nth-child(-n+3) {
-        background-color: #f2f2f2; /* Even row background */
+        background-color: #f2f2f2;
     }
 
     #monitoringTable tbody tr:hover td:nth-child(-n+3) {
-        background-color: #e9ecef; /* Hover row background */
+        background-color: #e9ecef;
     }
 }

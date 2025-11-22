@@ -1,13 +1,19 @@
-const { getSheetsClient, SPREADSHEET_ID } = require('./google-sheets-client');
+import { authenticate } from './authMiddleware.js';
+import { getSheetsClient, SPREADSHEET_ID } from './google-sheets-client.js';
 
 export default async function handler(req, res) {
+    const user = authenticate(req, res);
+    if (!user) {
+        return;
+    }
+
     if (req.method !== 'GET') {
         return res.status(405).json({ message: 'Only GET requests are allowed' });
     }
 
     try {
         const sheets = await getSheetsClient();
-        const range = "'Analytics'!A1:B"; // Read all data from columns A and B
+        const range = "'Analytics'!A1:B";
         
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
@@ -17,7 +23,6 @@ export default async function handler(req, res) {
         res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
         res.status(200).json(response.data);
     } catch (error) {
-        // If the sheet doesn't exist, it will throw an error. Return an empty array.
         if (error.code === 400 && error.errors[0].message.includes('Unable to parse range')) {
             return res.status(200).json({ values: [] });
         }

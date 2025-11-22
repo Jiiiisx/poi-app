@@ -47,12 +47,25 @@ document.addEventListener('DOMContentLoaded', function () {
     async function ensureDataForSales(salesName) {
         if (monitoringDataBySales[salesName.toLowerCase()]) return; // Already loaded
 
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+
         tableContainer.innerHTML = '<p>Loading data for ' + salesName + '...</p>';
         try {
             const rangeName = salesDataRanges[salesName];
             if (!rangeName) throw new Error('Invalid sales name.');
 
-            const response = await fetch(`/api/fetch-monitoring?ranges=${rangeName}`);
+            const response = await fetch(`/api/fetch-monitoring?ranges=${rangeName}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.status === 401) { // Handle unauthorized case
+                window.location.href = 'login.html';
+                return;
+            }
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             
             const data = await response.json();
@@ -348,6 +361,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const td = e.target;
             if (td.tagName !== 'TD' || !td.isContentEditable) return;
 
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
             const newValue = td.textContent.trim();
             const originalRow = td.dataset.originalRow;
             const header = td.dataset.header;
@@ -369,10 +388,19 @@ document.addEventListener('DOMContentLoaded', function () {
             try {
                 const response = await fetch('/api/update-cell', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
                     body: JSON.stringify({ range, value: newValue }),
                 });
+
+                if (response.status === 401) {
+                    window.location.href = 'login.html';
+                    return;
+                }
                 if (!response.ok) throw new Error('Failed to update sheet');
+
                 if (originalData) originalData[header] = newValue; // Update local data
                 td.style.backgroundColor = '#d4edda'; // Success
             } catch (error) {

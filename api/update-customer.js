@@ -1,15 +1,20 @@
-const { getSheetsClient, SPREADSHEET_ID, logActivity } = require('./google-sheets-client');
+import { authenticate } from './authMiddleware.js';
+import { getSheetsClient, SPREADSHEET_ID, logActivity } from './google-sheets-client.js';
 
 export default async function handler(req, res) {
+    const user = authenticate(req, res);
+    if (!user) {
+        return;
+    }
+
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Only POST requests are allowed' });
     }
 
-    // TODO: Add validation logic here, since express-validator is not available.
-    const { rowIndex, values, userEmail } = req.body;
+    const { rowIndex, values } = req.body;
 
-    if (rowIndex === undefined || !values || !userEmail) {
-        return res.status(400).json({ message: 'Missing rowIndex, values, or userEmail in request body' });
+    if (rowIndex === undefined || !values) {
+        return res.status(400).json({ message: 'Missing rowIndex or values in request body' });
     }
 
     try {
@@ -25,7 +30,7 @@ export default async function handler(req, res) {
             },
         });
 
-        await logActivity(userEmail, 'UPDATE_CUSTOMER', { rowIndex, values });
+        await logActivity(user.username, 'UPDATE_CUSTOMER', { rowIndex, values });
 
         res.status(200).json(response.data);
     } catch (error) {

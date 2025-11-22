@@ -1,9 +1,7 @@
-/* Hide the original table header permanently */
 #customerTable thead {
     display: none;
 }
 
-/* Reset TR/TD to be simple block containers */
 #customerTable tr, #customerTable td {
     display: block;
     width: 100%;
@@ -16,16 +14,14 @@
     margin-bottom: 1rem;
 }
 
-/* The main card wrapper */
 .mobile-card-wrapper {
     background: #fff;
     border-radius: 12px;
     padding: 1.25rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    height: 100%; /* For equal height cards in a grid */
+    height: 100%;
 }
 
-/* Card Header (Title + Toggle Button) */
 .card-header {
     display: flex;
     justify-content: space-between;
@@ -34,8 +30,9 @@
 }
 .card-header-main {
     flex-grow: 1;
-    min-width: 0; /* Prevent long text from pushing out the toggle button */
+    min-width: 0;
 }
+
 .card-title {
     font-size: 1.1rem;
     font-weight: 600;
@@ -49,7 +46,6 @@
     flex-shrink: 0;
 }
 
-/* Card Details (Expandable Area) */
 .card-details {
     max-height: 0;
     overflow: hidden;
@@ -83,7 +79,6 @@ tr.details-expanded .card-details {
     gap: 0.5rem;
 }
 
-/* Rotate the toggle icon when expanded */
 .btn-toggle-details i {
     transition: transform 0.3s ease;
 }
@@ -91,13 +86,12 @@ tr.details-expanded .btn-toggle-details i {
     transform: rotate(180deg);
 }
 
-/* Style for the location button inside a card */
 .card-location-button .btn-shareloc {
     background-color: var(--primary-color, #b34747);
     color: white;
     border: none;
     padding: 0.5rem 1rem;
-    border-radius: 20px; /* Pill shape */
+    border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
@@ -108,35 +102,31 @@ tr.details-expanded .btn-toggle-details i {
 }
 
 
-/* --- DESKTOP-SPECIFIC GRID LAYOUT --- */
-@media (min-width: 1024px) { /* Using 1024px as a breakpoint for 2+ columns */
+@media (min-width: 1024px) {
     #customerTable tbody {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); /* Create a responsive grid */
+        grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
         gap: 1.5rem;
     }
     #customerTable tr {
-        margin-bottom: 0; /* Remove margin as grid gap is used */
+        margin-bottom: 0;
     }
 }
 
 
-/* --- MOBILE-ONLY STYLES (Keep these inside the media query) --- */
 @media (max-width: 768px) {
-  /* --- Icon Font Fix --- */
   .fas, .fa-solid, .fa {
     font-family: 'Font Awesome 6 Free' !important;
     font-weight: 900 !important;
   }
 
-  /* --- Header Redesign --- */
   .header {
-    display: flex; /* Add this */
-    position: relative; /* Needed for absolute positioning of the button */
+    display: flex;
+    position: relative;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 2rem 5%; /* Adjust padding to be responsive */
+    padding: 2rem 5%;
     gap: 0.5rem;
   }
 
@@ -145,29 +135,26 @@ tr.details-expanded .btn-toggle-details i {
   }
 
   .header-left {
-    /* This contains the title and subtitle */
-    /* It will be centered by the parent's align-items: center */
   }
 
   .header-title h1 {
-    font-size: 1.5rem; /* Make title a bit bigger */
+    font-size: 1.5rem;
   }
 
   .header-subtitle {
     font-size: 0.9rem;
-    margin-top: -5px; /* Bring subtitle closer to title */
+    margin-top: -5px;
   }
 
   .header-right {
-    /* This contains the user info */
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 1rem; /* Add space between title and user info */
+    margin-top: 1rem;
   }
 
   #userProfileDisplayElement {
-      display: block !important; /* Make sure it's visible */
+      display: block !important;
   }
 
   #userProfilePicture {
@@ -186,17 +173,14 @@ tr.details-expanded .btn-toggle-details i {
     opacity: 0.8;
   }
 
-  /* --- Main Content & Stats --- */
   .main-content {
     padding: 1.25rem;
   }
 
-  /* Hide only the desktop 'Add' button on mobile */
   .table-filter-controls .btn-export {
       display: none;
   }
 
-  /* Style the filter button group for mobile */
   .table-filter-controls .filter-buttons-group {
       display: flex;
       flex-wrap: wrap;
@@ -205,10 +189,10 @@ tr.details-expanded .btn-toggle-details i {
   }
 
   .table-filter-controls .btn-filter {
-      flex-grow: 1; /* Allow buttons to share space */
+      flex-grow: 1;
       padding: 0.5rem 0.75rem;
       font-size: 0.8rem;
-      border-radius: 20px; /* Pill shape */
+      border-radius: 20px;
       border: 1px solid var(--border-color, #e8d5d5);
       background-color: #fff;
       color: var(--text-secondary, #6b4c4c);
@@ -221,7 +205,6 @@ tr.details-expanded .btn-toggle-details i {
       border-color: var(--primary-color, #b34747);
   }
 
-  /* --- Floating Action Button (FAB) --- */
   .fabb {
     position: fixed;
     bottom: 20px;
@@ -241,16 +224,14 @@ tr.details-expanded .btn-toggle-details i {
     cursor: pointer;
   }
 
-  /* --- Smaller Header Button --- */
   .header .sidebar-toggle {
     width: 36px;
     height: 36px;
-    font-size: 0.9rem; /* Make icon inside smaller */
+    font-size: 0.9rem;
   }
 
-  /* --- Responsive Stat Cards --- */
   .stat-card {
-      padding: 1rem; /* Reduce padding on mobile */
+      padding: 1rem;
       gap: 1rem;
   }
   .stat-icon {
@@ -261,22 +242,21 @@ tr.details-expanded .btn-toggle-details i {
       font-size: 1.2rem;
   }
   .stat-number {
-      font-size: 1.75rem; /* Slightly smaller number font */
+      font-size: 1.75rem;
   }
 }
 
 @media (min-width: 769px) {
     #fab-add-customer {
-        display: none !important; /* Hide on desktop */
+        display: none !important;
     }
     #fab-toggle-sidebar {
-        display: none !important; /* Hide on desktop */
+        display: none !important;
     }
 }
 
-/* --- Desktop Card Image Styles --- */
 .card-image-container {
-    width: calc(100% + 2.5rem); /* Span full width of padded card */
+    width: calc(100% + 2.5rem);
     aspect-ratio: 16 / 9;
     background-color: #f0f2f5;
     border-radius: 12px 12px 0 0;

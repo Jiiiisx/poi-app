@@ -177,7 +177,6 @@
     animation: fadeIn 0.3s ease;
 }
 
-/* Scrollbar styling */
 .modal-content::-webkit-scrollbar {
     width: 8px;
 }
@@ -196,8 +195,6 @@
     background: #555;
 }
 
-
-/* --- Merged from enhanced-modal.css --- */
 
 .enhanced-modal {
     display: none;

@@ -1,5 +1,4 @@
 
-/* General card container */
 .monitoring-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -7,7 +6,6 @@
     padding: 20px;
 }
 
-/* Individual card styling */
 .monitoring-card {
     background-color: #ffffff;
     border-radius: 15px;
@@ -46,7 +44,6 @@
     border-bottom: 1px solid #eee;
 }
 
-/* Card content */
 .card-content p {
     margin: 8px 0;
     color: #555;
@@ -63,7 +60,6 @@
     text-align: center;
 }
 
-/* Card actions */
 .card-actions {
     display: flex;
     justify-content: flex-end;
