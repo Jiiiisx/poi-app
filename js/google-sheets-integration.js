@@ -271,7 +271,7 @@ class GoogleSheetsIntegration {
 
         try {
             this.showLoading(true);
-            const response = await fetch('/backend?action=customer-data');
+            const response = await fetch('/api?action=customer-data');
             
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -325,7 +325,7 @@ class GoogleSheetsIntegration {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-                const response = await fetch(`/backend?action=fetch-monitoring&ranges=${rangesString}`, {
+                const response = await fetch(`/api?action=fetch-monitoring&ranges=${rangesString}`, {
                     signal: controller.signal
                 });
 
@@ -456,7 +456,7 @@ class GoogleSheetsIntegration {
 
         try {
             this.showLoading(true);
-            const response = await fetch('/backend?action=government-data');
+            const response = await fetch('/api?action=government-data');
 
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -579,7 +579,7 @@ class GoogleSheetsIntegration {
             const colLetter = this.columnIndexToLetter(colIndex);
             const range = `'REKAP PS AR KALIABANG'!${colLetter}${rowIndex}`;
 
-            const response = await fetch('/backend?action=update-cell', {
+            const response = await fetch('/api?action=update-cell', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

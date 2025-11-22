@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const requestedRanges = Object.values(salesDataRanges);
         const ranges = requestedRanges.join(',');
         try {
-            const response = await fetchWithAuth(`/backend?action=fetch-monitoring&ranges=${ranges}`);
+            const response = await fetchWithAuth(`/api?action=fetch-monitoring&ranges=${ranges}`);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
             salesPerformance = processApiResponse(data);

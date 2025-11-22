@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const rangeName = salesDataRanges[salesName];
             if (!rangeName) throw new Error('Invalid sales name.');
 
-            const response = await fetch(`/backend?action=fetch-monitoring&ranges=${rangeName}`, {
+            const response = await fetch(`/api?action=fetch-monitoring&ranges=${rangeName}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             td.style.backgroundColor = '#fdffab'; // Indicate saving
             try {
-                const response = await fetch('/backend?action=admin-update-cell', {
+                const response = await fetch('/api?action=admin-update-cell', {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',

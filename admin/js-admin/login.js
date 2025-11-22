@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = loginForm.password.value;
 
         try {
-            const response = await fetch('/backend?action=login', {
+            const response = await fetch('/api?action=login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

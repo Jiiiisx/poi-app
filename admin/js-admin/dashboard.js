@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
     async function loadAndProcessMonitoringData() {
         const requestedRanges = Object.values(salesDataRanges);
         const ranges = requestedRanges.join(',');
-        const response = await fetchWithAuth(`/backend?action=fetch-monitoring&ranges=${ranges}`);
+        const response = await fetchWithAuth(`/api?action=fetch-monitoring&ranges=${ranges}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         const { uniqueCustomers, sortedBillingHeaders } = deDuplicateAndProcessData(data);
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function loadCustomerData() {
-        const response = await fetchWithAuth('/backend?action=customer-data');
+        const response = await fetchWithAuth('/api?action=customer-data');
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         if (!data.values || data.values.length < 1) {
@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function loadGovernmentData() {
-        const response = await fetchWithAuth('/backend?action=government-data');
+        const response = await fetchWithAuth('/api?action=government-data');
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         if (!data.values || data.values.length < 1) {
@@ -691,7 +691,7 @@ document.addEventListener('DOMContentLoaded', function () {
             td.style.backgroundColor = '#fdffab'; // Saving...
 
             try {
-                const response = await fetchWithAuth('/backend?action=update-cell', {
+                const response = await fetchWithAuth('/api?action=update-cell', {
                     method: 'POST',
                     body: JSON.stringify({ range, value: newValue }),
                 });

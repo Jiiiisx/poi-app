@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
     async function loadAnalyticsData() {
         try {
             console.log('Fetching analytics data...');
-            const response = await fetchWithAuth('/backend?action=fetch-analytics');
+            const response = await fetchWithAuth('/api?action=fetch-analytics');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Existing functions for history table (from original file) ---
     async function loadHistoryData() {
         try {
-            const response = await fetchWithAuth('/backend?action=fetch-history');
+            const response = await fetchWithAuth('/api?action=fetch-history');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
