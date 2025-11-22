@@ -4,14 +4,12 @@ class GoogleSheetsCRUD {
         this.sheetName = 'REKAP CALON PELANGGAN BY SPARTA';
     }
 
-    // CREATE - Menambah data baru via backend
     async addCustomer(customerData) {
         try {
             const url = `/api/add-customer?t=${Date.now()}`;
 
-            // The backend expects an object with a 'values' property which is an array.
             const requestBody = {
-                userEmail: window.currentUserEmail, // Added for audit trail
+                userEmail: window.currentUserEmail,
                 values: [
                     customerData.odp_terdekat,
                     customerData.nama,
@@ -55,7 +53,6 @@ class GoogleSheetsCRUD {
         }
     }
 
-    // Validation functions
     validateCustomerData(data) {
         const required = ['nama', 'no_telepon', 'alamat', 'odp_terdekat', 'nama_sales'];
         const missing = required.filter(field => !data[field] || data[field].trim() === '');
@@ -64,7 +61,6 @@ class GoogleSheetsCRUD {
             throw new Error(`Field wajib tidak lengkap: ${missing.join(', ')}`);
         }
         
-        // Validasi nomor telepon
         if (!/^[0-9]{10,13}$/.test(data.no_telepon)) {
             throw new Error('Nomor telepon harus 10-13 digit angka');
         }
@@ -77,4 +73,3 @@ const googleSheetsCRUD = new GoogleSheetsCRUD();
 
 document.dispatchEvent(new CustomEvent('crudReady'));
 window.googleSheetsCRUD = googleSheetsCRUD;
-

@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             if (isProfilePage) {
                 // On profile page, only load billing data
-                const monitoringRes = await fetchWithAuth(`/api/fetch-monitoring?ranges=${Object.values(salesDataRanges).join(',')}`);
+                const monitoringRes = await fetchWithAuth(`/api?action=fetch-monitoring&ranges=${Object.values(salesDataRanges).join(',')}`);
                 if (monitoringRes.ok) {
                     const monitoringData = await monitoringRes.json();
                     const rangeToSalesKey = Object.fromEntries(Object.entries(salesDataRanges).map(a => a.reverse()));
@@ -67,9 +67,9 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 // On other pages, load all data
                 const [customerRes, governmentRes, monitoringRes] = await Promise.all([
-                    fetchWithAuth('/api/customer-data'),
-                    fetchWithAuth('/api/government-data'),
-                    fetchWithAuth(`/api/fetch-monitoring?ranges=${Object.values(salesDataRanges).join(',')}`)
+                    fetchWithAuth('/api?action=customer-data'),
+                    fetchWithAuth('/api?action=government-data'),
+                    fetchWithAuth(`/api?action=fetch-monitoring&ranges=${Object.values(salesDataRanges).join(',')}`)
                 ]);
 
                 // Process Customer Data

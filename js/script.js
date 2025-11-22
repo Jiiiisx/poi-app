@@ -1,7 +1,6 @@
 const CLIENT_ID = '167078370634-de0ou8c3hikdba9pq6evimmfekbkk9o6.apps.googleusercontent.com';
 let salesPerformanceChart = null;
 
-// Simple Error Handler
 const ErrorHandler = {
   log: () => {},
   handleError: (error, context) => {
@@ -16,9 +15,9 @@ function initializeGsi() {
   });
   google.accounts.id.renderButton(
     document.getElementById('g_id_onload'),
-    { theme: 'outline', size: 'large' }  // customization attributes
+    { theme: 'outline', size: 'large' }
   );
-  google.accounts.id.prompt(); // also display the One Tap dialog
+  google.accounts.id.prompt();
 }
 
 
@@ -36,8 +35,6 @@ window.handleCredentialResponse = function(response) {
             picture: userPayload.picture,
             token: response.credential
           };
-          // The reload was causing a login loop.
-          // Instead, we save the definitive user info and call updateSigninStatus directly.
           localStorage.setItem('userInfo', JSON.stringify(userInfo));
           localStorage.setItem('isLoggedIn', 'true');
           
@@ -61,12 +58,9 @@ window.handleCredentialResponse = function(response) {
 
 
 
-// Function untuk mendapatkan email user dari Google login
 function getUserEmailFromToken(token) {
     try {
         if (!token) return '';
-        
-        // Decode JWT token untuk mendapatkan email
         const payload = token.split('.')[1];
         const decodedPayload = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
         const payloadObj = JSON.parse(decodedPayload);
@@ -94,7 +88,6 @@ function checkNetworkSpeed() {
     }
 }
 
-// Add event listener for manual sign-in button
 document.addEventListener('DOMContentLoaded', () => {
   const manualSignInBtn = document.getElementById('manualSignInBtn');
   if (manualSignInBtn) {
@@ -116,20 +109,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tokenClient) {
           console.log('Requesting access token with manual consent...');
           
-          // Set up callback for manual sign-in
           tokenClient.callback = (tokenResponse) => {
             if (tokenResponse && tokenResponse.access_token) {
               gapi.client.setToken(tokenResponse);
               currentAccessToken = tokenResponse.access_token;
               console.log('Manual sign-in successful');
               
-              // Update UI
               if (authInfo) {
                 authInfo.textContent = 'Sign-in berhasil! Memuat dashboard...';
                 authInfo.style.color = '#28a745';
               }
               
-              // Trigger data loading
               if (window.googleSheetsIntegration) {
                 window.googleSheetsIntegration.setup();
               }
@@ -177,7 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Check network speed
   checkNetworkSpeed();
 });
 
@@ -289,10 +278,6 @@ function updateSigninStatus(isSignedIn, userName = '', userPicture = '') {
   }
 }
 
-
-
-
-// Safe wrapper for googleSheetsIntegration.refreshData
 function safeRefreshData() {
   if (typeof googleSheetsIntegration !== 'undefined' && googleSheetsIntegration.refreshData) {
     googleSheetsIntegration.refreshData();
@@ -302,8 +287,6 @@ function safeRefreshData() {
   }
 };
 
-// Global functions with error handling
-
 function closeEditModal() {
   try {
     const editModal = document.getElementById('editModal');
@@ -311,13 +294,11 @@ function closeEditModal() {
       editModal.style.display = 'none';
       editModal.classList.remove('show');
       
-      // Reset form when closing
       const editForm = document.getElementById('editForm');
       if (editForm) {
         editForm.reset();
       }
       
-      // Clear any error messages
       const errorDisplay = document.getElementById('errorDisplay');
       if (errorDisplay) {
         errorDisplay.style.display = 'none';
@@ -343,12 +324,10 @@ function closeViewHistoryModal() {
       viewHistoryModal.style.display = 'none';
       viewHistoryModal.classList.remove('show');
       
-      // Clear any error messages
       const historyError = document.getElementById('historyError');
       if (historyError) {
         historyError.style.display = 'none';
       }
-      // Clear table body
       const historyTableBody = document.getElementById('historyTableBody');
       if (historyTableBody) {
         historyTableBody.innerHTML = '';
@@ -363,7 +342,6 @@ document.addEventListener('DOMContentLoaded', () => {
   try {
     ErrorHandler.log('DOM Content Loaded - Initializing application...');
     
-    // Prevent white screen by ensuring elements exist
     const requiredElements = ['sign-in-container', 'main-content', 'errorDisplay'];
     const missingElements = requiredElements.filter(id => !document.getElementById(id));
     
@@ -372,7 +350,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     
-    // Check login status
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     ErrorHandler.log(`Login status: ${isLoggedIn}`);
     
@@ -384,13 +361,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     
-    // Initialize UI components
     initializeUIComponents();
 
-    // Check network speed
     checkNetworkSpeed();
 
-    // Accordion functionality for customer cards
     const customerTableBody = document.querySelector('#customerTable tbody');
     if (customerTableBody) {
         customerTableBody.addEventListener('click', (e) => {
@@ -404,17 +378,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Add event listener for government data filter button to switch view
     const govFilterBtn = document.getElementById('btnTableShowGoverment');
     const allFilterBtn = document.getElementById('btnTableShowAll');
     const schoolFilterBtn = document.getElementById('btnTableShowSchool');
     const nonSchoolFilterBtn = document.getElementById('btnTableShowNonSchool');
-
-    // Dashboard Tutorial Modal Logic
     const dashboardTutorialLink = document.getElementById('dashboard-tutorial-link');
     const dashboardTutorialModal = document.getElementById('dashboard-tutorial-modal');
     const dashboardTutorialClose = document.getElementById('dashboard-tutorial-close');
-
     const dashboardTutorialSidebarLinks = document.querySelectorAll('.dashboard-tutorial-trigger');
 
     if (dashboardTutorialLink && dashboardTutorialModal && dashboardTutorialClose) {
@@ -456,7 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
       govFilterBtn.addEventListener('click', () => {
         if (window.googleSheetsIntegration) {
           window.googleSheetsIntegration.currentDataView = 'government';
-          window.googleSheetsIntegration.governmentCurrentPage = 1; // Reset to first page if needed
+          window.googleSheetsIntegration.governmentCurrentPage = 1;
           window.googleSheetsIntegration.applyCombinedFilters();
           window.googleSheetsIntegration.renderPaginationControls();
           setActiveFilterButton(govFilterBtn);
@@ -502,11 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }
-    
-    // Sidebar toggle is now handled by SidebarManager
-    // No need for duplicate initialization
 
-    // Listen for sales view changes to control chart visibility
     document.addEventListener('salesViewChanged', (e) => {
         const salesName = e.detail.salesName;
         const chartSection = document.querySelector('.chart-section');
@@ -514,13 +480,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!chartSection) return;
 
         if (salesName && salesName !== 'Home') {
-            // Individual sales view: destroy chart and hide section
             if (salesPerformanceChart) {
                 salesPerformanceChart.destroy();
             }
             chartSection.style.display = 'none';
         } else {
-            // Home view: show section and re-render chart
             chartSection.style.display = 'block';
             if (typeof window.renderSalesPerformanceChart === 'function') {
                 window.renderSalesPerformanceChart();
@@ -535,7 +499,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initializeUIComponents() {
   try {
-    // Modal and button event listeners
     const addSalesModal = document.getElementById('addSalesModal');
     const openAddSalesBtn = document.getElementById('openAddSalesBtn');
     const closeAddSalesModal = document.getElementById('closeAddSalesModal');
@@ -545,7 +508,6 @@ function initializeUIComponents() {
     const addCustomerFormContainer = document.getElementById('add-customer-form-container');
     const overviewBtn = document.getElementById('overview-btn');
 
-    // Shared function to toggle the form
     const toggleForm = () => {
         const addCustomerSection = document.getElementById('add-customer-section');
         if (addCustomerSection) {
@@ -560,18 +522,15 @@ function initializeUIComponents() {
         }
     };
 
-    // Toggle Add Customer Form (Desktop button)
     if (toggleCustomerFormBtn) {
       toggleCustomerFormBtn.addEventListener('click', toggleForm);
     }
 
-    // Toggle Add Customer Form with FAB (Mobile button)
     const fabAddCustomerBtn = document.getElementById('fab-add-customer');
     if (fabAddCustomerBtn) {
       fabAddCustomerBtn.addEventListener('click', toggleForm);
     }
     
-    // Close form button
     const closeFormBtn = document.getElementById('closeFormBtn');
     if (closeFormBtn) {
       closeFormBtn.addEventListener('click', () => {
@@ -583,7 +542,6 @@ function initializeUIComponents() {
       });
     }
     
-    // Cancel button
     const cancelAddCustomerBtn = document.getElementById('cancelAddCustomer');
     if (cancelAddCustomerBtn) {
       cancelAddCustomerBtn.addEventListener('click', () => {
@@ -595,20 +553,16 @@ function initializeUIComponents() {
       });
     }
     
-    // Initialize Add Customer Form
     initializeAddCustomerForm();
 
-    // Populate sales dropdown
     populateSalesDropdown();
 
-    // Open modal
     if (openAddSalesBtn && addSalesModal) {
       openAddSalesBtn.addEventListener('click', () => {
         addSalesModal.classList.add('show');
       });
     }
 
-    // Close modal
     if(closeAddSalesModal && addSalesModal) {
       closeAddSalesModal.addEventListener('click', () => {
         addSalesModal.classList.remove('show');
@@ -621,13 +575,11 @@ function initializeUIComponents() {
       });
     }
 
-    // Close modal when clicking outside
     window.addEventListener('click', (event) => {
       if (event.target === addSalesModal) addSalesModal.classList.remove('show');
       if (event.target === editModal) editModal.classList.remove('show');
     });
 
-    // Close modal with ESC key
     window.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
         const editModal = document.getElementById('editModal');
@@ -643,7 +595,6 @@ function initializeUIComponents() {
       }
     });
 
-    // Show all data when overview is clicked
     if (overviewBtn) {
       overviewBtn.addEventListener('click', () => {
         googleSheetsIntegration.filterBySales('Home');
@@ -651,11 +602,7 @@ function initializeUIComponents() {
         overviewBtn.classList.add('active');
       });
     }
-
-    // Handle form submissions
     setupFormHandlers();
-    // setupEditFormHandler(); // Commented out because function is undefined
-    
   } catch (error) {
     ErrorHandler.handleError(error, 'initializeUIComponents');
   }
@@ -663,7 +610,6 @@ function initializeUIComponents() {
 
 function setupFormHandlers() {
   try {
-    // Handle form tambah sales
     const addSalesForm = document.getElementById('addSalesForm');
     if (addSalesForm) {
       addSalesForm.addEventListener('submit', async (e) => {
@@ -703,7 +649,6 @@ function populateEditModal(customerData, rowIndex) {
     document.getElementById('originalStatus').value = customerData.status || '';
     document.getElementById('editKeteranganTambahan').value = customerData.keterangan_tambahan || '';
 
-    // Show the edit modal
     const editModal = document.getElementById('editModal');
     if (editModal) {
       editModal.style.display = 'block';
@@ -714,12 +659,10 @@ function populateEditModal(customerData, rowIndex) {
   }
 }
 
-// Global error handler for uncaught errors
 window.addEventListener('error', (event) => {
-  // Check if this is the specific refreshData error
   if (event.message.includes('refreshData') && event.message.includes('undefined')) {
     console.warn('Caught refreshData undefined error - this is expected during initialization');
-    return; // Don't show this specific error to user
+    return;
   }
   ErrorHandler.handleError(new Error(event.message), 'Global Error');
 });
@@ -749,33 +692,24 @@ window.addEventListener('unhandledrejection', (event) => {
   ErrorHandler.handleError(new Error(event.reason), 'Unhandled Promise Rejection');
 });
 
-// Listen for googleSheetsIntegration ready event
 document.addEventListener('googleSheetsIntegrationReady', () => {
   console.log('googleSheetsIntegration is now ready');
   safeRefreshData();
 });
 
-// Initialize googleSheetsIntegration safely
 function initializeGoogleSheetsIntegration() {
   if (typeof googleSheetsIntegration === 'undefined') {
     console.log('Waiting for googleSheetsIntegration to load...');
     setTimeout(initializeGoogleSheetsIntegration, 1000);
   } else {
     console.log('googleSheetsIntegration loaded successfully');
-    // Ensure it's properly initialized
     if (googleSheetsIntegration.isInitialized) {
       safeRefreshData();
     }
   }
 };
 
-// Start initialization when DOM is ready
 document.addEventListener('DOMContentLoaded', initializeGoogleSheetsIntegration);
-
-// Sidebar toggle functionality has been moved to sidebar-manager.js
-// The SidebarManager class now handles all sidebar interactions
-
-// Add Customer Form Functions
 function initializeAddCustomerForm() {
   try {
     const addCustomerForm = document.getElementById('addCustomerForm');
@@ -807,17 +741,14 @@ function populateSalesDropdown() {
     const salesSelect = document.getElementById('assignedSales');
     const editSalesSelect = document.getElementById('editSales');
     
-    // Only proceed if they are select elements
     if (!salesSelect || salesSelect.tagName !== 'SELECT' || 
         !editSalesSelect || editSalesSelect.tagName !== 'SELECT') {
       return; 
     }
     
-    // Clear existing options
     salesSelect.innerHTML = '<option value="">Pilih Sales</option>';
     editSalesSelect.innerHTML = '<option value="">Pilih Sales</option>';
     
-    // Get sales from the sidebar
     const salesItems = document.querySelectorAll('.sales-item');
     salesItems.forEach(item => {
       const salesName = item.textContent.trim();
@@ -846,25 +777,19 @@ async function handleAddCustomerSubmit(e) {
     const formData = new FormData(e.target);
     const customerData = Object.fromEntries(formData.entries());
 
-    // Debug log currentUserEmail
     console.log('DEBUG: currentUserEmail during add:', currentUserEmail);
-    
-    // Validate required fields
     if (!customerData.nama || !customerData.no_telepon || !customerData.alamat || !customerData.odp_terdekat || !customerData.nama_sales) {
       ModalHandler.show('Error', 'Mohon lengkapi semua field yang wajib diisi');
       return;
     }
     
-    // Validate customer data
     googleSheetsCRUD.validateCustomerData(customerData);
     
-    // Show loading
     const saveBtn = document.getElementById('saveCustomer');
     const originalText = saveBtn.innerHTML;
     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
     saveBtn.disabled = true;
     
-    // Prepare data for Google Sheets
     const customerDataForSheets = {
         odp_terdekat: customerData.odp_terdekat || '',
         nama: customerData.nama || '',
@@ -876,26 +801,21 @@ async function handleAddCustomerSubmit(e) {
         keterangan_tambahan: customerData.keterangan || ''
     };
     
-    // Add new customer using GoogleSheetsCRUD
     await googleSheetsCRUD.addCustomer(customerDataForSheets);
     
-    // Success message
     NotificationHandler.show('Calon pelanggan berhasil ditambahkan!', 'success');
     
-    // Reset form and hide
     resetAddCustomerForm();
     const addCustomerSection = document.getElementById('add-customer-section');
     if (addCustomerSection) {
       addCustomerSection.style.display = 'none';
     }
     
-    // Refresh data
     safeRefreshData();
     
   } catch (error) {
     ErrorHandler.handleError(error, 'handleAddCustomerSubmit');
   } finally {
-    // Reset button state
     const saveBtn = document.getElementById('saveCustomer');
     saveBtn.innerHTML = '<i class="fas fa-save"></i> Simpan Calon Pelanggan';
     saveBtn.disabled = false;
@@ -909,7 +829,6 @@ function resetAddCustomerForm() {
       form.reset();
     }
     
-    // Reset any validation states
     const inputs = form.querySelectorAll('input, select, textarea');
     inputs.forEach(input => {
       input.classList.remove('error');
@@ -920,8 +839,6 @@ function resetAddCustomerForm() {
   }
 };
 
-// Update the populateSalesDropdown function to be called when sales data is loaded
-// Wait for googleSheetsIntegration to be initialized before accessing it
 function setupRefreshDataOverride() {
   if (typeof googleSheetsIntegration !== 'undefined' && googleSheetsIntegration.refreshData) {
     const originalRefreshData = googleSheetsIntegration.refreshData;
@@ -931,17 +848,14 @@ function setupRefreshDataOverride() {
       });
     };
   } else {
-    // Retry after a short delay
     setTimeout(setupRefreshDataOverride, 100);
   }
 };
 
-// Call the setup function when DOM is ready
 document.addEventListener('DOMContentLoaded', setupRefreshDataOverride);
 
-// Function called by the Logout button in index.html
 function signOut() {
-    handleSignoutClick(); // Call the existing sign out logic
+    handleSignoutClick();
 }
 
 function displayCurrentDate() {
@@ -1186,7 +1100,6 @@ function renderSingleSalesChart(salesName) {
     });
 }
 
-// --- START TAB NAVIGATION LOGIC ---
 function setupTabNavigation() {
     const tabContainer = document.querySelector('.tab-navigation');
     const contentGrid = document.querySelector('.content-grid');
@@ -1194,15 +1107,13 @@ function setupTabNavigation() {
     const salesSummarySection = document.getElementById('salesSummarySection');
 
     if (!tabContainer || !contentGrid || !monitoringSection || !salesSummarySection) {
-        return; // If elements aren't here, do nothing.
+        return; 
     }
 
-    // Hide tabs by default
     tabContainer.style.display = 'none';
 
-    // Make tab switcher globally available
     window.switchToTab = (tabName) => {
-        if (!tabContainer.querySelector(`[data-tab="${tabName}"]`)) return; // Exit if tab doesn't exist
+        if (!tabContainer.querySelector(`[data-tab="${tabName}"]`)) return;
 
         tabContainer.querySelectorAll('.tab-link').forEach(link => {
             link.classList.toggle('active', link.dataset.tab === tabName);
@@ -1217,7 +1128,6 @@ function setupTabNavigation() {
             if (chartSection) chartSection.style.display = 'none';
         } else if (tabName === 'monitoring') {
             contentGrid.style.display = 'none';
-            // Explicitly show the monitoring sections when switching to the tab
             monitoringSection.style.display = 'block';
             salesSummarySection.style.display = 'block';
             if (chartSection) chartSection.style.display = 'block';
@@ -1231,9 +1141,7 @@ function setupTabNavigation() {
         }
     });
 
-    // Set initial state on page load
     window.switchToTab('pelanggan');
 }
 
 document.addEventListener('DOMContentLoaded', setupTabNavigation);
-// --- END TAB NAVIGATION LOGIC ---

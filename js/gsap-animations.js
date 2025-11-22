@@ -1,6 +1,3 @@
-// GSAP Animations for the application
-
-// Function to play the skeleton loader build-up animation
 function playSkeletonBuildUpAnimation() {
     const tl = gsap.timeline();
 
@@ -17,18 +14,15 @@ function playSkeletonBuildUpAnimation() {
       .from(".skeleton-pagination", { duration: 0.5, y: 20, opacity: 0, ease: "power2.out" }, "-=0.2");
 }
 
-// Function to play the dashboard entrance animation
 function playDashboardEntranceAnimation() {
-    const tl = gsap.timeline({ defaults: { duration: 0.6, ease: "back.out(1.2)" } }); // Faster duration, more bouncy ease
+    const tl = gsap.timeline({ defaults: { duration: 0.6, ease: "back.out(1.2)" } });
 
-    // Set initial states
     gsap.set("#main-content", { autoAlpha: 1 });
     gsap.set(".sidebar", { x: "-100%", opacity: 0 });
     gsap.set(".header .header-left, .header .header-right", { y: -40, opacity: 0 });
     gsap.set(".stat-card", { y: 30, scale: 0.95, opacity: 0 });
     gsap.set([".table-section", ".sales-summary-section", "#monthlyMonitoringSection"], { y: 40, opacity: 0 });
 
-    // Staggered animation sequence
     tl.to(".sidebar", { x: "0%", opacity: 1, duration: 0.8, ease: "power3.out" })
       .to(".header .header-left, .header .header-right", {
           y: 0,
@@ -39,7 +33,7 @@ function playDashboardEntranceAnimation() {
           y: 0,
           scale: 1,
           opacity: 1,
-          stagger: 0.1, // Faster stagger
+          stagger: 0.1,
           duration: 0.5
       }, "-=0.4")
       .to([".table-section", ".sales-summary-section", "#monthlyMonitoringSection"], {

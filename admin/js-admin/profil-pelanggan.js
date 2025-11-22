@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ranges = Object.values(salesDataRanges).join(',');
             }
 
-            const response = await fetchWithAuth(`/api/fetch-monitoring?ranges=${ranges}`);
+            const response = await fetchWithAuth(`/api?action=fetch-monitoring&ranges=${ranges}`);
 
             if (!response.ok) {
                 throw new Error('Failed to load monitoring data.');

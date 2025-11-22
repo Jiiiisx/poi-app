@@ -1,8 +1,3 @@
-/**
- * Table Scrollbar Sync - Moves scrollbar to top of table
- * This script synchronizes scroll positions between top and bottom scrollbars
- */
-
 class TableScrollbarSync {
   constructor() {
     this.tableContainer = null;
@@ -28,25 +23,20 @@ class TableScrollbarSync {
   }
 
   setupScrollSync() {
-    // Create a hidden div that matches the table width for the top scrollbar
     this.updateScrollContentWidth();
     
-    // Sync scroll from top scrollbar to table
     this.scrollTop.addEventListener('scroll', () => {
       this.tableContainer.scrollLeft = this.scrollTop.scrollLeft;
     });
     
-    // Sync scroll from table to top scrollbar
     this.tableContainer.addEventListener('scroll', () => {
       this.scrollTop.scrollLeft = this.tableContainer.scrollLeft;
     });
     
-    // Update width when window resizes
     window.addEventListener('resize', () => {
       this.updateScrollContentWidth();
     });
     
-    // Also update when table content changes
     const observer = new MutationObserver(() => {
       this.updateScrollContentWidth();
     });
@@ -67,16 +57,13 @@ class TableScrollbarSync {
   }
 }
 
-// Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   const scrollbarSync = new TableScrollbarSync();
   scrollbarSync.init();
   
-  // Re-initialize when table data is loaded
   window.addEventListener('tableDataLoaded', () => {
     scrollbarSync.updateScrollContentWidth();
   });
 });
 
-// Export for use in other modules
 window.TableScrollbarSync = TableScrollbarSync;

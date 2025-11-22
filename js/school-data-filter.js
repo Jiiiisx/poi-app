@@ -36,7 +36,6 @@ class SchoolDataFilter {
     init() {
         this.bindEvents();
 
-        // Hook into googleSheetsIntegration refreshData to update filtered data after data load
         const originalRefreshData = this.googleSheets.refreshData.bind(this.googleSheets);
         this.googleSheets.refreshData = async () => {
             await originalRefreshData();
@@ -52,7 +51,6 @@ class SchoolDataFilter {
             }
         };
 
-        // Initial filter data after setup
         this.filterData();
     }
 
@@ -100,7 +98,6 @@ class SchoolDataFilter {
         this.isActive = true;
         this.activeFilter = 'government';
 
-        // Set current data view to government and apply filters including sales filter
         if (window.googleSheetsIntegration) {
             window.googleSheetsIntegration.currentDataView = 'government';
             window.googleSheetsIntegration.applyCombinedFilters();
@@ -153,7 +150,6 @@ filterData() {
         this.isActive = false;
         this.activeFilter = 'all';
 
-        // Update GoogleSheetsIntegration filter state and apply combined filters
         this.googleSheets.currentSchoolFilter = 'all';
         if (typeof this.googleSheets.applyCombinedFilters === 'function') {
             this.googleSheets.applyCombinedFilters();
@@ -168,7 +164,6 @@ filterData() {
         this.isActive = true;
         this.activeFilter = 'school';
 
-        // Update GoogleSheetsIntegration filter state and apply combined filters
         this.googleSheets.currentSchoolFilter = 'school';
         if (typeof this.googleSheets.applyCombinedFilters === 'function') {
             this.googleSheets.applyCombinedFilters();
@@ -183,7 +178,6 @@ filterData() {
         this.isActive = true;
         this.activeFilter = 'nonSchool';
 
-        // Update GoogleSheetsIntegration filter state and apply combined filters
         this.googleSheets.currentSchoolFilter = 'nonSchool';
         if (typeof this.googleSheets.applyCombinedFilters === 'function') {
             this.googleSheets.applyCombinedFilters();
@@ -256,7 +250,6 @@ filterData() {
     }
 }
 
-// CSS untuk filter buttons
 const schoolFilterCSS = `
 <style>
 #schoolFilterContainer .btn {
@@ -311,12 +304,8 @@ const schoolFilterCSS = `
 </style>
 `;
 
-// Inject CSS
 document.head.insertAdjacentHTML('beforeend', schoolFilterCSS);
 
-
-
-// Instantiate SchoolDataFilter with googleSheetsIntegration when available
 document.addEventListener('googleSheetsIntegrationReady', function() {
     if (window.googleSheetsIntegration && !window.schoolDataFilter) {
         window.schoolDataFilter = new SchoolDataFilter(window.googleSheetsIntegration);

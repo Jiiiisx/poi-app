@@ -105,3 +105,4 @@ function resizeAllCharts() {
     billingStatusChart.resize();
   }
 }
+

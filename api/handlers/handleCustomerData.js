@@ -1,11 +1,7 @@
-import { authenticate } from './authMiddleware.js';
-import { getSheetsClient, SPREADSHEET_ID } from './google-sheets-client.js';
+const { authenticate } = require('../authMiddleware.js');
+const { getSheetsClient, SPREADSHEET_ID } = require('../google-sheets-client.js');
 
-export default async function handler(req, res) {
-    const user = authenticate(req, res);
-    if (!user) {
-        return;
-    }
+async function handleCustomerData(req, res) {
 
     if (req.method !== 'GET') {
         return res.status(405).json({ message: 'Only GET requests are allowed' });
@@ -27,3 +23,5 @@ export default async function handler(req, res) {
         res.status(500).json({ message: 'Failed to fetch customer data', error: error.message });
     }
 }
+
+module.exports = { handleCustomerData };

@@ -1,5 +1,5 @@
-import { authenticate } from './authMiddleware.js';
-import { getSheetsClient, SPREADSHEET_ID } from './google-sheets-client.js';
+const { authenticate } = require('../authMiddleware.js');
+const { getSheetsClient, SPREADSHEET_ID } = require('../google-sheets-client.js');
 
 async function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -21,11 +21,7 @@ async function fetchWithRetry(fn, retries = 3, delayMs = 1000) {
     }
 }
 
-export default async function handler(req, res) {
-    const user = authenticate(req, res);
-    if (!user) {
-        return;
-    }
+async function handleFetchMonitoring(req, res) {
 
     if (req.method !== 'GET') {
         return res.status(405).json({ message: 'Only GET requests are allowed' });
@@ -69,3 +65,5 @@ export default async function handler(req, res) {
         res.status(500).json({ message: 'Failed to fetch monitoring data', error: error.message });
     }
 }
+
+module.exports = { handleFetchMonitoring };

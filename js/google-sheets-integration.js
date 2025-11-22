@@ -1,4 +1,3 @@
-// Helper function to wait for googleSheetsCRUD to be defined
 async function waitForGoogleSheetsCRUD(timeout = 5000) {
     const startTime = Date.now();
     while (!window.googleSheetsCRUD && Date.now() - startTime < timeout) {
@@ -65,7 +64,6 @@ class GoogleSheetsIntegration {
 
         this.selectedBillingMonth = 'all';
 
-        // Pagination and view state for monitoring table
         this.monitoringCurrentPage = 1;
         this.monitoringItemsPerPage = 10;
         this.monitoringTotalPages = 1;
@@ -99,16 +97,13 @@ class GoogleSheetsIntegration {
         if (!phone || typeof phone !== 'string') {
             return '';
         }
-        // Remove non-numeric characters
         let cleaned = phone.replace(/[^0-9]/g, '');
-        // Replace leading 0 with 62 for Indonesian numbers
         if (cleaned.startsWith('0')) {
             cleaned = '62' + cleaned.substring(1);
         }
         return cleaned;
     }
 
-    // Caching helper functions
     setCachedData(key, data) {
         try {
             const cacheEntry = {
@@ -276,7 +271,7 @@ class GoogleSheetsIntegration {
 
         try {
             this.showLoading(true);
-            const response = await fetch('/api/customer-data');
+            const response = await fetch('/api?action=customer-data');
             
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -328,9 +323,9 @@ class GoogleSheetsIntegration {
                 const rangesString = namedRanges.join(',');
                 
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+                const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-                const response = await fetch(`/api/fetch-monitoring?ranges=${rangesString}`, {
+                const response = await fetch(`/api?action=fetch-monitoring&ranges=${rangesString}`, {
                     signal: controller.signal
                 });
 
@@ -359,7 +354,7 @@ class GoogleSheetsIntegration {
                     this.filterBySales(this.loggedInSalesName);
                 }
                 
-                return; // Success, exit the loop
+                return;
 
             } catch (error) {
                 console.error(`Load monitoring data error (attempt ${attempt + 1}):`, error);
@@ -384,7 +379,6 @@ class GoogleSheetsIntegration {
             return;
         }
 
-        // Create a reverse map from named range to sales key
         const rangeToSalesKey = {};
         for (const key in this.salesDataRanges) {
             rangeToSalesKey[this.salesDataRanges[key]] = key;
@@ -398,7 +392,7 @@ class GoogleSheetsIntegration {
 
             if (!salesName) {
                 console.warn(`Could not find sales name for range: ${requestedRangeName} at index ${index}`);
-                return; // continue to next valueRange
+                return;
             }
             
             if (valueRange.values && valueRange.values.length > 1) {
@@ -462,7 +456,7 @@ class GoogleSheetsIntegration {
 
         try {
             this.showLoading(true);
-            const response = await fetch('/api/government-data');
+            const response = await fetch('/api?action=government-data');
 
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -559,6 +553,14 @@ class GoogleSheetsIntegration {
                 return;
             }
 
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            const googleIdToken = userInfo ? userInfo.token : null;
+
+            if (!googleIdToken) {
+                this.showError('Otentikasi pengguna tidak ditemukan. Silakan login ulang.');
+                return;
+            }
+
             const salesName = this.currentSalesFilter.toLowerCase();
             const headers = this.monitoringDataHeadersBySales[salesName];
             if (!headers) {
@@ -577,10 +579,11 @@ class GoogleSheetsIntegration {
             const colLetter = this.columnIndexToLetter(colIndex);
             const range = `'REKAP PS AR KALIABANG'!${colLetter}${rowIndex}`;
 
-            const response = await fetch('/api/update-cell', {
+            const response = await fetch('/api?action=update-cell', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${googleIdToken}`
                 },
                 body: JSON.stringify({ range, value: newValue }),
             });
@@ -760,7 +763,6 @@ class GoogleSheetsIntegration {
         const allHeaders = this.monitoringDataHeadersBySales[salesName] || [];
         const billingHeaders = allHeaders.filter(h => h.toLowerCase().startsWith('billing'));
 
-        // Special handling for 'pra npc' and 'ct0' which look across multiple months
         if (this.currentBillingFilter === 'pra npc') {
             const now = new Date();
             const sortedBillingHeaders = billingHeaders
@@ -806,12 +808,10 @@ class GoogleSheetsIntegration {
             });
         }
 
-        // For other filters ('paid', 'unpaid', 'all', etc.)
         if (this.currentBillingFilter === 'all') {
-            return data; // No filtering needed if status is 'all'
+            return data;
         }
 
-        // If a specific month is selected in the dropdown, use it.
         if (this.selectedBillingMonth !== 'all') {
             const currentBillingColumn = this.selectedBillingMonth;
             return data.filter(item => {
@@ -819,7 +819,6 @@ class GoogleSheetsIntegration {
                 return billingStatus === this.currentBillingFilter;
             });
         } else {
-            // If dropdown is 'All Months', use the current real-time month for filtering.
             const currentMonthColumn = this.getCurrentMonthColumnName();
             if (allHeaders.map(h => h.toUpperCase()).includes(currentMonthColumn.toUpperCase())) {
                  return data.filter(item => {
@@ -827,7 +826,6 @@ class GoogleSheetsIntegration {
                     return billingStatus === this.currentBillingFilter;
                 });
             } else {
-                // If the current month's column doesn't exist, show no data for the filter.
                 return [];
             }
         }
@@ -1008,15 +1006,12 @@ class GoogleSheetsIntegration {
         const salesName = this.currentSalesFilter.toLowerCase();
         const allHeaders = this.monitoringDataHeadersBySales[salesName] || [];
         
-        // Determine which billing headers to show
         let visibleBillingHeaders = [];
         if (this.selectedBillingMonth !== 'all') {
-            // If a specific month is selected, only show that one
             if (allHeaders.includes(this.selectedBillingMonth)) {
                 visibleBillingHeaders.push(this.selectedBillingMonth);
             }
         } else {
-            // Otherwise, show all billing headers
             visibleBillingHeaders = allHeaders.filter(h => h.toLowerCase().startsWith('billing'));
         }
 
@@ -1029,7 +1024,7 @@ class GoogleSheetsIntegration {
         tbody.innerHTML = '';
 
         const staticHeaders = ['Nama Pelanggan', 'No Internet', 'No Customer', 'Redaman Loss', 'FUP', 'Histori Gangguan', 'Tanggal Pembayaran'];
-        const dynamicHeaders = [...staticHeaders, ...visibleBillingHeaders]; // Use visible headers
+        const dynamicHeaders = [...staticHeaders, ...visibleBillingHeaders];
         
         if (paginatedData.length === 0) {
             tbody.innerHTML = `<tr><td colspan="${dynamicHeaders.length}" style="text-align: center; padding: 40px;"><div class="no-data-placeholder">
@@ -1340,7 +1335,6 @@ class GoogleSheetsIntegration {
         this.toggleActionsColumn();
         this.applyCombinedFilters();
 
-        // Dispatch an event to notify other parts of the app about the view change
         document.dispatchEvent(new CustomEvent('salesViewChanged', { detail: { salesName: salesName } }));
 
         setTimeout(() => {
@@ -1368,9 +1362,8 @@ class GoogleSheetsIntegration {
         const tabNavigation = document.querySelector('.tab-navigation');
 
         if (salesName && salesName !== 'Home') {
-            // Only show tabs for the 'telda' team view
             if (tabNavigation && this.currentTeam === 'telda') {
-                tabNavigation.style.display = 'flex'; // Show tabs
+                tabNavigation.style.display = 'flex';
             }
 
             const normalizedSalesName = salesName.toLowerCase();
@@ -1386,14 +1379,13 @@ class GoogleSheetsIntegration {
             if (currentMonthHeader) {
                 this.selectedBillingMonth = currentMonthHeader;
             } else {
-                // Fallback: sort and pick the latest available month if current month is not in data
                 const sortedBillingHeaders = [...billingHeaders].sort((a, b) => {
                     const dateA = this._parseHeaderDate(a);
                     const dateB = this._parseHeaderDate(b);
                     if (!dateA && !dateB) return 0;
                     if (!dateA) return 1;
                     if (!dateB) return -1;
-                    return dateB - dateA; // Descending sort
+                    return dateB - dateA;
                 });
                 this.selectedBillingMonth = sortedBillingHeaders.length > 0 ? sortedBillingHeaders[0] : 'all';
             }
@@ -1401,7 +1393,6 @@ class GoogleSheetsIntegration {
             this.populateMonthFilter(availableHeaders);
             this.monitoringCurrentPage = 1;
             
-            // Switch to the monitoring tab first
             if (window.switchToTab) {
                 window.switchToTab('monitoring');
             }
@@ -1434,7 +1425,7 @@ class GoogleSheetsIntegration {
             }
 
         } else {
-            if (tabNavigation) tabNavigation.style.display = 'none'; // Hide tabs
+            if (tabNavigation) tabNavigation.style.display = 'none';
 
             const contentGrid = document.querySelector('.content-grid');
             const monitoringSection = document.getElementById('monthlyMonitoringSection');
@@ -1622,7 +1613,7 @@ class GoogleSheetsIntegration {
             return;
         }
 
-        cardContainer.innerHTML = ''; // Clear existing content
+        cardContainer.innerHTML = '';
         const cardGrid = document.createElement('div');
         cardGrid.className = 'monitoring-cards-grid government-view';
 
@@ -1663,7 +1654,7 @@ class GoogleSheetsIntegration {
     }
 
     renderGovernmentTable() {
-        const table = document.getElementById('customerTable'); // Assuming the same table element is used
+        const table = document.getElementById('customerTable');
         if (!table) return;
 
         const thead = table.querySelector('thead');
@@ -1927,7 +1918,6 @@ class GoogleSheetsIntegration {
             if (monthlyMonitoringSection) monthlyMonitoringSection.style.display = 'none';
             if (salesAccount) salesAccount.style.display = '';
             if (nonTeldaSalesAccount) nonTeldaSalesAccount.style.display = 'none';
-            // The _applySalesFilter function will handle showing/hiding the tabs as needed
         }
     }
 
@@ -2080,7 +2070,7 @@ class GoogleSheetsIntegration {
 
             this.showMessage('Data berhasil diperbarui!', 'success');
             this.closeEditModal();
-            this.refreshData(); // This function needs to be created
+            this.refreshData();
         } catch (error) {
             console.error('Update row error:', error);
             this.showError('Gagal memperbarui data: ' + error.message);
@@ -2145,7 +2135,6 @@ class GoogleSheetsIntegration {
 
     async refreshData() {
         console.log(' Refreshing data...');
-        // Clear cache and re-load all data
         localStorage.removeItem('mainData');
         localStorage.removeItem('governmentData');
         localStorage.removeItem('monitoringData');

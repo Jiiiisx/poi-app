@@ -1,10 +1,11 @@
-import { authenticate } from './authMiddleware.js';
-import { getSheetsClient, SPREADSHEET_ID } from './google-sheets-client.js';
+const { authenticateGoogleUser } = require('../googleAuthMiddleware.js');
+const { getSheetsClient, SPREADSHEET_ID } = require('../google-sheets-client.js');
 
-export default async function handler(req, res) {
-    const user = authenticate(req, res);
+async function handleUpdateCell(req, res) {
+    // Gunakan middleware otentikasi Google
+    const user = await authenticateGoogleUser(req, res);
     if (!user) {
-        return;
+        return; // Otentikasi gagal, respons sudah dikirim oleh middleware
     }
 
     if (req.method !== 'POST') {
@@ -34,3 +35,5 @@ export default async function handler(req, res) {
         res.status(500).json({ message: 'Failed to update cell', error: error.message });
     }
 }
+
+module.exports = { handleUpdateCell };

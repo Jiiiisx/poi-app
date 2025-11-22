@@ -1,6 +1,6 @@
-const { getSheetsClient, SPREADSHEET_ID } = require('./google-sheets-client');
+const { getSheetsClient, SPREADSHEET_ID } = require('../google-sheets-client.js');
 
-export default async function handler(req, res) {
+async function handleLogView(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Only POST requests are allowed' });
     }
@@ -41,7 +41,6 @@ export default async function handler(req, res) {
             });
         }
 
-        // Append the new view
         await sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
             range: `${sheetName}!A:B`,
@@ -57,3 +56,5 @@ export default async function handler(req, res) {
         res.status(500).json({ message: 'Failed to log view', error: error.message });
     }
 }
+
+module.exports = { handleLogView };

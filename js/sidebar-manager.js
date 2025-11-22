@@ -1,11 +1,9 @@
-// Complete Sidebar Manager - Single source of truth for sidebar functionality
-
 class SidebarManager {
     constructor() {
         this.sidebar = document.getElementById('sidebar');
         this.sidebarToggle = document.getElementById('sidebarToggle');
         this.fabSidebarToggle = document.getElementById('fab-toggle-sidebar');
-        this.closeBtn = document.getElementById('closeSidebarBtn'); // Get the new close button
+        this.closeBtn = document.getElementById('closeSidebarBtn');
         this.overlay = document.getElementById('sidebarOverlay');
         this.salesList = document.querySelector('.sales-list');
         this.menuItems = document.querySelectorAll('.menu-list li');
@@ -23,7 +21,7 @@ class SidebarManager {
         }
 
         this.setupToggle();
-        this.setupCloseButton(); // Setup the new close button
+        this.setupCloseButton();
         this.setupFabToggle();
         this.setupSalesList();
         this.setupMenuStates();
@@ -38,7 +36,6 @@ class SidebarManager {
     }
 
     setupToggle() {
-        // Ensure clean state
         this.sidebarToggle.removeEventListener('click', this.handleToggleClick);
         this.sidebarToggle.addEventListener('click', this.handleToggleClick.bind(this));
     }
@@ -64,7 +61,6 @@ class SidebarManager {
             this.closeSidebar();
         }
 
-        // Resize charts after sidebar animation
         setTimeout(() => {
             if (typeof resizeAllCharts === 'function') {
                 resizeAllCharts();
@@ -103,17 +99,14 @@ class SidebarManager {
     }
 
     setupResponsiveBehavior() {
-        // Handle overlay clicks
         if (this.overlay) {
             this.overlay.addEventListener('click', () => {
                 this.closeSidebar();
             });
         }
 
-        // Handle window resize
         window.addEventListener('resize', () => {
             if (window.innerWidth > 768) {
-                // On desktop, always show sidebar
                 this.sidebar.classList.remove('collapsed');
                 const icon = this.sidebarToggle.querySelector('i');
                 if (icon) {
@@ -125,7 +118,6 @@ class SidebarManager {
             }
         });
 
-        // Handle clicks outside on mobile
         document.addEventListener('click', (event) => {
             const isMobile = window.innerWidth <= 768;
             if (isMobile && 
@@ -142,11 +134,9 @@ class SidebarManager {
 
         this.salesList.innerHTML = '';
         
-        // Add "Home" option
         const allSalesItem = this.createSalesItem('Home', 'all', true);
         this.salesList.appendChild(allSalesItem);
 
-        // Load dynamic sales
         this.loadSalesFromSheets();
     }
 
@@ -169,15 +159,12 @@ class SidebarManager {
     }
 
     selectSalesItem(selectedItem) {
-        // Remove active from all items
         this.salesList.querySelectorAll('.sales-item').forEach(item => {
             item.classList.remove('active');
         });
         
-        // Add active to selected
         selectedItem.classList.add('active');
         
-        // Trigger filtering
         if (typeof googleSheetsIntegration !== 'undefined') {
             const salesName = selectedItem.dataset.salesName;
             if (googleSheetsIntegration.filterBySales) {
@@ -187,8 +174,6 @@ class SidebarManager {
     }
 
     loadSalesFromSheets() {
-        // Placeholder for dynamic loading
-        // In production, this would fetch from Google Sheets
         const salesNames = ['John Doe', 'Jane Smith', 'Mike Johnson'];
         
         salesNames.forEach(name => {
@@ -213,7 +198,6 @@ class SidebarManager {
     }
 
     switchView(view) {
-        // Implement view switching logic here
     }
 
     loadSavedState() {
@@ -227,7 +211,6 @@ class SidebarManager {
         }
     }
 
-    // Public API methods
     forceOpen() {
         this.openSidebar();
     }
@@ -249,7 +232,6 @@ class SidebarManager {
     }
 }
 
-// Initialize when DOM is ready
 function initSidebarManager() {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
@@ -260,8 +242,6 @@ function initSidebarManager() {
     }
 }
 
-// Start initialization
 initSidebarManager();
 
-// Export for global use
 window.SidebarManager = SidebarManager;

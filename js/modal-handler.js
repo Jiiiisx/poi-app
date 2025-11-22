@@ -40,3 +40,4 @@ const ModalHandler = {
         this.modal.style.display = 'none';
     }
 };
+

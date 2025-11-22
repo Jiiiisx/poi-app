@@ -1,6 +1,5 @@
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Function to initialize a custom dropdown
     function initializeCustomDropdown(selectElement) {
         const customDropdown = document.createElement('div');
         customDropdown.className = 'custom-dropdown';
@@ -12,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const optionsContainer = document.createElement('div');
         optionsContainer.className = 'custom-dropdown-options';
 
-        // Move options from select to custom dropdown
         Array.from(selectElement.options).forEach(option => {
             const customOption = document.createElement('div');
             customOption.className = 'custom-dropdown-option';
@@ -36,21 +34,16 @@ document.addEventListener('DOMContentLoaded', function () {
             optionsContainer.style.display = optionsContainer.style.display === 'block' ? 'none' : 'block';
         });
 
-        // Hide the original select element and insert the custom one
         selectElement.style.display = 'none';
         selectElement.parentNode.insertBefore(customDropdown, selectElement.nextSibling);
     }
 
-    // Wait for the month filter to be populated
     const observer = new MutationObserver(function (mutations) {
         const monthFilter = document.getElementById('monthFilter');
         if (monthFilter && monthFilter.options.length > 1) {
-            // Check if custom dropdown is not already created
             if (!monthFilter.nextElementSibling || !monthFilter.nextElementSibling.classList.contains('custom-dropdown')) {
                 initializeCustomDropdown(monthFilter);
             }
-            // Disconnect after initialization to avoid re-creating
-            // observer.disconnect(); 
         }
     });
 
@@ -59,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function () {
         observer.observe(monitoringSection, { childList: true, subtree: true });
     }
 
-    // Close dropdown when clicking outside
     document.addEventListener('click', function (e) {
         const openDropdown = document.querySelector('.custom-dropdown-options[style*="block"]');
         if (openDropdown && !e.target.closest('.custom-dropdown')) {

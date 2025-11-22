@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function () {
                             { opacity: 0, x: direction === 'forward' ? 50 : -50 }, 
                             { opacity: 1, x: 0, duration: 0.5 });
 
-                        // Animate form elements
                         const elements = nextStep.querySelectorAll('.form-group, .section-title, .form-actions');
                         gsap.from(elements, { 
                             opacity: 0, 
@@ -52,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const currentStepFields = steps[stepIndex].querySelectorAll('[required]');
             let isValid = true;
             currentStepFields.forEach(field => {
-                if (!field.checkValidity()) { // checkValidity() is more robust
+                if (!field.checkValidity()) {
                     isValid = false;
                     field.classList.add('is-invalid');
                 } else {
@@ -76,15 +75,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Function to reset wizard to the first step
         function resetWizard() {
             showStep(0);
         }
 
-        // Attach the reset function to the form so it can be called from outside
         form.resetWizard = resetWizard;
 
-        // Initialize the wizard
         const initialStep = 0;
         steps.forEach((step, index) => {
             if (index === initialStep) {

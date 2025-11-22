@@ -1,7 +1,7 @@
-import { authenticate } from './authMiddleware.js';
-import { getSheetsClient, SPREADSHEET_ID, logActivity } from './google-sheets-client.js';
+const { authenticate } = require('../authMiddleware.js');
+const { getSheetsClient, SPREADSHEET_ID, logActivity } = require('../google-sheets-client.js');
 
-export default async function handler(req, res) {
+async function handleAddCustomer(req, res) {
     const user = authenticate(req, res);
     if (!user) {
         return;
@@ -36,3 +36,5 @@ export default async function handler(req, res) {
         res.status(500).json({ message: 'Failed to add customer', error: error.message });
     }
 }
+
+module.exports = { handleAddCustomer };
