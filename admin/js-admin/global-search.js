@@ -247,9 +247,11 @@ document.addEventListener('DOMContentLoaded', function () {
         performSearch(searchInput.value);
     });
 
-    document.addEventListener('click', function(event) {
-        if (!searchResultsContainer.contains(event.target) && event.target !== searchInput) {
-            searchResultsContainer.style.display = 'none';
-        }
-    });
+    if (searchResultsContainer) {
+        document.addEventListener('click', function(event) {
+            if (!searchResultsContainer.contains(event.target) && event.target !== searchInput) {
+                searchResultsContainer.style.display = 'none';
+            }
+        });
+    }
 });

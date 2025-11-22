@@ -384,6 +384,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const colLetter = String.fromCharCode(65 + colIndex);
             const range = `'${sheetName}'!${colLetter}${originalRow}`;
 
+            console.log('DEBUG: Attempting to update range:', range); // Tambahan untuk debugging
+
             td.style.backgroundColor = '#fdffab'; // Indicate saving
             try {
                 const response = await fetch('/api?action=admin-update-cell', {
