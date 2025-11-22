@@ -642,7 +642,7 @@ function populateEditModal(customerData, rowIndex) {
     document.getElementById('editOdp').value = customerData.odp_terdekat || '';
     document.getElementById('editNama').value = customerData.nama || '';
     document.getElementById('editAlamat').value = customerData.alamat || '';
-    document.getElementById('editTelepon').value = customerData.no_telepon || '';
+    document.getElementById('editTelepon').value = (customerData.no_telepon === '-') ? '' : (customerData.no_telepon || '');
     document.getElementById('editSales').value = customerData.nama_sales || '';
     document.getElementById('editVisit').value = customerData.visit || '';
     document.getElementById('editStatus').value = customerData.status || '';

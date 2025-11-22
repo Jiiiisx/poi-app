@@ -12,6 +12,7 @@ const { handleGovernmentData } = require('./handlers/handleGovernmentData.js');
 const { handleLogView } = require('./handlers/handleLogView.js');
 const { handleUpdateCell } = require('./handlers/handleUpdateCell.js');
 const { handleUpdateCustomer } = require('./handlers/handleUpdateCustomer.js');
+const { handleAdminUpdateCell } = require('./handlers/handleAdminUpdateCell.js');
 
 module.exports = async (req, res) => {
     // Extract the 'action' from the query parameters
@@ -39,6 +40,8 @@ module.exports = async (req, res) => {
             return handleLogView(req, res);
         case 'update-cell':
             return handleUpdateCell(req, res);
+        case 'admin-update-cell':
+            return handleAdminUpdateCell(req, res);
         case 'update-customer':
             return handleUpdateCustomer(req, res);
         

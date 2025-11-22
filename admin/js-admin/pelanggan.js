@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             td.style.backgroundColor = '#fdffab'; // Indicate saving
             try {
-                const response = await fetch('/api?action=update-cell', {
+                const response = await fetch('/api?action=admin-update-cell', {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
