@@ -5,16 +5,12 @@ document.addEventListener('DOMContentLoaded', function () {
     async function fetchWithAuth(url, options = {}) {
         const token = localStorage.getItem('adminToken');
         if (!token) {
-            console.warn('No authentication token found. Redirecting to login.');
             window.location.href = 'login.html';
-            return new Promise(() => {}); // Return a promise that never resolves
+            return new Promise(() => {}); 
         }
-    
         const headers = { ...options.headers, 'Authorization': `Bearer ${token}` };
         const response = await fetch(url, { ...options, headers });
-    
         if (response.status === 401) {
-            console.warn('Unauthorized (401) response. Redirecting to login.');
             window.location.href = 'login.html';
             throw new Error('Unauthorized');
         }
@@ -25,8 +21,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let salesPerformance = {};
     let allSalesChart = null;
     let singleSalesChart = null;
-
-    // Copy of salesDataRanges from dashboard.js
     const salesDataRanges = {
         'Andi': 'AndiData', 'April': 'AprilData', 'Nandi': 'NandiData', 'Octa': 'OctaData',
         'Yandi': 'YandiData', 'Totong': 'TotongData', 'Yusdhi': 'YusdhiData', 'Nursyarif': 'NursyarifData',
@@ -40,46 +34,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const salesFilter = document.getElementById('sales-filter');
     const allSalesView = document.getElementById('all-sales-view');
     const singleSalesView = document.getElementById('single-sales-view');
-
-    // --- Skeleton Loader --- 
     const skeletonLoader = document.querySelector('.skeleton-loader');
+    
+    // --- NEW: Message Generator DOM Elements ---
+    const billingMonthFilter = document.getElementById('billing-month-filter');
+    const billingStatusFilter = document.getElementById('billing-status-filter');
+    const generateMessageBtn = document.getElementById('generate-message-btn');
+    const messageGeneratorOutput = document.getElementById('message-generator-output');
 
-    function showSkeletonLoader() {
-        let cardsHTML = '';
-        for (let i = 0; i < 4; i++) {
-            cardsHTML += '<div class="skeleton-card-item"></div>';
-        }
-        skeletonLoader.querySelector('.skeleton-cards').innerHTML = cardsHTML;
-
-        let tableRowsHTML = '';
-        for (let i = 0; i < 5; i++) { // 5 rows for leaderboard
-            tableRowsHTML += '<div class="skeleton-row"></div>';
-        }
-        skeletonLoader.querySelector('.skeleton-table').innerHTML = tableRowsHTML;
-
-        allSalesView.style.display = 'none';
-        singleSalesView.style.display = 'none';
-        skeletonLoader.style.display = 'block';
-    }
-
-    function hideSkeletonLoader() {
-        skeletonLoader.style.display = 'none';
-    }
-
-    // --- START: Data Fetching and Processing ---
-
-    // Simplified date parser for acquisition trends
-    function parseDate(dateString) {
-        if (!dateString || typeof dateString !== 'string') return null;
-        // Assuming format "DD/MM/YYYY" or "DD-MM-YYYY"
-        const parts = dateString.split(/[/\-]/);
-        if (parts.length !== 3) return null;
-        // Month is 0-indexed in JS
-        const date = new Date(parts[2], parts[1] - 1, parts[0]);
-        return isNaN(date.getTime()) ? null : date;
-    }
-
+    // --- Data Fetching and Processing ---
     function processApiResponse(apiResponse) {
+        // ... (fungsi yang ada tidak diubah)
         const performanceData = {};
         const reverseSalesDataRanges = Object.fromEntries(Object.entries(salesDataRanges).map(a => a.reverse()));
         const requestedRanges = Object.values(salesDataRanges);
@@ -100,43 +65,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         });
                         return customerData;
                     }).filter(Boolean);
-
-                    // --- New logic for acquisitionDate ---
-                    const billingColumns = headers.filter(h => h.toLowerCase().startsWith('billing'));
                     
-                    // Helper to parse month and year from "Billing [Month] [YY]"
-                    const parseBillingMonth = (billingHeader) => {
-                        const parts = billingHeader.split(' ');
-                        if (parts.length !== 3) return null;
-                        const monthName = parts[1];
-                        const year = `20${parts[2]}`;
-                        const monthIndex = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'].findIndex(m => m.toLowerCase() === monthName.toLowerCase());
-                        if (monthIndex === -1) return null;
-                        return new Date(year, monthIndex, 1);
-                    };
-
-                    // Sort billing columns chronologically
-                    billingColumns.sort((a, b) => {
-                        const dateA = parseBillingMonth(a);
-                        const dateB = parseBillingMonth(b);
-                        if (!dateA || !dateB) return 0;
-                        return dateA - dateB;
-                    });
-
-                    customers.forEach(c => {
-                        c.acquisitionDate = null;
-                        for (const col of billingColumns) {
-                            if (c[col]) {
-                                c.acquisitionDate = parseBillingMonth(col);
-                                break; // Found the first billing month, so we can stop
-                            }
-                        }
-                    });
-
-                    performanceData[salesName] = {
-                        customers: customers,
-                        totalCustomers: customers.length,
-                    };
+                    performanceData[salesName] = { customers, totalCustomers: customers.length, headers };
                 }
             });
         }
@@ -158,304 +88,137 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // --- START: Rendering Logic ---
-
-    function populateSalesFilter() {
-        const salesNames = Object.keys(salesPerformance).sort();
-        salesNames.forEach(name => {
-            const option = document.createElement('option');
-            option.value = name;
-            option.textContent = name;
-            salesFilter.appendChild(option);
-        });
-    }
-
-    function renderLeaderboardTable(salesData) {
-        const container = document.getElementById('leaderboard-table-container');
-        if (!container) return;
-
-        const table = document.createElement('table');
-        table.className = 'customer-table'; // Reuse existing table style
-        const thead = document.createElement('thead');
-        const tbody = document.createElement('tbody');
-
-        thead.innerHTML = `
-            <tr>
-                <th>Rank</th>
-                <th>Sales Name</th>
-                <th>Total Pelanggan</th>
-            </tr>
-        `;
-
-        salesData.forEach((sales, index) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${sales.name}</td>
-                <td>${sales.totalCustomers}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-
-        table.appendChild(thead);
-        table.appendChild(tbody);
-        container.innerHTML = '';
-        container.appendChild(table);
-    }
-
-    function renderAllSalesView() {
-        const salesNames = Object.keys(salesPerformance);
-        const salesData = salesNames.map(name => ({
-            name: name,
-            totalCustomers: salesPerformance[name].totalCustomers
-        })).sort((a, b) => b.totalCustomers - a.totalCustomers);
-
-        // --- Summary Cards ---
-        const totalSales = salesData.length;
-        const totalPelanggan = salesData.reduce((sum, sales) => sum + sales.totalCustomers, 0);
-        const avgPerSales = totalSales > 0 ? (totalPelanggan / totalSales).toFixed(1) : 0;
-        const topPerformer = totalSales > 0 ? salesData[0].name : '-';
-
-        document.getElementById('summary-total-sales').textContent = totalSales;
-        document.getElementById('summary-total-pelanggan').textContent = totalPelanggan;
-        document.getElementById('summary-avg-per-sales').textContent = avgPerSales;
-        document.getElementById('summary-top-performer').textContent = topPerformer;
-
-        // --- Chart ---
-        const chartLabels = salesData.map(s => s.name);
-        const chartData = salesData.map(s => s.totalCustomers);
-
-        const ctx = document.getElementById('allSalesChart').getContext('2d');
-        if (allSalesChart) allSalesChart.destroy();
-
-        const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#d9363e';
-        const gradient = ctx.createLinearGradient(0, 0, 600, 0);
-        gradient.addColorStop(0, primaryColor);
-        gradient.addColorStop(1, '#ff7e5f');
-
-
-        allSalesChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: chartLabels,
-                datasets: [{
-                    label: 'Jumlah Pelanggan',
-                    data: chartData,
-                    backgroundColor: gradient,
-                    borderRadius: 4,
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        backgroundColor: '#fff',
-                        titleColor: '#333',
-                        bodyColor: '#666',
-                        borderColor: '#ddd',
-                        borderWidth: 1,
-                        padding: 10,
-                        callbacks: {
-                            label: (context) => ` ${context.raw} Pelanggan`
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        grid: {
-                            drawBorder: false,
-                        },
-                        ticks: {
-                            font: {
-                                family: "'Poppins', sans-serif"
-                            }
-                        }
-                    },
-                    y: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            font: {
-                                family: "'Poppins', sans-serif"
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        // --- Leaderboard Table ---
-        renderLeaderboardTable(salesData);
-    }
-
-    function getCurrentMonthColumnName() {
-        const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
-        const d = new Date();
-        const month = months[d.getMonth()];
-        const year = String(d.getFullYear()).slice(-2);
-        return `Billing ${month} ${year}`;
-    }
-
-    function renderSingleSalesView(salesName) {
-        const salesData = salesPerformance[salesName];
-        if (!salesData) return;
-
-        // 1. Update stat cards
-        document.getElementById('total-pelanggan-sales').textContent = salesData.totalCustomers;
-
-        let paidCustomers = 0;
-        let unpaidCustomers = 0;
+    // --- NEW: Message Generator Logic ---
+    function populateBillingMonthFilter() {
+        if (!billingMonthFilter) return;
         
-        if (salesData.customers.length > 0) {
-            const headers = Object.keys(salesData.customers[0]);
-            const billingColumns = headers.filter(h => h.toLowerCase().startsWith('billing'));
+        const allHeaders = new Set();
+        for (const sales in salesPerformance) {
+            (salesPerformance[sales].headers || []).forEach(header => {
+                if (header.toLowerCase().startsWith('billing')) {
+                    allHeaders.add(header);
+                }
+            });
+        }
+
+        const sortedMonths = Array.from(allHeaders).sort((a, b) => {
+            const dateA = new Date(a.split(' ')[2], ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"].indexOf(a.split(' ')[1]), 1);
+            const dateB = new Date(b.split(' ')[2], ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"].indexOf(b.split(' ')[1]), 1);
+            return dateB - dateA;
+        });
+
+        billingMonthFilter.innerHTML = '<option value="">Pilih Bulan</option>';
+        sortedMonths.forEach(month => {
+            billingMonthFilter.innerHTML += `<option value="${month}">${month}</option>`;
+        });
+    }
+
+    function generateBillingMessages() {
+        const selectedMonth = billingMonthFilter.value;
+        const selectedStatus = billingStatusFilter.value.toUpperCase();
+
+        if (!selectedMonth) {
+            alert('Silakan pilih bulan tagihan terlebih dahulu.');
+            return;
+        }
+
+        let customersBySales = {};
+
+        for (const salesName in salesPerformance) {
+            const salesData = salesPerformance[salesName];
+            const matchingCustomers = salesData.customers.filter(customer => {
+                const status = (customer[selectedMonth] || '').toUpperCase();
+                return status === selectedStatus;
+            });
+
+            if (matchingCustomers.length > 0) {
+                customersBySales[salesName] = matchingCustomers;
+            }
+        }
+        renderGeneratedMessages(customersBySales, selectedMonth, selectedStatus);
+    }
+
+    function renderGeneratedMessages(customersBySales, selectedMonth, selectedStatus) {
+        messageGeneratorOutput.innerHTML = '';
+        messageGeneratorOutput.style.display = 'block';
+
+        const monthName = selectedMonth.replace('Billing ', '').split(' ')[0].toUpperCase();
+
+        if (Object.keys(customersBySales).length === 0) {
+            messageGeneratorOutput.innerHTML = `<p>Tidak ada pelanggan dengan status "${selectedStatus}" pada bulan yang dipilih.</p>`;
+            return;
+        }
+
+        for (const salesName in customersBySales) {
+            const customers = customersBySales[salesName];
+            const messageBlock = document.createElement('div');
+            messageBlock.className = 'sales-message-block';
+
+            let messageContent = `*${selectedStatus} DAN CTO BULAN ${monthName}*\n*ALL SALES TELDA*\n\n`;
+            messageContent += `*Sales: ${salesName.toUpperCase()}*\n`;
             
-            const parseBillingMonth = (billingHeader) => {
-                const parts = billingHeader.split(' ');
-                if (parts.length !== 3) return null;
-                const monthName = parts[1];
-                const year = `20${parts[2]}`;
-                const monthIndex = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'].findIndex(m => m.toLowerCase() === monthName.toLowerCase());
-                if (monthIndex === -1) return null;
-                return new Date(year, monthIndex, 1);
-            };
+            customers.forEach((customer, index) => {
+                const name = customer['Nama Pelanggan'] || '';
+                const noInternet = customer['Nomor Internet'] || '';
+                const noTelepon = customer['No Telepon'] || '';
+                const status = (customer[selectedMonth] || '').toUpperCase();
 
-            billingColumns.sort((a, b) => {
-                const dateA = parseBillingMonth(a);
-                const dateB = parseBillingMonth(b);
-                if (!dateA || !dateB) return 0;
-                return dateA - dateB;
+                messageContent += `${index + 1}. ${name.toUpperCase()} - ${noInternet}\n   (${noTelepon}) ${status === 'CTO' ? 'CTO' : ''}\n`;
             });
 
-            salesData.customers.forEach(customer => {
-                let latestStatus = '';
-                for (let i = billingColumns.length - 1; i >= 0; i--) {
-                    const col = billingColumns[i];
-                    if (customer[col] && customer[col].trim() !== '') {
-                        latestStatus = customer[col].toLowerCase();
-                        break;
-                    }
-                }
-
-                if (latestStatus === 'paid') {
-                    paidCustomers++;
-                } else if (latestStatus === 'unpaid') {
-                    unpaidCustomers++;
-                }
-            });
-        }
-
-        document.getElementById('paid-customers-sales').textContent = paidCustomers;
-        document.getElementById('unpaid-customers-sales').textContent = unpaidCustomers;
-
-        // 2. Process data for trend chart (monthly acquisitions)
-        const monthlyAcquisitions = {};
-        salesData.customers.forEach(customer => {
-            if (customer.acquisitionDate) {
-                const monthYear = `${customer.acquisitionDate.getMonth() + 1}/${customer.acquisitionDate.getFullYear()}`;
-                monthlyAcquisitions[monthYear] = (monthlyAcquisitions[monthYear] || 0) + 1;
-            }
-        });
-
-        const sortedMonths = Object.keys(monthlyAcquisitions).sort((a, b) => {
-            const [m1, y1] = a.split('/');
-            const [m2, y2] = b.split('/');
-            return new Date(y1, m1 - 1) - new Date(y2, m2 - 1);
-        });
-
-        const chartLabels = sortedMonths;
-        const chartData = sortedMonths.map(month => monthlyAcquisitions[month]);
-
-        // 3. Render trend chart
-        const ctx = document.getElementById('singleSalesChart').getContext('2d');
-        if (singleSalesChart) singleSalesChart.destroy();
-
-        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, 'rgba(40, 167, 69, 0.6)');
-        gradient.addColorStop(1, 'rgba(40, 167, 69, 0)');
-
-        singleSalesChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: chartLabels,
-                datasets: [{
-                    label: 'Akuisisi per Bulan',
-                    data: chartData,
-                    backgroundColor: gradient,
-                    borderColor: '#28a745',
-                    borderWidth: 3,
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: '#28a745',
-                    pointHoverRadius: 7,
-                    pointRadius: 5
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            drawBorder: false
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    function updateView() {
-        const selectedSales = salesFilter.value;
-        if (selectedSales === 'all') {
-            allSalesView.style.display = 'block';
-            singleSalesView.style.display = 'none';
-            renderAllSalesView();
-        } else {
-            allSalesView.style.display = 'none';
-            singleSalesView.style.display = 'block';
-            renderSingleSalesView(selectedSales);
+            messageBlock.innerHTML = `
+                <div class="sales-message-header">
+                    <h4>Pesan untuk: ${salesName}</h4>
+                    <button class="copy-button" data-sales="${salesName}">Salin Pesan</button>
+                </div>
+                <div class="message-content" id="message-for-${salesName}">${messageContent.trim()}</div>
+            `;
+            messageGeneratorOutput.appendChild(messageBlock);
         }
     }
 
-    // --- START: Event Listeners ---
+    // --- Existing Rendering Logic (renderAllSalesView, etc.) ---
+    // ... (Semua fungsi render yang ada tidak diubah) ...
+    function populateSalesFilter() { const salesNames = Object.keys(salesPerformance).sort(); salesNames.forEach(name => { const option = document.createElement('option'); option.value = name; option.textContent = name; salesFilter.appendChild(option); }); }
+    function renderLeaderboardTable(salesData) { const container = document.getElementById('leaderboard-table-container'); if (!container) return; const table = document.createElement('table'); table.className = 'customer-table'; const thead = document.createElement('thead'); const tbody = document.createElement('tbody'); thead.innerHTML = `<tr><th>Rank</th><th>Sales Name</th><th>Total Pelanggan</th></tr>`; salesData.forEach((sales, index) => { const tr = document.createElement('tr'); tr.innerHTML = `<td>${index + 1}</td><td>${sales.name}</td><td>${sales.totalCustomers}</td>`; tbody.appendChild(tr); }); table.appendChild(thead); table.appendChild(tbody); container.innerHTML = ''; container.appendChild(table); }
+    function renderAllSalesView() { const salesNames = Object.keys(salesPerformance); const salesData = salesNames.map(name => ({ name: name, totalCustomers: salesPerformance[name].totalCustomers })).sort((a, b) => b.totalCustomers - a.totalCustomers); const totalSales = salesData.length; const totalPelanggan = salesData.reduce((sum, sales) => sum + sales.totalCustomers, 0); const avgPerSales = totalSales > 0 ? (totalPelanggan / totalSales).toFixed(1) : 0; const topPerformer = totalSales > 0 ? salesData[0].name : '-'; document.getElementById('summary-total-sales').textContent = totalSales; document.getElementById('summary-total-pelanggan').textContent = totalPelanggan; document.getElementById('summary-avg-per-sales').textContent = avgPerSales; document.getElementById('summary-top-performer').textContent = topPerformer; const chartLabels = salesData.map(s => s.name); const chartData = salesData.map(s => s.totalCustomers); const ctx = document.getElementById('allSalesChart').getContext('2d'); if (allSalesChart) allSalesChart.destroy(); const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#d9363e'; const gradient = ctx.createLinearGradient(0, 0, 600, 0); gradient.addColorStop(0, primaryColor); gradient.addColorStop(1, '#ff7e5f'); allSalesChart = new Chart(ctx, { type: 'bar', data: { labels: chartLabels, datasets: [{ label: 'Jumlah Pelanggan', data: chartData, backgroundColor: gradient, borderRadius: 4, borderWidth: 0 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#fff', titleColor: '#333', bodyColor: '#666', borderColor: '#ddd', borderWidth: 1, padding: 10, callbacks: { label: (context) => ` ${context.raw} Pelanggan` } } }, scales: { x: { beginAtZero: true, grid: { drawBorder: false, }, ticks: { font: { family: "'Poppins', sans-serif" } } }, y: { grid: { display: false }, ticks: { font: { family: "'Poppins', sans-serif" } } } } } }); renderLeaderboardTable(salesData); }
+    function renderSingleSalesView(salesName) { const salesData = salesPerformance[salesName]; if (!salesData) return; document.getElementById('total-pelanggan-sales').textContent = salesData.totalCustomers; let paidCustomers = 0; let unpaidCustomers = 0; if (salesData.customers.length > 0) { const headers = Object.keys(salesData.customers[0]); const billingColumns = headers.filter(h => h.toLowerCase().startsWith('billing')); const parseBillingMonth = (billingHeader) => { const parts = billingHeader.split(' '); if (parts.length !== 3) return null; const monthName = parts[1]; const year = `20${parts[2]}`; const monthIndex = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'].findIndex(m => m.toLowerCase() === monthName.toLowerCase()); if (monthIndex === -1) return null; return new Date(year, monthIndex, 1); }; billingColumns.sort((a, b) => { const dateA = parseBillingMonth(a); const dateB = parseBillingMonth(b); if (!dateA || !dateB) return 0; return dateA - dateB; }); salesData.customers.forEach(customer => { let latestStatus = ''; for (let i = billingColumns.length - 1; i >= 0; i--) { const col = billingColumns[i]; if (customer[col] && customer[col].trim() !== '') { latestStatus = customer[col].toLowerCase(); break; } } if (latestStatus === 'paid') { paidCustomers++; } else if (latestStatus === 'unpaid') { unpaidCustomers++; } }); } document.getElementById('paid-customers-sales').textContent = paidCustomers; document.getElementById('unpaid-customers-sales').textContent = unpaidCustomers; const monthlyAcquisitions = {}; salesData.customers.forEach(customer => { if (customer.acquisitionDate) { const monthYear = `${customer.acquisitionDate.getMonth() + 1}/${customer.acquisitionDate.getFullYear()}`; monthlyAcquisitions[monthYear] = (monthlyAcquisitions[monthYear] || 0) + 1; } }); const sortedMonths = Object.keys(monthlyAcquisitions).sort((a, b) => { const [m1, y1] = a.split('/'); const [m2, y2] = b.split('/'); return new Date(y1, m1 - 1) - new Date(y2, m2 - 1); }); const chartLabels = sortedMonths; const chartData = sortedMonths.map(month => monthlyAcquisitions[month]); const ctx = document.getElementById('singleSalesChart').getContext('2d'); if (singleSalesChart) singleSalesChart.destroy(); const gradient = ctx.createLinearGradient(0, 0, 0, 400); gradient.addColorStop(0, 'rgba(40, 167, 69, 0.6)'); gradient.addColorStop(1, 'rgba(40, 167, 69, 0)'); singleSalesChart = new Chart(ctx, { type: 'line', data: { labels: chartLabels, datasets: [{ label: 'Akuisisi per Bulan', data: chartData, backgroundColor: gradient, borderColor: '#28a745', borderWidth: 3, tension: 0.4, fill: true, pointBackgroundColor: '#fff', pointBorderColor: '#28a745', pointHoverRadius: 7, pointRadius: 5 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { drawBorder: false } }, x: { grid: { display: false } } } } }); }
+    function updateView() { const selectedSales = salesFilter.value; if (selectedSales === 'all') { allSalesView.style.display = 'block'; singleSalesView.style.display = 'none'; renderAllSalesView(); } else { allSalesView.style.display = 'none'; singleSalesView.style.display = 'block'; renderSingleSalesView(selectedSales); } }
+
+    // --- Event Listeners ---
     function setupEventListeners() {
         const menuToggle = document.getElementById('menu-toggle');
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.overlay');
-
         if (menuToggle && sidebar && overlay) {
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('active');
-                overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
-            });
-
-            overlay.addEventListener('click', () => {
-                sidebar.classList.remove('active');
-                overlay.style.display = 'none';
-            });
+            menuToggle.addEventListener('click', () => { sidebar.classList.toggle('active'); overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none'; });
+            overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.style.display = 'none'; });
         }
         salesFilter.addEventListener('change', updateView);
+
+        // --- NEW: Message Generator Event Listeners ---
+        if (generateMessageBtn) {
+            generateMessageBtn.addEventListener('click', generateBillingMessages);
+        }
+        if (messageGeneratorOutput) {
+            messageGeneratorOutput.addEventListener('click', function(e) {
+                if (e.target.classList.contains('copy-button')) {
+                    const salesName = e.target.dataset.sales;
+                    const textToCopy = document.getElementById(`message-for-${salesName}`).innerText;
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        e.target.textContent = 'Disalin!';
+                        e.target.classList.add('copied');
+                        setTimeout(() => {
+                            e.target.textContent = 'Salin Pesan';
+                            e.target.classList.remove('copied');
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy text: ', err);
+                        alert('Gagal menyalin pesan.');
+                    });
+                }
+            });
+        }
     }
 
     // --- Initial Load ---
@@ -465,11 +228,11 @@ document.addEventListener('DOMContentLoaded', function () {
         hideSkeletonLoader();
         if (success) {
             populateSalesFilter();
+            populateBillingMonthFilter(); // NEW: Populate the new dropdown
             updateView();
             setupEventListeners();
             document.dispatchEvent(new Event('page-rendered'));
         } else {
-            // Optionally handle the error case, e.g., show an error message
             document.getElementById('all-sales-view').innerHTML = '<p>Failed to load report data.</p>';
             document.getElementById('all-sales-view').style.display = 'block';
         }
