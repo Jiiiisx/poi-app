@@ -321,7 +321,7 @@ async function handleAdminUpdateCell(req, res) {
 }
 
 async function handleUpdateCustomer(req, res) {
-    const user = authenticate(req, res);
+    const user = await authenticateGoogleUser(req, res);
     if (!user) return;
     if (req.method !== 'POST') return res.status(405).json({ message: 'Only POST requests are allowed' });
     const { rowIndex, values } = req.body;

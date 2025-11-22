@@ -2048,19 +2048,27 @@ class GoogleSheetsIntegration {
                 document.getElementById('editKeteranganTambahan').value
             ];
 
-            const response = await fetch('/api/update-customer', {
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            const googleIdToken = userInfo ? userInfo.token : null;
+
+            if (!googleIdToken) {
+                ModalHandler.show('Error', 'Otentikasi pengguna tidak ditemukan. Silakan login ulang.', 'error');
+                throw new Error('User not authenticated');
+            }
+
+            const response = await fetch('/api?action=update-customer', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${googleIdToken}`
                 },
-                body: JSON.stringify({ rowIndex, values, userEmail: window.currentUserEmail }),
+                body: JSON.stringify({ rowIndex, values }),
             });
 
             if (!response.ok) {
-                if (response.status === 400) {
+                if (response.status === 400 || response.status === 401) {
                     const errorData = await response.json();
-                    const errorMessages = errorData.errors.map(err => `<li>${err.msg}</li>`).join('');
-                    ModalHandler.show('Oops! Data Tidak Valid', `Harap perbaiki kesalahan berikut:<ul>${errorMessages}</ul>`, 'error');
+                    ModalHandler.show('Oops! Gagal Menyimpan', errorData.message, 'error');
                 } else {
                     const errorText = await response.text();
                     ModalHandler.show('Server Error', `Terjadi kesalahan pada server: ${errorText}`, 'error');
@@ -2086,50 +2094,10 @@ class GoogleSheetsIntegration {
 
     async deleteRow(originalIndex) {
         try {
-            const rowData = this.originalData[originalIndex];
-            if (!rowData) {
-                this.showError('Data tidak ditemukan untuk dihapus.');
-                return;
-            }
-            const expectedNama = rowData.nama;
-            if (!expectedNama) {
-                this.showError('Data tidak memiliki nilai NAMA yang valid.');
-                return;
-            }
-
-            ModalHandler.show(
-                'Konfirmasi Penghapusan',
-                `Apakah Anda yakin ingin menghapus data dengan NAMA: ${expectedNama}?`,
-                async () => {
-                    try {
-                        const response = await fetch('/api/delete-row', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ 
-                                rowIndex: originalIndex, 
-                                sheetName: 'REKAP CALON PELANGGAN BY SPARTA',
-                                userEmail: window.currentUserEmail
-                            }),
-                        });
-
-                        if (!response.ok) {
-                            const errorData = await response.json();
-                            throw new Error(errorData.message || `HTTP ${response.status}`);
-                        }
-
-                        this.showMessage('Data berhasil dihapus!', 'success');
-                        this.refreshData();
-                    } catch (error) {
-                        console.error('Delete row error:', error);
-                        this.showError('Gagal menghapus data: ' + error.message);
-                    }
-                }
-            );
+            ModalHandler.show('Informasi', 'Fitur ini tidak tersedia di dasbor ini. Penghapusan data hanya dapat dilakukan melalui panel admin.', 'info');
+            console.warn('deleteRow called on public dashboard, but is disabled for security reasons.');
         } catch (error) {
-            console.error('Delete row error:', error);
-            this.showError('Gagal menghapus data: ' + error.message);
+            console.error('Disabled deleteRow function encountered an error:', error);
         }
     }
 

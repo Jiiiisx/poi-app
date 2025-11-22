@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-        fetch('/api/log-view', {
+        fetch('/api?action=log-view', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
