@@ -1,5 +1,5 @@
-const { authenticate } = require('../authMiddleware.js');
-const { getSheetsClient, SPREADSHEET_ID, logActivity } = require('../google-sheets-client.js');
+const { authenticate } = require('../_authMiddleware.js');
+const { getSheetsClient, SPREADSHEET_ID, logActivity } = require('../_google-sheets-client.js');
 
 async function handleUpdateCustomer(req, res) {
     const user = authenticate(req, res);

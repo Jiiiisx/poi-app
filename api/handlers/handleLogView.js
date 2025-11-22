@@ -1,4 +1,4 @@
-const { getSheetsClient, SPREADSHEET_ID } = require('../google-sheets-client.js');
+const { getSheetsClient, SPREADSHEET_ID } = require('../_google-sheets-client.js');
 
 async function handleLogView(req, res) {
     if (req.method !== 'POST') {

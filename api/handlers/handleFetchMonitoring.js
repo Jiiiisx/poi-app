@@ -1,5 +1,5 @@
-const { authenticate } = require('../authMiddleware.js');
-const { getSheetsClient, SPREADSHEET_ID } = require('../google-sheets-client.js');
+const { authenticate } = require('../_authMiddleware.js');
+const { getSheetsClient, SPREADSHEET_ID } = require('../_google-sheets-client.js');
 
 async function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));

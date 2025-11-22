@@ -1,5 +1,5 @@
-const { authenticateGoogleUser } = require('../googleAuthMiddleware.js');
-const { getSheetsClient, SPREADSHEET_ID } = require('../google-sheets-client.js');
+const { authenticateGoogleUser } = require('../_googleAuthMiddleware.js');
+const { getSheetsClient, SPREADSHEET_ID } = require('../_google-sheets-client.js');
 
 async function handleUpdateCell(req, res) {
     // Gunakan middleware otentikasi Google
