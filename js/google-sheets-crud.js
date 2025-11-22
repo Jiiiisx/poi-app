@@ -6,10 +6,17 @@ class GoogleSheetsCRUD {
 
     async addCustomer(customerData) {
         try {
-            const url = `/api/add-customer?t=${Date.now()}`;
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            const googleIdToken = userInfo ? userInfo.token : null;
+
+            if (!googleIdToken) {
+                ModalHandler.show('Error', 'Otentikasi pengguna tidak ditemukan. Silakan login ulang.', 'error');
+                throw new Error('User not authenticated');
+            }
+
+            const url = `/api?action=add-customer&t=${Date.now()}`;
 
             const requestBody = {
-                userEmail: window.currentUserEmail,
                 values: [
                     customerData.odp_terdekat,
                     customerData.nama,
@@ -25,20 +32,15 @@ class GoogleSheetsCRUD {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${googleIdToken}`
                 },
                 body: JSON.stringify(requestBody)
             });
 
             if (!response.ok) {
-                if (response.status === 400) {
-                    const errorData = await response.json();
-                    const errorMessages = errorData.errors.map(err => `<li>${err.msg}</li>`).join('');
-                    ModalHandler.show('Oops! Data Tidak Valid', `Harap perbaiki kesalahan berikut:<ul>${errorMessages}</ul>`, 'error');
-                } else {
-                    const errorText = await response.text();
-                    ModalHandler.show('Server Error', `Terjadi kesalahan pada server: ${errorText}`, 'error');
-                }
+                const errorData = await response.json();
+                ModalHandler.show('Oops! Gagal Menyimpan', errorData.message, 'error');
                 throw new Error(`Server returned ${response.status}`);
             }
 
@@ -48,7 +50,7 @@ class GoogleSheetsCRUD {
 
         } catch (error) {
             console.error('Add customer error:', error);
-            ModalHandler.show('Error', `Failed to add data: ${error.message}`);
+            // ModalHandler sudah menampilkan error di atas, jadi tidak perlu lagi di sini
             throw new Error(`Gagal menambah data: ${error.message}`);
         }
     }

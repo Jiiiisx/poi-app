@@ -130,11 +130,33 @@ async function handleLogin(req, res) {
 }
 
 async function handleAddCustomer(req, res) {
-    const user = authenticate(req, res);
-    if (!user) return;
+    // Otentikasi Pengguna Google terlebih dahulu
+    const user = await authenticateGoogleUser(req, res);
+    if (!user) return; // Gagal otentikasi
+
     if (req.method !== 'POST') return res.status(405).json({ message: 'Only POST requests are allowed' });
-    const { values } = req.body;
-    if (!values) return res.status(400).json({ message: 'Missing values in request body' });
+    
+    let { values } = req.body;
+
+    if (!Array.isArray(values) || values.length < 8) {
+        return res.status(400).json({ message: 'Request body requires a "values" array with 8 elements.' });
+    }
+
+    // 1. Sanitasi: Hapus spasi ekstra dari semua input
+    values = values.map(v => typeof v === 'string' ? v.trim() : v);
+
+    // 2. Validasi
+    const nama = values[1];
+    const no_telepon = values[3];
+    const phoneRegex = /^08[0-9]{8,11}$/;
+
+    if (!nama) {
+        return res.status(400).json({ message: 'Nama tidak boleh kosong.' });
+    }
+    if (!no_telepon || !phoneRegex.test(no_telepon)) {
+        return res.status(400).json({ message: 'Format nomor telepon tidak valid. Harus diawali 08 dan terdiri dari 10-13 digit.' });
+    }
+
     try {
         const sheets = await getSheetsClient();
         const response = await sheets.spreadsheets.values.append({
@@ -143,7 +165,10 @@ async function handleAddCustomer(req, res) {
             valueInputOption: 'USER_ENTERED',
             resource: { values: [values] },
         });
-        await logActivity(user.username, 'ADD_CUSTOMER', { values });
+
+        // Gunakan email dari token yang sudah terverifikasi untuk log
+        await logActivity(user.email, 'ADD_CUSTOMER', { values });
+
         res.status(200).json(response.data);
     } catch (error) {
         console.error('Error adding customer:', error);
