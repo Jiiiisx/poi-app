@@ -368,24 +368,42 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
+            console.log('--- START DEBUGGING INLINE EDIT ---');
+            
             const newValue = td.textContent.trim();
             const originalRow = td.dataset.originalRow;
             const header = td.dataset.header;
+            const colIndex = parseInt(td.dataset.colIndex, 10);
+            
             const headerInfo = monitoringDataHeadersBySales[selectedSales.toLowerCase()] || {};
             const sheetName = headerInfo.sheetName;
             
             const originalData = (monitoringDataBySales[selectedSales.toLowerCase()] || []).find(item => item.originalSheetRow == originalRow);
             const oldValue = originalData ? originalData[header] : '';
 
-            if (newValue === oldValue || !sheetName) return;
+            console.log('DEBUG: Selected Sales:', selectedSales);
+            console.log('DEBUG: Sheet Name:', sheetName);
+            console.log('DEBUG: Original Row:', originalRow);
+            console.log('DEBUG: Header:', header);
+            console.log('DEBUG: Column Index:', colIndex);
 
-            const colIndex = parseInt(td.dataset.colIndex, 10);
-            if (isNaN(colIndex)) return;
+            if (newValue === oldValue || !sheetName) {
+                console.log('DEBUG: No change or no sheet name. Aborting.');
+                console.log('--- END DEBUGGING ---');
+                return;
+            }
+
+            if (isNaN(colIndex)) {
+                console.error('DEBUG: colIndex is NaN. Aborting.');
+                console.log('--- END DEBUGGING ---');
+                return;
+            }
 
             const colLetter = String.fromCharCode(65 + colIndex);
             const range = `'${sheetName}'!${colLetter}${originalRow}`;
 
-            console.log('DEBUG: Attempting to update range:', range); // Tambahan untuk debugging
+            console.log('DEBUG: Final Range:', range);
+            console.log('--- END DEBUGGING ---');
 
             td.style.backgroundColor = '#fdffab'; // Indicate saving
             try {
