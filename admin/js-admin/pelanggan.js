@@ -83,6 +83,9 @@ document.addEventListener('DOMContentLoaded', function () {
         data.valueRanges.forEach((valueRange, index) => {
             const rangeName = requestedRanges[index];
             const salesName = rangeToSalesKey[rangeName];
+            
+            console.log(`[DEBUG] Processing data for sales: ${salesName}. Raw range from API: ${valueRange.range}`); // Log tambahan
+
             if (!salesName || !valueRange.values || valueRange.values.length < 2) return;
 
             const headers = valueRange.values[0].map(h => h.trim());
