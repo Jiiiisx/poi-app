@@ -193,6 +193,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 td.dataset.originalRow = item.originalSheetRow;
                 td.dataset.header = header;
+                td.dataset.colIndex = colIndex; // Menyimpan indeks kolom secara langsung
                 tr.appendChild(td);
             });
             tbody.appendChild(tr);
@@ -378,8 +379,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (newValue === oldValue || !sheetName) return;
 
-            const colIndex = (headerInfo.headers || []).findIndex(h => h === header);
-            if (colIndex === -1) return;
+            const colIndex = parseInt(td.dataset.colIndex, 10);
+            if (isNaN(colIndex)) return;
 
             const colLetter = String.fromCharCode(65 + colIndex);
             const range = `'${sheetName}'!${colLetter}${originalRow}`;
