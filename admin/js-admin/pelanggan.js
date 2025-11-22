@@ -335,6 +335,16 @@ document.addEventListener('DOMContentLoaded', function () {
         nextPageButton.disabled = currentPage === totalPages || totalPages === 0;
     }
 
+    function columnIndexToLetter(index) {
+        let temp, letter = '';
+        while (index >= 0) {
+            temp = index % 26;
+            letter = String.fromCharCode(temp + 65) + letter;
+            index = Math.floor(index / 26) - 1;
+        }
+        return letter;
+    }
+
     // --- Event Listeners ---
     function setupEventListeners() {
         searchInput.addEventListener('input', applyFilters);
@@ -399,7 +409,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            const colLetter = String.fromCharCode(65 + colIndex);
+            const colLetter = columnIndexToLetter(colIndex); // Menggunakan fungsi baru yang benar
             const range = `'${sheetName}'!${colLetter}${originalRow}`;
 
             console.log('DEBUG: Final Range:', range);
