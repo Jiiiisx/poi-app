@@ -19,10 +19,6 @@ body {
     color: var(--text-primary);
 }
 
-.dashboard-container {
-    display: flex;
-}
-
 .card {
     background-color: #fff;
     padding: 2rem;
