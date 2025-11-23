@@ -118,57 +118,49 @@ document.addEventListener('DOMContentLoaded', function () {
     function getMonthColumns(headers) {
         const billingHeaders = headers.filter(h => h.toLowerCase().startsWith('billing'));
         return billingHeaders.sort((a, b) => {
-            const [aMonth, aYear] = a.split(' ').slice(1);
-            const [bMonth, bYear] = b.split(' ').slice(1);
-            const dateA = new Date(`20${aYear}`, monthMap.indexOf(aMonth), 1);
-            const dateB = new Date(`20${bYear}`, monthMap.indexOf(bMonth), 1);
+            const dateA = parseMonthColumnToDate(a);
+            const dateB = parseMonthColumnToDate(b);
             return dateB - dateA;
         });
     }
 
-    function findEffectiveStatus(customer, selectedMonth, allHeaders) {
-        const sortedMonths = getMonthColumns(allHeaders);
-        const startIndex = sortedMonths.indexOf(selectedMonth);
-
-        if (startIndex === -1) {
-            return { status: null, month: null };
-        }
-
-        for (let i = startIndex; i < sortedMonths.length; i++) {
-            const currentMonthColumn = sortedMonths[i];
-            const status = (customer[currentMonthColumn] || '').toUpperCase();
-
-            if (status && status !== 'N/A') {
-                const monthDiff = i - startIndex;
-
-                if (status === 'PRA NPC' && monthDiff >= 2) {
-                    return { status: 'CTO', month: currentMonthColumn };
-                }
-                return { status: status, month: currentMonthColumn };
-            }
-        }
-        return { status: null, month: null };
+    function parseMonthColumnToDate(monthColumn) {
+        if (!monthColumn) return null;
+        const parts = monthColumn.split(' ');
+        if (parts.length < 3) return null;
+        const monthName = parts[1];
+        const year = `20${parts[2]}`;
+        const monthIndex = monthMap.indexOf(monthName);
+        if (monthIndex === -1) return null;
+        return new Date(year, monthIndex, 1);
     }
 
+    function findLatestStatus(customer, allHeaders) {
+        const sortedMonths = getMonthColumns(allHeaders);
+        for (const monthColumn of sortedMonths) {
+            const status = (customer[monthColumn] || '').toUpperCase();
+            if (status && status !== 'N/A') {
+                return { status, monthColumn };
+            }
+        }
+        return { status: null, monthColumn: null };
+    }
 
     function generateBillingMessages() {
         const selectedMonth = billingMonthFilter.value;
         const selectedStatus = billingStatusFilter.value.toUpperCase();
         const selectedSales = salesFilter.value;
 
-        if (!selectedMonth) {
-            alert('Silakan pilih bulan tagihan terlebih dahulu.');
+        if ((selectedStatus === 'PAID' || selectedStatus === 'UNPAID') && !selectedMonth) {
+            alert('Silakan pilih bulan tagihan untuk status PAID atau UNPAID.');
             return;
         }
 
         let customersBySales = {};
-        const allHeaders = new Set();
-        for (const sales in salesPerformance) {
-            (salesPerformance[sales].headers || []).forEach(header => allHeaders.add(header));
-        }
-        const sortedMonths = getMonthColumns(Array.from(allHeaders));
-        const monthIndex = sortedMonths.indexOf(selectedMonth);
-        const previousMonth = monthIndex + 1 < sortedMonths.length ? sortedMonths[monthIndex + 1] : null;
+        const allHeaders = Array.from(Object.values(salesPerformance).reduce((acc, { headers }) => {
+            headers.forEach(h => acc.add(h));
+            return acc;
+        }, new Set()));
 
         for (const salesName in salesPerformance) {
             if (selectedSales !== 'all' && salesName !== selectedSales) {
@@ -176,27 +168,31 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             const salesData = salesPerformance[salesName];
-
             const matchingCustomers = salesData.customers.filter(customer => {
-                let isMatch = false;
                 if (selectedStatus === 'PAID' || selectedStatus === 'UNPAID') {
                     const statusInMonth = (customer[selectedMonth] || '').toUpperCase();
-                    isMatch = (statusInMonth === selectedStatus);
-                } else if (selectedStatus === 'PRA NPC') {
-                    const statusInMonth = (customer[selectedMonth] || '').toUpperCase();
-                    const statusInPrevMonth = previousMonth ? (customer[previousMonth] || '').toUpperCase() : '';
-                    
-                    if (statusInMonth === 'PRA NPC') {
-                        isMatch = true;
-                    } else if ((!statusInMonth || statusInMonth === 'N/A') && statusInPrevMonth === 'PRA NPC') {
-                        isMatch = true;
+                    return statusInMonth === selectedStatus;
+                } else {
+                    const { status: latestStatus, monthColumn: latestMonthColumn } = findLatestStatus(customer, allHeaders);
+                    if (!latestStatus) return false;
+
+                    const statusDate = parseMonthColumnToDate(latestMonthColumn);
+                    if (!statusDate) return false;
+
+                    const now = new Date();
+                    const twoMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, now.getDate());
+
+                    if (selectedStatus === 'PRA NPC') {
+                        return latestStatus === 'PRA NPC' && statusDate >= twoMonthsAgo;
                     }
 
-                } else if (selectedStatus === 'CTO') {
-                    const effective = findEffectiveStatus(customer, selectedMonth, salesData.headers);
-                    isMatch = (effective.status === 'CTO');
+                    if (selectedStatus === 'CTO') {
+                        if (latestStatus === 'CTO') return true;
+                        if (latestStatus === 'PRA NPC' && statusDate < twoMonthsAgo) return true;
+                        return false;
+                    }
                 }
-                return isMatch;
+                return false;
             });
 
             if (matchingCustomers.length > 0) {
@@ -210,10 +206,10 @@ document.addEventListener('DOMContentLoaded', function () {
         messageGeneratorOutput.innerHTML = '';
         messageGeneratorOutput.style.display = 'block';
 
-        const monthName = selectedMonth.replace('Billing ', '').split(' ')[0].toUpperCase();
+        const monthName = selectedMonth ? selectedMonth.replace('Billing ', '').split(' ')[0].toUpperCase() : new Date().toLocaleString('default', { month: 'short' }).toUpperCase();
 
         if (Object.keys(customersBySales).length === 0) {
-            messageGeneratorOutput.innerHTML = `<p>Tidak ada pelanggan dengan status "${selectedStatus}" pada bulan yang dipilih.</p>`;
+            messageGeneratorOutput.innerHTML = `<p>Tidak ada pelanggan dengan status "${selectedStatus}" yang cocok dengan kriteria.</p>`;
             return;
         }
 
@@ -224,7 +220,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const messageBlock = document.createElement('div');
             messageBlock.className = 'sales-message-block';
             
-            let messageContent = `*${selectedStatus} BULAN ${monthName}*\n*${salesTitle}*\n\n`;
+            let titleMonth = (selectedStatus === 'PAID' || selectedStatus === 'UNPAID') ? `BULAN ${monthName}` : `PERIODE ${new Date().toLocaleString('default', { month: 'short' }).toUpperCase()}`;
+            let messageContent = `*${selectedStatus} ${titleMonth}*\n*${salesTitle}*\n\n`;
+
             if (selectedSales === 'all') {
                  messageContent += `*Sales: ${salesName.toUpperCase()}*\n`;
             }
