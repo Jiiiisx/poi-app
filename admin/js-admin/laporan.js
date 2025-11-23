@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function () {
             customers.forEach((customer, index) => {
                 const name = customer['Nama Pelanggan'] || '';
                 const noInternet = customer['Nomor Internet'] || '';
-                const noTelepon = customer['No Telepon'] || '';
+                const noTelepon = customer['No Customer'] || ''; // FIX: Corrected key from 'No Telepon'
 
                 const phonePart = noTelepon ? `, ${noTelepon}` : '';
                 messageContent += `${index + 1}. ${name.toUpperCase()} - ${noInternet}${phonePart}\n`;
