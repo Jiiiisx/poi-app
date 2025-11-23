@@ -113,10 +113,48 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    const monthMap = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+
+    function getMonthColumns(headers) {
+        const billingHeaders = headers.filter(h => h.toLowerCase().startsWith('billing'));
+        return billingHeaders.sort((a, b) => {
+            const [aMonth, aYear] = a.split(' ').slice(1);
+            const [bMonth, bYear] = b.split(' ').slice(1);
+            const dateA = new Date(`20${aYear}`, monthMap.indexOf(aMonth), 1);
+            const dateB = new Date(`20${bYear}`, monthMap.indexOf(bMonth), 1);
+            return dateB - dateA;
+        });
+    }
+
+    function findEffectiveStatus(customer, selectedMonth, allHeaders) {
+        const sortedMonths = getMonthColumns(allHeaders);
+        const startIndex = sortedMonths.indexOf(selectedMonth);
+
+        if (startIndex === -1) {
+            return { status: null, month: null };
+        }
+
+        for (let i = startIndex; i < sortedMonths.length; i++) {
+            const currentMonthColumn = sortedMonths[i];
+            const status = (customer[currentMonthColumn] || '').toUpperCase();
+
+            if (status && status !== 'N/A') {
+                const monthDiff = i - startIndex;
+
+                if (status === 'PRA NPC' && monthDiff >= 2) {
+                    return { status: 'CTO', month: currentMonthColumn };
+                }
+                return { status: status, month: currentMonthColumn };
+            }
+        }
+        return { status: null, month: null };
+    }
+
+
     function generateBillingMessages() {
         const selectedMonth = billingMonthFilter.value;
         const selectedStatus = billingStatusFilter.value.toUpperCase();
-        const selectedSales = salesFilter.value; // Read selected sales person
+        const selectedSales = salesFilter.value;
 
         if (!selectedMonth) {
             alert('Silakan pilih bulan tagihan terlebih dahulu.');
@@ -124,17 +162,41 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         let customersBySales = {};
+        const allHeaders = new Set();
+        for (const sales in salesPerformance) {
+            (salesPerformance[sales].headers || []).forEach(header => allHeaders.add(header));
+        }
+        const sortedMonths = getMonthColumns(Array.from(allHeaders));
+        const monthIndex = sortedMonths.indexOf(selectedMonth);
+        const previousMonth = monthIndex + 1 < sortedMonths.length ? sortedMonths[monthIndex + 1] : null;
 
         for (const salesName in salesPerformance) {
-            // If a specific sales person is selected, skip others
             if (selectedSales !== 'all' && salesName !== selectedSales) {
                 continue;
             }
 
             const salesData = salesPerformance[salesName];
+
             const matchingCustomers = salesData.customers.filter(customer => {
-                const status = (customer[selectedMonth] || '').toUpperCase();
-                return status === selectedStatus;
+                let isMatch = false;
+                if (selectedStatus === 'PAID' || selectedStatus === 'UNPAID') {
+                    const statusInMonth = (customer[selectedMonth] || '').toUpperCase();
+                    isMatch = (statusInMonth === selectedStatus);
+                } else if (selectedStatus === 'PRA NPC') {
+                    const statusInMonth = (customer[selectedMonth] || '').toUpperCase();
+                    const statusInPrevMonth = previousMonth ? (customer[previousMonth] || '').toUpperCase() : '';
+                    
+                    if (statusInMonth === 'PRA NPC') {
+                        isMatch = true;
+                    } else if ((!statusInMonth || statusInMonth === 'N/A') && statusInPrevMonth === 'PRA NPC') {
+                        isMatch = true;
+                    }
+
+                } else if (selectedStatus === 'CTO') {
+                    const effective = findEffectiveStatus(customer, selectedMonth, salesData.headers);
+                    isMatch = (effective.status === 'CTO');
+                }
+                return isMatch;
             });
 
             if (matchingCustomers.length > 0) {
@@ -155,7 +217,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Determine the main title based on whether a specific sales person was selected
         const salesTitle = selectedSales === 'all' ? "ALL SALES TELDA" : `Sales: ${selectedSales.toUpperCase()}`;
 
         for (const salesName in customersBySales) {
@@ -163,7 +224,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const messageBlock = document.createElement('div');
             messageBlock.className = 'sales-message-block';
             
-            // Create a more accurate and dynamic title
             let messageContent = `*${selectedStatus} BULAN ${monthName}*\n*${salesTitle}*\n\n`;
             if (selectedSales === 'all') {
                  messageContent += `*Sales: ${salesName.toUpperCase()}*\n`;
@@ -174,7 +234,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 const noInternet = customer['Nomor Internet'] || '';
                 const noTelepon = customer['No Telepon'] || '';
 
-                // Format customer info onto a single line, conditionally adding the phone number
                 const phonePart = noTelepon ? `, ${noTelepon}` : '';
                 messageContent += `${index + 1}. ${name.toUpperCase()} - ${noInternet}${phonePart}\n`;
             });
