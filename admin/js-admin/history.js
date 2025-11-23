@@ -40,30 +40,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const analyticsSection = document.querySelector('.analytics-section');
     const tableContainerArea = document.querySelector('.table-container.content-area');
 
-    function showSkeletonLoader() {
-        let cardsHTML = '';
-        for (let i = 0; i < 2; i++) { // 2 analytics cards
-            cardsHTML += '<div class="skeleton-card-item"></div>';
-        }
-        skeletonLoader.querySelector('.skeleton-analytics-cards').innerHTML = cardsHTML;
-
-        let tableRowsHTML = '';
-        for (let i = 0; i < 15; i++) { // 15 rows for history table
-            tableRowsHTML += '<div class="skeleton-row"></div>';
-        }
-        skeletonLoader.querySelector('.skeleton-table').innerHTML = tableRowsHTML;
-
-        analyticsSection.style.display = 'none';
-        tableContainerArea.style.display = 'none';
-        skeletonLoader.style.display = 'block';
-    }
-
-    function hideSkeletonLoader() {
-        skeletonLoader.style.display = 'none';
-        analyticsSection.style.display = 'block';
-        tableContainerArea.style.display = 'block';
-    }
-
     // --- NEW: Load Analytics Data ---
     async function loadAnalyticsData() {
         try {
@@ -350,32 +326,36 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        searchInput.addEventListener('input', filterAndRenderTable);
+        if (searchInput) {
+            searchInput.addEventListener('input', filterAndRenderTable);
+        }
+        
+        if (prevPageButton) {
+            prevPageButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTable();
+                }
+            });
+        }
 
-        prevPageButton.addEventListener('click', () => {
-            if (currentPage > 1) {
-                currentPage--;
-                renderTable();
-            }
-        });
-
-        nextPageButton.addEventListener('click', () => {
-            const totalPages = Math.ceil(filteredHistoryData.length / rowsPerPage);
-            if (currentPage < totalPages) {
-                currentPage++;
-                renderTable();
-            }
-        });
+        if (nextPageButton) {
+            nextPageButton.addEventListener('click', () => {
+                const totalPages = Math.ceil(filteredHistoryData.length / rowsPerPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderTable();
+                }
+            });
+        }
     }
 
     // Initial Load
-    async function init() {
+    async function initHistoryPage() {
         showSkeletonLoader();
         await Promise.all([loadAnalyticsData(), loadHistoryData()]);
         hideSkeletonLoader();
         setupEventListeners();
         document.dispatchEvent(new Event('page-rendered'));
     }
-
-    init();
 });

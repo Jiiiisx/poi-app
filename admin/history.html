@@ -91,8 +91,17 @@
             </div>
         </main>
     </div>
+    <script src="js-admin/utils.js"></script>
     <script src="js-admin/history.js?v=2"></script>
     <script src="js-admin/global-search.js"></script>
     <script src="js-admin/logout.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if the init function exists to avoid errors on other pages
+            if (typeof initHistoryPage === 'function') {
+                initHistoryPage();
+            }
+        });
+    </script>
 </body>
 </html>
