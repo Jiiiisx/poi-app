@@ -30,6 +30,7 @@ body {
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
+/* --- Sidebar & Header (Copied for consistency) --- */
 .sidebar {
     width: 250px;
     background-color: var(--primary-color);
@@ -39,52 +40,18 @@ body {
     height: 100vh;
     position: fixed;
     flex-shrink: 0;
+    z-index: 100;
+    transition: width 0.3s ease;
 }
 
-.sidebar-header {
-    padding: 20px;
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: 600;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
+.sidebar-header { padding: 20px; text-align: center; font-size: 1.5rem; font-weight: 600; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.sidebar-nav ul { list-style: none; padding: 0; margin: 20px 0; }
+.sidebar-nav li a { display: flex; align-items: center; gap: 15px; padding: 15px 20px; color: #fff; text-decoration: none; font-weight: 500; transition: background-color 0.3s; }
+.sidebar-nav li a:hover, .sidebar-nav li.active a { background-color: rgba(0, 0, 0, 0.2); }
+.sidebar-footer { margin-top: auto; padding: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+.sidebar-footer a { display: flex; align-items: center; gap: 15px; color: #fff; text-decoration: none; }
 
-.sidebar-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 20px 0;
-}
-
-.sidebar-nav li a {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 15px 20px;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-    transition: background-color 0.3s;
-}
-
-.sidebar-nav li a:hover,
-.sidebar-nav li.active a {
-    background-color: rgba(0, 0, 0, 0.2);
-}
-
-.sidebar-footer {
-    margin-top: auto;
-    padding: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.sidebar-footer a {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    color: #fff;
-    text-decoration: none;
-}
-.main-content { flex-grow: 1; padding: 30px; margin-left: 250px; }
+.main-content { flex-grow: 1; padding: 30px; margin-left: 250px; transition: margin-left 0.3s ease; }
 .main-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
 .main-header h1 { margin: 0; font-size: 1.8rem; }
 
@@ -192,3 +159,89 @@ body {
 
 .customer-link { cursor: pointer; color: var(--primary-color); font-weight: 500; }
 .customer-link:hover { text-decoration: underline; }
+
+/* --- SIDEBAR & RESPONSIVE STYLES (from dashboard.css) --- */
+
+.menu-toggle {
+    display: none; /* Hidden on desktop by default in this file */
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .menu-toggle {
+        display: block;
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+}
+
+.overlay {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+.sidebar.active ~ .overlay {
+    display: block;
+}
+
+/* Collapsible Sidebar Styles for Desktop */
+body.sidebar-collapsed .sidebar {
+    width: 80px;
+    text-align: center;
+}
+
+body.sidebar-collapsed .main-content {
+    margin-left: 80px;
+}
+
+body.sidebar-collapsed .sidebar-header span {
+    display: none;
+}
+
+body.sidebar-collapsed .sidebar-nav li a {
+    padding: 15px 0;
+    gap: 0;
+    justify-content: center;
+}
+
+body.sidebar-collapsed .sidebar-nav li a span {
+    display: none;
+}
+
+body.sidebar-collapsed .sidebar-footer {
+    padding: 20px 0;
+}
+
+body.sidebar-collapsed .sidebar-footer a {
+    gap: 0;
+    justify-content: center;
+}
+
+body.sidebar-collapsed .sidebar-footer a span {
+    display: none;
+}
