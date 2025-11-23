@@ -53,7 +53,6 @@ body {
 .main-content { flex-grow: 1; padding: 30px; margin-left: 250px; }
 .main-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
 .main-header h1 { margin: 0; font-size: 1.8rem; }
-.menu-toggle { display: none; } /* Add responsive later if needed */
 
 /* --- Main Content Layout --- */
 .two-column-layout {

@@ -640,15 +640,13 @@ body {
     }
 }
 
-@media (min-width: 769px) {
-    .menu-toggle {
-        display: block; /* Make toggle always visible */
-        background: none;
-        border: none;
-        color: var(--text-primary);
-        font-size: 1.5rem;
-        cursor: pointer;
-    }
+.menu-toggle {
+    display: block !important; /* Make toggle always visible, override other sheets */
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
 }
 
 .overlay {
@@ -668,14 +666,10 @@ body {
     display: block;
 }
 
-/* --- NEW Collapsible Sidebar Styles for Desktop --- */
+/* --- Collapsible Sidebar Styles for Desktop --- */
 
 .sidebar {
     transition: width 0.3s ease;
-}
-
-.sidebar-nav li a span, .sidebar-header span, .sidebar-footer a span {
-    transition: opacity 0.2s ease;
 }
 
 body.sidebar-collapsed .sidebar {
@@ -689,16 +683,18 @@ body.sidebar-collapsed .main-content {
 body.sidebar-collapsed .sidebar-header span,
 body.sidebar-collapsed .sidebar-nav li a span,
 body.sidebar-collapsed .sidebar-footer a span {
-    display: none; /* More robust way to hide text */
+    display: none;
 }
 
 body.sidebar-collapsed .sidebar-nav li a,
 body.sidebar-collapsed .sidebar-footer a {
+    padding-left: 0;
+    padding-right: 0;
     gap: 0;
     justify-content: center;
 }
 
 body.sidebar-collapsed .sidebar-header {
-    padding-left: 0;
-    padding-right: 0;
+    padding-left: 10px;
+    padding-right: 10px;
 }

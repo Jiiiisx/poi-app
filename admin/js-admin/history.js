@@ -220,6 +220,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
             if (!data.values || data.values.length < 1) {
                 allHistoryData = [];
+                tableContainer.innerHTML = '<p>No history data found.</p>'; // Explicitly clear loading message
                 return;
             }
             const headers = data.values[0];
