@@ -138,9 +138,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function findLatestStatus(customer, allHeaders) {
         const sortedMonths = getMonthColumns(allHeaders);
         for (const monthColumn of sortedMonths) {
-            const status = (customer[monthColumn] || '').trim().toUpperCase(); // TRIM ADDED
-            // DIAGNOSTIC HACK: Ignore UNPAID status to see if PRA NPC appears
-            if (status && status !== 'N/A' && status !== 'UNPAID') {
+            const status = (customer[monthColumn] || '').trim().toUpperCase();
+            if (status && status !== 'N/A') {
                 return { status, monthColumn };
             }
         }
@@ -171,9 +170,16 @@ document.addEventListener('DOMContentLoaded', function () {
             const salesData = salesPerformance[salesName];
             const matchingCustomers = salesData.customers.filter(customer => {
                 if (selectedStatus === 'PAID' || selectedStatus === 'UNPAID') {
-                    const statusInMonth = (customer[selectedMonth] || '').trim().toUpperCase(); // TRIM ADDED
+                    const statusInMonth = (customer[selectedMonth] || '').trim().toUpperCase();
                     return statusInMonth === selectedStatus;
                 } else {
+                    // FINAL DIAGNOSTIC LOG: Dump the entire customer object
+                    if (selectedStatus === 'PRA NPC' || selectedStatus === 'CTO') {
+                        console.log("--- Customer Object START ---");
+                        console.log(JSON.stringify(customer, null, 2));
+                        console.log("--- Customer Object END ---");
+                    }
+
                     const { status: latestStatus, monthColumn: latestMonthColumn } = findLatestStatus(customer, allHeaders);
                     if (!latestStatus) return false;
 
