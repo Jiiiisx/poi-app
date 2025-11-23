@@ -2,11 +2,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const menuToggle = document.getElementById('menu-toggle');
     const body = document.body;
 
-    // Check for saved sidebar state
-    if (localStorage.getItem('sidebar-collapsed') === 'true') {
-        body.classList.add('sidebar-collapsed');
-    }
-
     if (menuToggle) {
         menuToggle.addEventListener('click', function () {
             body.classList.toggle('sidebar-collapsed');
