@@ -139,7 +139,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const sortedMonths = getMonthColumns(allHeaders);
         for (const monthColumn of sortedMonths) {
             const status = (customer[monthColumn] || '').trim().toUpperCase(); // TRIM ADDED
-            if (status && status !== 'N/A') {
+            // DIAGNOSTIC HACK: Ignore UNPAID status to see if PRA NPC appears
+            if (status && status !== 'N/A' && status !== 'UNPAID') {
                 return { status, monthColumn };
             }
         }
