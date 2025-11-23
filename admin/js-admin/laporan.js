@@ -116,6 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function generateBillingMessages() {
         const selectedMonth = billingMonthFilter.value;
         const selectedStatus = billingStatusFilter.value.toUpperCase();
+        const selectedSales = salesFilter.value; // Read selected sales person
 
         if (!selectedMonth) {
             alert('Silakan pilih bulan tagihan terlebih dahulu.');
@@ -125,6 +126,11 @@ document.addEventListener('DOMContentLoaded', function () {
         let customersBySales = {};
 
         for (const salesName in salesPerformance) {
+            // If a specific sales person is selected, skip others
+            if (selectedSales !== 'all' && salesName !== selectedSales) {
+                continue;
+            }
+
             const salesData = salesPerformance[salesName];
             const matchingCustomers = salesData.customers.filter(customer => {
                 const status = (customer[selectedMonth] || '').toUpperCase();
@@ -135,10 +141,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 customersBySales[salesName] = matchingCustomers;
             }
         }
-        renderGeneratedMessages(customersBySales, selectedMonth, selectedStatus);
+        renderGeneratedMessages(customersBySales, selectedMonth, selectedStatus, selectedSales);
     }
 
-    function renderGeneratedMessages(customersBySales, selectedMonth, selectedStatus) {
+    function renderGeneratedMessages(customersBySales, selectedMonth, selectedStatus, selectedSales) {
         messageGeneratorOutput.innerHTML = '';
         messageGeneratorOutput.style.display = 'block';
 
@@ -149,21 +155,28 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        // Determine the main title based on whether a specific sales person was selected
+        const salesTitle = selectedSales === 'all' ? "ALL SALES TELDA" : `Sales: ${selectedSales.toUpperCase()}`;
+
         for (const salesName in customersBySales) {
             const customers = customersBySales[salesName];
             const messageBlock = document.createElement('div');
             messageBlock.className = 'sales-message-block';
-
-            let messageContent = `*${selectedStatus} DAN CTO BULAN ${monthName}*\n*ALL SALES TELDA*\n\n`;
-            messageContent += `*Sales: ${salesName.toUpperCase()}*\n`;
+            
+            // Create a more accurate and dynamic title
+            let messageContent = `*${selectedStatus} BULAN ${monthName}*\n*${salesTitle}*\n\n`;
+            if (selectedSales === 'all') {
+                 messageContent += `*Sales: ${salesName.toUpperCase()}*\n`;
+            }
             
             customers.forEach((customer, index) => {
                 const name = customer['Nama Pelanggan'] || '';
                 const noInternet = customer['Nomor Internet'] || '';
                 const noTelepon = customer['No Telepon'] || '';
-                const status = (customer[selectedMonth] || '').toUpperCase();
 
-                messageContent += `${index + 1}. ${name.toUpperCase()} - ${noInternet}\n   (${noTelepon}) ${status === 'CTO' ? 'CTO' : ''}\n`;
+                // Format customer info onto a single line, conditionally adding the phone number
+                const phonePart = noTelepon ? `, ${noTelepon}` : '';
+                messageContent += `${index + 1}. ${name.toUpperCase()} - ${noInternet}${phonePart}\n`;
             });
 
             messageBlock.innerHTML = `
