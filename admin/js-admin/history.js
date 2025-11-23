@@ -43,16 +43,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- NEW: Load Analytics Data ---
     async function loadAnalyticsData() {
         try {
-            console.log('Fetching analytics data...');
             const response = await fetchWithAuth('/api?action=fetch-analytics');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            console.log('Received raw analytics data from API:', data);
 
             if (!data.values || data.values.length < 1) {
-                console.log('No analytics data values found. Rendering empty dashboard.');
                 processAnalytics([]);
                 return;
             }
@@ -64,11 +61,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
                 return rowAsObject;
             });
-            console.log('Processed analytics data for dashboard:', analyticsData);
             processAnalytics(analyticsData);
         } catch (error) {
             console.error('Error fetching analytics data:', error);
-            // Optionally update the UI to show an error for the analytics section
         }
     }
 
@@ -77,7 +72,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const pageViewsCountEl = document.getElementById('active-users-count');
         const uniquePagesCountEl = document.getElementById('total-activities-count');
         
-        // Update card titles
         if (pageViewsCountEl && uniquePagesCountEl) {
             pageViewsCountEl.previousElementSibling.textContent = 'Total Page Views';
             uniquePagesCountEl.previousElementSibling.textContent = 'Unique Pages';
@@ -89,7 +83,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // Calculate metrics
             const totalPageViews = data.length;
             const uniquePages = new Set(data.map(row => row.Page));
 
@@ -97,8 +90,6 @@ document.addEventListener('DOMContentLoaded', function () {
             uniquePagesCountEl.textContent = uniquePages.size;
         }
 
-
-        // Prepare data for the chart (activities per day for the last 7 days)
         const activitiesByDay = {};
         const today = new Date();
         const last7Days = Array.from({ length: 7 }, (_, i) => {
@@ -134,83 +125,27 @@ document.addEventListener('DOMContentLoaded', function () {
         const primaryColor = rootStyles.getPropertyValue('--primary-color').trim() || '#d9363e';
 
         const options = {
-            chart: {
-                type: 'area',
-                height: 350,
-                toolbar: { show: false },
-                zoom: { enabled: false },
-                background: 'transparent'
-            },
+            chart: { type: 'area', height: 350, toolbar: { show: false }, zoom: { enabled: false }, background: 'transparent' },
             colors: [primaryColor],
-            series: [{
-                name: 'Page Views',
-                data: labels.map(day => activitiesByDay[day] || 0)
-            }],
-            xaxis: {
-                categories: labels,
-                labels: {
-                    style: {
-                        colors: textColor
-                    }
-                },
-                axisBorder: {
-                    show: false
-                },
-                axisTicks: {
-                    show: false
-                }
-            },
-            yaxis: {
-                labels: {
-                    style: {
-                        colors: textColor
-                    }
-                }
-            },
+            series: [{ name: 'Page Views', data: labels.map(day => activitiesByDay[day] || 0) }],
+            xaxis: { categories: labels, labels: { style: { colors: textColor } }, axisBorder: { show: false }, axisTicks: { show: false } },
+            yaxis: { labels: { style: { colors: textColor } } },
             dataLabels: { enabled: false },
             stroke: { curve: 'smooth', width: 3 },
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    shade: 'light',
-                    type: "vertical",
-                    shadeIntensity: 0.3,
-                    gradientToColors: undefined,
-                    inverseColors: false,
-                    opacityFrom: 0.7,
-                    opacityTo: 0.2,
-                    stops: [0, 100]
-                }
-            },
-            grid: {
-                borderColor: gridColor,
-                strokeDashArray: 4,
-                position: 'back'
-            },
-            tooltip: {
-                theme: 'light',
-                style: {
-                    fontSize: '12px',
-                    fontFamily: rootStyles.getPropertyValue('--font-family').trim() || 'sans-serif'
-                },
-                x: {
-                    format: 'dd MMM yyyy'
-                }
-            },
-            legend: {
-                show: false
-            }
+            fill: { type: 'gradient', gradient: { shade: 'light', type: "vertical", shadeIntensity: 0.3, gradientToColors: undefined, inverseColors: false, opacityFrom: 0.7, opacityTo: 0.2, stops: [0, 100] } },
+            grid: { borderColor: gridColor, strokeDashArray: 4, position: 'back' },
+            tooltip: { theme: 'light', style: { fontSize: '12px', fontFamily: rootStyles.getPropertyValue('--font-family').trim() || 'sans-serif' }, x: { format: 'dd MMM yyyy' } },
+            legend: { show: false }
         };
 
         const chartEl = document.querySelector("#analytics-chart");
         if (chartEl) {
-            chartEl.innerHTML = ''; // Clear previous chart
+            chartEl.innerHTML = '';
             const chart = new ApexCharts(chartEl, options);
             chart.render();
         }
     }
 
-    // --- Existing functions for history table (from original file) ---
     async function loadHistoryData() {
         try {
             const response = await fetchWithAuth('/api?action=fetch-history');
@@ -220,7 +155,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
             if (!data.values || data.values.length < 1) {
                 allHistoryData = [];
-                tableContainer.innerHTML = '<p>No history data found.</p>'; // Explicitly clear loading message
+                tableContainer.innerHTML = '<p>No history data found.</p>';
+                updatePagination();
                 return;
             }
             const headers = data.values[0];
@@ -230,9 +166,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     rowAsObject[header] = row[index] || '';
                 });
                 return rowAsObject;
-            }).reverse(); // Reverse to show newest first
+            }).reverse();
 
-            filterAndRenderTable(); // This function is now defined
+            filterAndRenderTable();
         } catch (error) {
             console.error('Error fetching history data:', error);
             tableContainer.innerHTML = '<p>Failed to load history data. Please try again.</p>';
@@ -245,17 +181,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const paginatedData = filteredHistoryData.slice(start, end);
 
         if (paginatedData.length === 0) {
-            tableContainer.innerHTML = '<p>No history data found.</p>';
+            tableContainer.innerHTML = '<p>No history data found for this filter.</p>';
             updatePagination();
             return;
         }
 
         const table = document.createElement('table');
-        table.className = 'customer-table'; // Reusing styles
+        table.className = 'customer-table';
         const thead = document.createElement('thead');
         const tbody = document.createElement('tbody');
-
-        // Create headers
         const headerRow = document.createElement('tr');
         if (paginatedData.length > 0) {
             const headers = Object.keys(paginatedData[0]);
@@ -267,7 +201,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         thead.appendChild(headerRow);
 
-        // Create rows
         paginatedData.forEach(item => {
             const tr = document.createElement('tr');
             Object.values(item).forEach(cellData => {
@@ -311,6 +244,26 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function setupEventListeners() {
+        // The old, conflicting sidebar logic is commented out to prevent issues.
+        // The global sidebar.js now handles this functionality.
+        /*
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.overlay');
+
+        if (menuToggle && sidebar && overlay) {
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+                overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
+            });
+
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+                overlay.style.display = 'none';
+            });
+        }
+        */
+
         if (searchInput) {
             searchInput.addEventListener('input', filterAndRenderTable);
         }
@@ -335,12 +288,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Initial Load
     async function initHistoryPage() {
-        showSkeletonLoader();
+        // This function is called from history.html
+        // I removed the show/hide skeleton loader from here to avoid conflicts
+        // showSkeletonLoader(); 
         await Promise.all([loadAnalyticsData(), loadHistoryData()]);
-        hideSkeletonLoader();
+        // hideSkeletonLoader();
         setupEventListeners();
         document.dispatchEvent(new Event('page-rendered'));
     }
+    
+    // Make it available to be called from the HTML
+    window.initHistoryPage = initHistoryPage;
+
 });
