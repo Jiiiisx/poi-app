@@ -156,6 +156,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        console.log(`--- GENERATING MESSAGES FOR [${selectedStatus}] ---`);
+
         let customersBySales = {};
         const allHeaders = Array.from(Object.values(salesPerformance).reduce((acc, { headers }) => {
             headers.forEach(h => acc.add(h));
@@ -169,27 +171,51 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const salesData = salesPerformance[salesName];
             const matchingCustomers = salesData.customers.filter(customer => {
+                const customerName = customer['Nama Pelanggan'] || 'Unnamed';
+                
                 if (selectedStatus === 'PAID' || selectedStatus === 'UNPAID') {
                     const statusInMonth = (customer[selectedMonth] || '').toUpperCase();
                     return statusInMonth === selectedStatus;
                 } else {
+                    console.log(`\n[DEBUG] Checking Customer: ${customerName}`);
                     const { status: latestStatus, monthColumn: latestMonthColumn } = findLatestStatus(customer, allHeaders);
-                    if (!latestStatus) return false;
+                    console.log(`  > Found latest status: '${latestStatus}' in column '${latestMonthColumn}'`);
+
+                    if (!latestStatus) {
+                        console.log('  > No latest status found. Skipping.');
+                        return false;
+                    }
 
                     const statusDate = parseMonthColumnToDate(latestMonthColumn);
-                    if (!statusDate) return false;
+                    if (!statusDate) {
+                        console.log(`  > Could not parse date from column '${latestMonthColumn}'. Skipping.`);
+                        return false;
+                    }
+                    console.log(`  > Status date parsed as: ${statusDate.toISOString()}`);
 
                     const now = new Date();
                     const twoMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, now.getDate());
+                    console.log(`  > Current date: ${now.toISOString()}`);
+                    console.log(`  > Two months ago: ${twoMonthsAgo.toISOString()}`);
 
                     if (selectedStatus === 'PRA NPC') {
-                        return latestStatus === 'PRA NPC' && statusDate >= twoMonthsAgo;
+                        const isMatch = latestStatus === 'PRA NPC' && statusDate >= twoMonthsAgo;
+                        console.log(`  > Rule: PRA NPC. Condition: (latestStatus === 'PRA NPC' && statusDate >= twoMonthsAgo) -> ${isMatch}`);
+                        return isMatch;
                     }
 
                     if (selectedStatus === 'CTO') {
-                        if (latestStatus === 'CTO') return true;
-                        if (latestStatus === 'PRA NPC' && statusDate < twoMonthsAgo) return true;
-                        return false;
+                        let isMatch = false;
+                        if (latestStatus === 'CTO') {
+                            isMatch = true;
+                            console.log(`  > Rule: CTO. Condition: (latestStatus === 'CTO') -> ${isMatch}`);
+                        } else if (latestStatus === 'PRA NPC' && statusDate < twoMonthsAgo) {
+                            isMatch = true;
+                            console.log(`  > Rule: CTO. Condition: (latestStatus === 'PRA NPC' && statusDate < twoMonthsAgo) -> ${isMatch}`);
+                        } else {
+                             console.log(`  > Rule: CTO. No condition met.`);
+                        }
+                        return isMatch;
                     }
                 }
                 return false;
