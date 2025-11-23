@@ -642,7 +642,12 @@ body {
 
 @media (min-width: 769px) {
     .menu-toggle {
-        display: none;
+        display: block; /* Make toggle always visible */
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        cursor: pointer;
     }
 }
 
@@ -661,4 +666,37 @@ body {
 
 .sidebar.active ~ .overlay {
     display: block;
+}
+
+/* --- NEW Collapsible Sidebar Styles for Desktop --- */
+
+.sidebar {
+    transition: width 0.3s ease;
+}
+
+.sidebar-nav li a span, .sidebar-header span, .sidebar-footer a span {
+    transition: opacity 0.2s ease;
+}
+
+body.sidebar-collapsed .sidebar {
+    width: 80px;
+}
+
+body.sidebar-collapsed .main-content {
+    margin-left: 80px;
+}
+
+body.sidebar-collapsed .sidebar-header span,
+body.sidebar-collapsed .sidebar-nav li a span,
+body.sidebar-collapsed .sidebar-footer a span {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+body.sidebar-collapsed .sidebar-nav li a {
+    justify-content: center;
+}
+body.sidebar-collapsed .sidebar-footer a {
+    justify-content: center;
 }
