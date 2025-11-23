@@ -135,15 +135,19 @@ document.addEventListener('DOMContentLoaded', function () {
         return new Date(year, monthIndex, 1);
     }
 
-    function findLatestStatus(customer, allHeaders) {
-        const sortedMonths = getMonthColumns(allHeaders);
-        for (const monthColumn of sortedMonths) {
-            const status = (customer[monthColumn] || '').trim().toUpperCase();
-            if (status && status !== 'N/A') {
-                return { status, monthColumn };
-            }
-        }
-        return { status: null, monthColumn: null };
+    function _parseHeaderDate(header) {
+        const monthMap = {
+            'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'mei': 4, 'jun': 5,
+            'jul': 6, 'agu': 7, 'ags': 7, 'agt': 7, 'sep': 8, 'okt': 9, 'nov': 10, 'des': 11
+        };
+        if (typeof header !== 'string') return null;
+        const parts = header.replace(/billing/i, '').trim().split(' ');
+        if (parts.length < 2) return null;
+        const monthName = parts[0].toLowerCase().substring(0, 3);
+        const month = monthMap[monthName];
+        const year = parseInt(parts[1], 10);
+        if (month === undefined || isNaN(year)) { console.warn(`Could not parse date: "${header}"`); return null; }
+        return new Date(year + 2000, month);
     }
 
     function generateBillingMessages() {
@@ -162,6 +166,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return acc;
         }, new Set()));
 
+        const billingHeaders = allHeaders.filter(h => h.toLowerCase().startsWith('billing'));
+
         for (const salesName in salesPerformance) {
             if (selectedSales !== 'all' && salesName !== selectedSales) {
                 continue;
@@ -169,35 +175,39 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const salesData = salesPerformance[salesName];
             const matchingCustomers = salesData.customers.filter(customer => {
+                // PAID and UNPAID logic remains tied to the selected month
                 if (selectedStatus === 'PAID' || selectedStatus === 'UNPAID') {
                     const statusInMonth = (customer[selectedMonth] || '').trim().toUpperCase();
                     return statusInMonth === selectedStatus;
-                } else {
-                    // FINAL DIAGNOSTIC LOG: Dump the entire customer object
-                    if (selectedStatus === 'PRA NPC' || selectedStatus === 'CTO') {
-                        console.log("--- Customer Object START ---");
-                        console.log(JSON.stringify(customer, null, 2));
-                        console.log("--- Customer Object END ---");
-                    }
-
-                    const { status: latestStatus, monthColumn: latestMonthColumn } = findLatestStatus(customer, allHeaders);
-                    if (!latestStatus) return false;
-
-                    const statusDate = parseMonthColumnToDate(latestMonthColumn);
-                    if (!statusDate) return false;
-
+                } 
+                // Derived status logic for PRA NPC and CTO
+                else if (selectedStatus === 'PRA NPC') {
                     const now = new Date();
-                    const twoMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, now.getDate());
+                    const sortedBillingHeaders = billingHeaders
+                        .filter(header => _parseHeaderDate(header) <= now)
+                        .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
 
-                    if (selectedStatus === 'PRA NPC') {
-                        return latestStatus === 'PRA NPC' && statusDate >= twoMonthsAgo;
-                    }
+                    if (sortedBillingHeaders.length < 2) return false;
+                    
+                    const lastTwoMonthsHeaders = sortedBillingHeaders.slice(-2);
+                    const isUnpaidLastMonth = (customer[lastTwoMonthsHeaders[1]] || '').trim().toUpperCase() === 'UNPAID';
+                    const isUnpaidTwoMonthsAgo = (customer[lastTwoMonthsHeaders[0]] || '').trim().toUpperCase() === 'UNPAID';
+                    return isUnpaidLastMonth && isUnpaidTwoMonthsAgo;
 
-                    if (selectedStatus === 'CTO') {
-                        if (latestStatus === 'CTO') return true;
-                        if (latestStatus === 'PRA NPC' && statusDate < twoMonthsAgo) return true;
-                        return false;
+                } else if (selectedStatus === 'CTO') {
+                    const sortedBillingHeaders = billingHeaders.sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
+                    if (sortedBillingHeaders.length < 2) return false;
+
+                    for (let i = 0; i <= sortedBillingHeaders.length - 2; i++) {
+                        const header1 = sortedBillingHeaders[i];
+                        const header2 = sortedBillingHeaders[i+1];
+                        const isUnpaid1 = (customer[header1] || '').trim().toUpperCase() === 'UNPAID';
+                        const isUnpaid2 = (customer[header2] || '').trim().toUpperCase() === 'UNPAID';
+                        if (isUnpaid1 && isUnpaid2) {
+                            return true; // Found two consecutive unpaid months
+                        }
                     }
+                    return false;
                 }
                 return false;
             });
