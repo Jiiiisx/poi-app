@@ -54,6 +54,10 @@
     margin-bottom: 30px;
 }
 
+#all-sales-view .stats-cards {
+    margin-top: 30px;
+}
+
 .card {
     background-color: #fff;
     padding: 20px;

@@ -265,11 +265,117 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- Existing Rendering Logic (renderAllSalesView, etc.) ---
-    // ... (Semua fungsi render yang ada tidak diubah) ...
     function populateSalesFilter() { const salesNames = Object.keys(salesPerformance).sort(); salesNames.forEach(name => { const option = document.createElement('option'); option.value = name; option.textContent = name; salesFilter.appendChild(option); }); }
     function renderLeaderboardTable(salesData) { const container = document.getElementById('leaderboard-table-container'); if (!container) return; const table = document.createElement('table'); table.className = 'customer-table'; const thead = document.createElement('thead'); const tbody = document.createElement('tbody'); thead.innerHTML = `<tr><th>Rank</th><th>Sales Name</th><th>Total Pelanggan</th></tr>`; salesData.forEach((sales, index) => { const tr = document.createElement('tr'); tr.innerHTML = `<td>${index + 1}</td><td>${sales.name}</td><td>${sales.totalCustomers}</td>`; tbody.appendChild(tr); }); table.appendChild(thead); table.appendChild(tbody); container.innerHTML = ''; container.appendChild(table); }
     function renderAllSalesView() { const salesNames = Object.keys(salesPerformance); const salesData = salesNames.map(name => ({ name: name, totalCustomers: salesPerformance[name].totalCustomers })).sort((a, b) => b.totalCustomers - a.totalCustomers); const totalSales = salesData.length; const totalPelanggan = salesData.reduce((sum, sales) => sum + sales.totalCustomers, 0); const avgPerSales = totalSales > 0 ? (totalPelanggan / totalSales).toFixed(1) : 0; const topPerformer = totalSales > 0 ? salesData[0].name : '-'; document.getElementById('summary-total-sales').textContent = totalSales; document.getElementById('summary-total-pelanggan').textContent = totalPelanggan; document.getElementById('summary-avg-per-sales').textContent = avgPerSales; document.getElementById('summary-top-performer').textContent = topPerformer; const chartLabels = salesData.map(s => s.name); const chartData = salesData.map(s => s.totalCustomers); const ctx = document.getElementById('allSalesChart').getContext('2d'); if (allSalesChart) allSalesChart.destroy(); const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#d9363e'; const gradient = ctx.createLinearGradient(0, 0, 600, 0); gradient.addColorStop(0, primaryColor); gradient.addColorStop(1, '#ff7e5f'); allSalesChart = new Chart(ctx, { type: 'bar', data: { labels: chartLabels, datasets: [{ label: 'Jumlah Pelanggan', data: chartData, backgroundColor: gradient, borderRadius: 4, borderWidth: 0 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#fff', titleColor: '#333', bodyColor: '#666', borderColor: '#ddd', borderWidth: 1, padding: 10, callbacks: { label: (context) => ` ${context.raw} Pelanggan` } } }, scales: { x: { beginAtZero: true, grid: { drawBorder: false, }, ticks: { font: { family: "'Poppins', sans-serif" } } }, y: { grid: { display: false }, ticks: { font: { family: "'Poppins', sans-serif" } } } } } }); renderLeaderboardTable(salesData); }
-    function renderSingleSalesView(salesName) { const salesData = salesPerformance[salesName]; if (!salesData) return; document.getElementById('total-pelanggan-sales').textContent = salesData.totalCustomers; let paidCustomers = 0; let unpaidCustomers = 0; if (salesData.customers.length > 0) { const headers = Object.keys(salesData.customers[0]); const billingColumns = headers.filter(h => h.toLowerCase().startsWith('billing')); const parseBillingMonth = (billingHeader) => { const parts = billingHeader.split(' '); if (parts.length !== 3) return null; const monthName = parts[1]; const year = `20${parts[2]}`; const monthIndex = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'].findIndex(m => m.toLowerCase() === monthName.toLowerCase()); if (monthIndex === -1) return null; return new Date(year, monthIndex, 1); }; billingColumns.sort((a, b) => { const dateA = parseBillingMonth(a); const dateB = parseBillingMonth(b); if (!dateA || !dateB) return 0; return dateA - dateB; }); salesData.customers.forEach(customer => { let latestStatus = ''; for (let i = billingColumns.length - 1; i >= 0; i--) { const col = billingColumns[i]; if (customer[col] && customer[col].trim() !== '') { latestStatus = customer[col].toLowerCase(); break; } } if (latestStatus === 'paid') { paidCustomers++; } else if (latestStatus === 'unpaid') { unpaidCustomers++; } }); } document.getElementById('paid-customers-sales').textContent = paidCustomers; document.getElementById('unpaid-customers-sales').textContent = unpaidCustomers; const monthlyAcquisitions = {}; salesData.customers.forEach(customer => { if (customer.acquisitionDate) { const monthYear = `${customer.acquisitionDate.getMonth() + 1}/${customer.acquisitionDate.getFullYear()}`; monthlyAcquisitions[monthYear] = (monthlyAcquisitions[monthYear] || 0) + 1; } }); const sortedMonths = Object.keys(monthlyAcquisitions).sort((a, b) => { const [m1, y1] = a.split('/'); const [m2, y2] = b.split('/'); return new Date(y1, m1 - 1) - new Date(y2, m2 - 1); }); const chartLabels = sortedMonths; const chartData = sortedMonths.map(month => monthlyAcquisitions[month]); const ctx = document.getElementById('singleSalesChart').getContext('2d'); if (singleSalesChart) singleSalesChart.destroy(); const gradient = ctx.createLinearGradient(0, 0, 0, 400); gradient.addColorStop(0, 'rgba(40, 167, 69, 0.6)'); gradient.addColorStop(1, 'rgba(40, 167, 69, 0)'); singleSalesChart = new Chart(ctx, { type: 'line', data: { labels: chartLabels, datasets: [{ label: 'Akuisisi per Bulan', data: chartData, backgroundColor: gradient, borderColor: '#28a745', borderWidth: 3, tension: 0.4, fill: true, pointBackgroundColor: '#fff', pointBorderColor: '#28a745', pointHoverRadius: 7, pointRadius: 5 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { drawBorder: false } }, x: { grid: { display: false } } } } }); }
+    
+    function renderSingleSalesView(salesName) {
+        const salesData = salesPerformance[salesName];
+        if (!salesData) return;
+
+        // --- Card Stats Logic ---
+        document.getElementById('total-pelanggan-sales').textContent = salesData.totalCustomers;
+        let paidCustomers = 0;
+        let unpaidCustomers = 0;
+        const billingColumns = Object.keys(salesData.customers[0] || {}).filter(h => h.toLowerCase().startsWith('billing'));
+        
+        const sortedBillingColumns = billingColumns.sort((a, b) => {
+            const dateA = _parseHeaderDate(a);
+            const dateB = _parseHeaderDate(b);
+            if (!dateA || !dateB) return 0;
+            return dateA - dateB;
+        });
+
+        salesData.customers.forEach(customer => {
+            let latestStatus = '';
+            for (let i = sortedBillingColumns.length - 1; i >= 0; i--) {
+                const col = sortedBillingColumns[i];
+                const status = (customer[col] || '').trim().toLowerCase();
+                if (status && status !== 'n/a') {
+                    latestStatus = status;
+                    break;
+                }
+            }
+            if (latestStatus === 'paid') paidCustomers++;
+            else if (latestStatus === 'unpaid') unpaidCustomers++;
+        });
+
+        document.getElementById('paid-customers-sales').textContent = paidCustomers;
+        document.getElementById('unpaid-customers-sales').textContent = unpaidCustomers;
+
+        // --- Chart Logic ---
+        const monthlyAcquisitions = {};
+        salesData.customers.forEach(customer => {
+            // Find the first month with any status as the acquisition date
+            for (const monthColumn of sortedBillingColumns) {
+                const status = (customer[monthColumn] || '').trim();
+                if (status && status.toUpperCase() !== 'N/A') {
+                    const acquisitionDate = _parseHeaderDate(monthColumn);
+                    if (acquisitionDate) {
+                        const monthYear = `${acquisitionDate.getMonth() + 1}/${acquisitionDate.getFullYear()}`;
+                        monthlyAcquisitions[monthYear] = (monthlyAcquisitions[monthYear] || 0) + 1;
+                        break; // Stop after finding the first one
+                    }
+                }
+            }
+        });
+
+        const sortedAcquisitionMonths = Object.keys(monthlyAcquisitions).sort((a, b) => {
+            const [m1, y1] = a.split('/');
+            const [m2, y2] = b.split('/');
+            return new Date(y1, m1 - 1) - new Date(y2, m2 - 1);
+        });
+
+        const chartLabels = sortedAcquisitionMonths;
+        const chartData = sortedAcquisitionMonths.map(month => monthlyAcquisitions[month]);
+
+        const ctx = document.getElementById('singleSalesChart').getContext('2d');
+        if (singleSalesChart) {
+            singleSalesChart.destroy();
+        }
+        
+        const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#d9363e';
+        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, primaryColor);
+        gradient.addColorStop(1, 'rgba(217, 54, 62, 0.1)');
+
+        singleSalesChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    label: 'New Customers',
+                    data: chartData,
+                    backgroundColor: gradient,
+                    borderColor: primaryColor,
+                    borderWidth: 2,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: primaryColor,
+                    pointHoverRadius: 7,
+                    pointHoverBackgroundColor: primaryColor,
+                    pointHoverBorderColor: '#fff',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1 // Ensure y-axis increments by whole numbers
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     function updateView() { const selectedSales = salesFilter.value; if (selectedSales === 'all') { allSalesView.style.display = 'block'; singleSalesView.style.display = 'none'; renderAllSalesView(); } else { allSalesView.style.display = 'none'; singleSalesView.style.display = 'block'; renderSingleSalesView(selectedSales); } }
 
     // --- Event Listeners ---
