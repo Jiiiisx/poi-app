@@ -42,16 +42,19 @@
         <div class="overlay"></div>
         <main class="main-content">
             <header class="main-header">
-                <button class="menu-toggle" id="menu-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i> Kembali</a>
-                <div class="global-search-container">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="globalSearchInput" placeholder="Search for customers...">
-                    <div id="globalSearchResults" class="global-search-results"></div>
+                <div class="header-left">
+                    <button class="menu-toggle" id="menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i> Kembali</a>
                 </div>
-
+                <div class="header-right">
+                    <div class="global-search-container">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="globalSearchInput" placeholder="Search for customers...">
+                        <div id="globalSearchResults" class="global-search-results"></div>
+                    </div>
+                </div>
             </header>
 
             <div class="initial-prompt-view" style="display: none;">

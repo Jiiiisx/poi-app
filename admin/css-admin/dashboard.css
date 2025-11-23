@@ -106,15 +106,25 @@ body {
     margin-bottom: 30px;
 }
 
-.main-header h1 {
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-left h1 {
     margin: 0;
     font-size: 1.8rem;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
 }
 
 .global-search-container {
     position: relative;
     width: 500px;
-    margin: 0 auto 30px;
 }
 
 .global-search-container i {
