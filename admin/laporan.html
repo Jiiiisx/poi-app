@@ -15,6 +15,40 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span>Point Of Interest</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="Internal.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="pelanggan.html"><i class="fas fa-file-invoice-dollar"></i>Billing Monitoring</a></li>
+                    <li><a href="laporan.html"><i class="fas fa-chart-bar"></i> Laporan</a></li>
+                    <li><a href="history.html"><i class="fas fa-history"></i> History</a></li>
+                    <li><a href="profil-pelanggan.html"><i class="fas fa-user-alt"></i> Profil Pelanggan</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+        <div class="overlay"></div>
+        <main class="main-content">
+            <header class="main-header">
+                <button class="menu-toggle" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Laporan Kinerja Sales</h1>
+                <div class="global-search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="globalSearchInput" placeholder="Search for customers...">
+                    <div id="globalSearchResults" class="global-search-results"></div>
+                </div>
+            </header>
+
             <div class="report-controls">
                 <div class="control-group">
                     <label for="sales-filter">Pilih Sales:</label>
