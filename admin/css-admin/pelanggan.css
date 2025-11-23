@@ -19,6 +19,10 @@ body {
     color: var(--text-primary);
 }
 
+.dashboard-container {
+    display: flex;
+}
+
 .card {
     background-color: #fff;
     padding: 2rem;
@@ -48,7 +52,8 @@ body {
 .sidebar-footer a { display: flex; align-items: center; gap: 15px; color: #fff; text-decoration: none; }
 
 .main-content { flex-grow: 1; padding: 30px; margin-left: 250px; transition: margin-left 0.3s ease; }
-
+.main-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.main-header h1 { margin: 0; font-size: 1.8rem; }
 
 /* --- Main Content Layout --- */
 .two-column-layout {
@@ -76,6 +81,9 @@ body {
 }
 .billing-title h2 { margin: 0; font-size: 1.5rem; }
 .billing-filters { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+.global-search-container { position: relative; }
+.global-search-container i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); }
+#globalSearchInput { width: 300px; padding: 10px 15px 10px 40px; border: 1px solid var(--border-color); border-radius: 20px; font-size: 0.9rem; }
 
 
 .filter-group { display: flex; gap: 10px; align-items: center; }

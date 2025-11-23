@@ -23,8 +23,6 @@ body {
 
 .dashboard-container {
     display: flex;
-    height: 100vh;
-    overflow: hidden;
 }
 
 .sidebar {
@@ -84,10 +82,18 @@ body {
 
 .main-content {
     flex-grow: 1;
-    padding: 30px;
     margin-left: 250px;
     box-sizing: border-box;
     transition: margin-left 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.main-content-inner-scroll {
+    overflow-y: auto;
+    height: 100%;
+    padding: 30px;
 }
 
 @keyframes fadeIn {
