@@ -308,6 +308,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function getCurrentMonthColumnName() {
+        const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+        const d = new Date();
+        const month = months[d.getMonth()];
+        const year = String(d.getFullYear()).slice(-2);
+        return `Billing ${month} ${year}`;
+    }
+
     // --- Initial Load ---
     async function init() {
         showSkeletonLoader();
@@ -315,7 +323,14 @@ document.addEventListener('DOMContentLoaded', function () {
         hideSkeletonLoader();
         if (success) {
             populateSalesFilter();
-            populateBillingMonthFilter(); // NEW: Populate the new dropdown
+            populateBillingMonthFilter(); 
+            
+            // Set default month to current month
+            const currentMonthColumn = getCurrentMonthColumnName();
+            if (billingMonthFilter.querySelector(`option[value="${currentMonthColumn}"]`)) {
+                billingMonthFilter.value = currentMonthColumn;
+            }
+
             updateView();
             setupEventListeners();
             document.dispatchEvent(new Event('page-rendered'));

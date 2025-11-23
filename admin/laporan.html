@@ -15,84 +15,54 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <style>
-        .generator-controls { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; padding-top: 16px;}
-        .generator-output { margin-top: 20px; background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 10px; font-family: monospace; white-space: pre-wrap; max-height: 400px; overflow-y: auto; }
-        .sales-message-block { border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 15px; background-color: #fff; }
-        .sales-message-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e9ecef; padding-bottom: 10px; margin-bottom: 10px; }
-        .sales-message-header h4 { margin: 0; }
-        .copy-button { cursor: pointer; background: #007bff; color: white; border: none; padding: 6px 12px; border-radius: 5px; font-size: 0.85em; transition: background-color 0.2s; }
-        .copy-button:hover { background-color: #0056b3; }
-        .copy-button.copied { background-color: #28a745; }
-        .message-content { white-space: pre-wrap; word-wrap: break-word; }
-    </style>
-</head>
-<body>
-    <div class="dashboard-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <span>Point Of Interest</span>
-            </div>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="Internal.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-                    <li><a href="pelanggan.html"><i class="fas fa-file-invoice-dollar"></i>Billing Monitoring</a></li>
-                    <li><a href="laporan.html"><i class="fas fa-chart-bar"></i> Laporan</a></li>
-                    <li><a href="history.html"><i class="fas fa-history"></i> History</a></li>
-                    <li><a href="profil-pelanggan.html"><i class="fas fa-user-alt"></i> Profil Pelanggan</a></li>
-                </ul>
-            </nav>
-            <div class="sidebar-footer">
-                <a href="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
-            </div>
-        </aside>
-        <div class="overlay"></div>
-        <main class="main-content">
-            <header class="main-header">
-                <button class="menu-toggle" id="menu-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <h1>Laporan Kinerja Sales</h1>
-                <div class="global-search-container">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="globalSearchInput" placeholder="Search for customers...">
-                    <div id="globalSearchResults" class="global-search-results"></div>
-                </div>
-            </header>
-
             <div class="report-controls">
                 <div class="control-group">
                     <label for="sales-filter">Pilih Sales:</label>
-                    <select id="sales-filter">
-                        <option value="all">Semua Sales</option>
-                        <!-- Sales names will be populated by JavaScript -->
-                    </select>
+                    <div class="custom-select-wrapper">
+                        <select id="sales-filter">
+                            <option value="all">Semua Sales</option>
+                            <!-- Sales names will be populated by JavaScript -->
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <div class="card content-area" style="margin-top: 20px;">
-                <h2><i class="fab fa-whatsapp"></i> Generator Pesan Tagihan</h2>
-                <p>Pilih bulan dan status untuk membuat format pesan WhatsApp untuk tim sales.</p>
-                <div class="generator-controls">
-                    <div class="control-group">
-                        <label for="billing-month-filter">Pilih Bulan Tagihan:</label>
-                        <select id="billing-month-filter">
-                            <option value="">Memuat...</option>
-                        </select>
-                    </div>
-                    <div class="control-group">
-                        <label for="billing-status-filter">Pilih Status Pelanggan:</label>
-                        <select id="billing-status-filter">
-                            <option value="UNPAID">UNPAID</option>
-                            <option value="PAID">PAID</option>
-                            <option value="CTO">CTO</option>
-                            <option value="PRA NPC">PRA NPC</option>
-                        </select>
-                    </div>
-                    <button id="generate-message-btn" class="btn btn-primary" style="padding: 10px 16px;"><i class="fas fa-cogs"></i> Generate Pesan</button>
+            <!-- Redesigned Message Generator Card -->
+            <div class="generator-card content-area">
+                <div class="generator-card-header">
+                    <i class="fab fa-whatsapp"></i>
+                    <h2>Generator Pesan Tagihan</h2>
                 </div>
-                <div id="message-generator-output" class="generator-output" style="display: none;">
-                    <!-- Hasil akan ditampilkan di sini -->
+                <div class="generator-card-body">
+                    <p>Pilih bulan dan status untuk membuat format pesan WhatsApp untuk tim sales.</p>
+                    <div class="generator-controls">
+                        <div class="control-group">
+                            <label for="billing-month-filter">Pilih Bulan Tagihan</label>
+                             <div class="custom-select-wrapper">
+                                <select id="billing-month-filter">
+                                    <option value="">Memuat...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label for="billing-status-filter">Pilih Status Pelanggan</label>
+                            <div class="custom-select-wrapper">
+                                <select id="billing-status-filter">
+                                    <option value="UNPAID">UNPAID</option>
+                                    <option value="PAID">PAID</option>
+                                    <option value="CTO">CTO</option>
+                                    <option value="PRA NPC">PRA NPC</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button id="generate-message-btn">
+                            <i class="fas fa-cogs"></i>
+                            <span>Generate Pesan</span>
+                        </button>
+                    </div>
+                    <div id="message-generator-output">
+                        <!-- Hasil akan ditampilkan di sini -->
+                    </div>
                 </div>
             </div>
 

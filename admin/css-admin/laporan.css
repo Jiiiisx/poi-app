@@ -121,3 +121,211 @@
         background-position: -200% 0;
     }
 }
+
+/* --- NEW STYLES FOR MESSAGE GENERATOR --- */
+
+/* Enhanced Card for the Generator */
+.generator-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.07);
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+.generator-card-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.generator-card-header i {
+    font-size: 24px;
+}
+
+.generator-card-header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.generator-card-body {
+    padding: 20px;
+}
+
+.generator-card-body p {
+    margin-top: 0;
+    margin-bottom: 24px;
+    color: #666;
+}
+
+.generator-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    align-items: end;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-group label {
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+}
+
+/* Custom Select Dropdown Styling */
+.custom-select-wrapper {
+    position: relative;
+}
+
+.custom-select-wrapper::after {
+    content: '\f078'; /* Font Awesome chevron-down */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #999;
+}
+
+.control-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.control-group select:hover {
+    border-color: #aaa;
+}
+
+.control-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(217, 54, 62, 0.2);
+}
+
+#generate-message-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    height: 47px; /* Match select height */
+}
+
+#generate-message-btn:hover {
+    background-color: #b82a33; /* Darker primary */
+    transform: translateY(-1px);
+}
+
+#generate-message-btn:active {
+    transform: translateY(0);
+}
+
+
+/* Output Area Styling */
+#message-generator-output {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    display: none; /* Initially hidden */
+}
+
+.sales-message-block {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: box-shadow 0.3s;
+}
+
+.sales-message-block:hover {
+     box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.sales-message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e0e5eb;
+}
+
+.sales-message-header h4 {
+    margin: 0;
+    font-weight: 600;
+    color: #343a40;
+}
+
+.copy-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.copy-button:before {
+    content: '\f0c5'; /* Font Awesome copy icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+}
+
+.copy-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.copy-button.copied {
+    background-color: #28a745;
+}
+
+.copy-button.copied:before {
+    content: '\f00c'; /* Font Awesome check icon */
+}
+
+.message-content {
+    padding: 20px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    font-size: 13px;
+    color: #495057;
+    background-color: #fff;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
