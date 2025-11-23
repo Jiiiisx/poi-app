@@ -163,7 +163,12 @@ body {
 /* --- SIDEBAR & RESPONSIVE STYLES (from dashboard.css) --- */
 
 .menu-toggle {
-    display: none; /* Hidden on desktop by default in this file */
+    display: block !important; /* Make toggle always visible, override other sheets */
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
 }
 
 /* Responsive Styles */
