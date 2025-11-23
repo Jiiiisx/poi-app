@@ -689,14 +689,16 @@ body.sidebar-collapsed .main-content {
 body.sidebar-collapsed .sidebar-header span,
 body.sidebar-collapsed .sidebar-nav li a span,
 body.sidebar-collapsed .sidebar-footer a span {
-    opacity: 0;
-    width: 0;
-    overflow: hidden;
+    display: none; /* More robust way to hide text */
 }
 
-body.sidebar-collapsed .sidebar-nav li a {
+body.sidebar-collapsed .sidebar-nav li a,
+body.sidebar-collapsed .sidebar-footer a {
+    gap: 0;
     justify-content: center;
 }
-body.sidebar-collapsed .sidebar-footer a {
-    justify-content: center;
+
+body.sidebar-collapsed .sidebar-header {
+    padding-left: 0;
+    padding-right: 0;
 }
