@@ -79,14 +79,17 @@
                             </div>
                         </div>
                         <div class="control-group">
-                            <label for="billing-status-filter">Pilih Status Pelanggan</label>
-                            <div class="custom-select-wrapper">
-                                <select id="billing-status-filter">
-                                    <option value="UNPAID">UNPAID</option>
-                                    <option value="PAID">PAID</option>
-                                    <option value="CTO">CTO</option>
-                                    <option value="PRA NPC">PRA NPC</option>
-                                </select>
+                            <label>Pilih Status Pelanggan</label>
+                            <div class="multiselect-wrapper">
+                                <div class="select-box" id="status-select-box">
+                                    <span class="placeholder">Pilih status...</span>
+                                </div>
+                                <div id="status-checkboxes" class="checkboxes">
+                                    <label><input type="checkbox" value="UNPAID" />UNPAID</label>
+                                    <label><input type="checkbox" value="PAID" />PAID</label>
+                                    <label><input type="checkbox" value="CTO" />CTO</label>
+                                    <label><input type="checkbox" value="PRA NPC" />PRA NPC</label>
+                                </div>
                             </div>
                         </div>
                         <button id="generate-message-btn">

@@ -36,15 +36,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const singleSalesView = document.getElementById('single-sales-view');
     const skeletonLoader = document.querySelector('.skeleton-loader');
     
-    // --- NEW: Message Generator DOM Elements ---
     const billingMonthFilter = document.getElementById('billing-month-filter');
-    const billingStatusFilter = document.getElementById('billing-status-filter');
     const generateMessageBtn = document.getElementById('generate-message-btn');
     const messageGeneratorOutput = document.getElementById('message-generator-output');
 
     // --- Data Fetching and Processing ---
     function processApiResponse(apiResponse) {
-        // ... (fungsi yang ada tidak diubah)
         const performanceData = {};
         const reverseSalesDataRanges = Object.fromEntries(Object.entries(salesDataRanges).map(a => a.reverse()));
         const requestedRanges = Object.values(salesDataRanges);
@@ -88,10 +85,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // --- NEW: Message Generator Logic ---
+    // --- Message Generator Logic ---
     function populateBillingMonthFilter() {
         if (!billingMonthFilter) return;
-        
         const allHeaders = new Set();
         for (const sales in salesPerformance) {
             (salesPerformance[sales].headers || []).forEach(header => {
@@ -100,39 +96,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
         }
-
         const sortedMonths = Array.from(allHeaders).sort((a, b) => {
             const dateA = new Date(a.split(' ')[2], ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"].indexOf(a.split(' ')[1]), 1);
             const dateB = new Date(b.split(' ')[2], ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"].indexOf(b.split(' ')[1]), 1);
             return dateB - dateA;
         });
-
         billingMonthFilter.innerHTML = '<option value="">Pilih Bulan</option>';
         sortedMonths.forEach(month => {
             billingMonthFilter.innerHTML += `<option value="${month}">${month}</option>`;
         });
-    }
-
-    const monthMap = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
-
-    function getMonthColumns(headers) {
-        const billingHeaders = headers.filter(h => h.toLowerCase().startsWith('billing'));
-        return billingHeaders.sort((a, b) => {
-            const dateA = parseMonthColumnToDate(a);
-            const dateB = parseMonthColumnToDate(b);
-            return dateB - dateA;
-        });
-    }
-
-    function parseMonthColumnToDate(monthColumn) {
-        if (!monthColumn) return null;
-        const parts = monthColumn.split(' ');
-        if (parts.length < 3) return null;
-        const monthName = parts[1];
-        const year = `20${parts[2]}`;
-        const monthIndex = monthMap.indexOf(monthName);
-        if (monthIndex === -1) return null;
-        return new Date(year, monthIndex, 1);
     }
 
     function _parseHeaderDate(header) {
@@ -146,17 +118,22 @@ document.addEventListener('DOMContentLoaded', function () {
         const monthName = parts[0].toLowerCase().substring(0, 3);
         const month = monthMap[monthName];
         const year = parseInt(parts[1], 10);
-        if (month === undefined || isNaN(year)) { console.warn(`Could not parse date: "${header}"`); return null; }
+        if (month === undefined || isNaN(year)) { return null; }
         return new Date(year + 2000, month);
     }
 
     function generateBillingMessages() {
         const selectedMonth = billingMonthFilter.value;
-        const selectedStatus = billingStatusFilter.value.toUpperCase();
         const selectedSales = salesFilter.value;
+        const statusCheckboxes = document.querySelectorAll('#status-checkboxes input[type="checkbox"]:checked');
+        const selectedStatuses = Array.from(statusCheckboxes).map(cb => cb.value.toUpperCase());
 
-        if ((selectedStatus === 'PAID' || selectedStatus === 'UNPAID') && !selectedMonth) {
-            alert('Silakan pilih bulan tagihan untuk status PAID atau UNPAID.');
+        if (selectedStatuses.length === 0) {
+            alert('Silakan pilih minimal satu status pelanggan.');
+            return;
+        }
+        if (!selectedMonth && (selectedStatuses.includes('PAID') || selectedStatuses.includes('UNPAID'))) {
+            alert('Silakan pilih bulan tagihan jika status PAID atau UNPAID dipilih.');
             return;
         }
 
@@ -165,80 +142,68 @@ document.addEventListener('DOMContentLoaded', function () {
             headers.forEach(h => acc.add(h));
             return acc;
         }, new Set()));
-
         const billingHeaders = allHeaders.filter(h => h.toLowerCase().startsWith('billing'));
 
         for (const salesName in salesPerformance) {
-            if (selectedSales !== 'all' && salesName !== selectedSales) {
-                continue;
-            }
+            if (selectedSales !== 'all' && salesName !== selectedSales) continue;
 
             const salesData = salesPerformance[salesName];
             const matchingCustomers = salesData.customers.filter(customer => {
-                // PAID and UNPAID logic remains tied to the selected month
-                if (selectedStatus === 'PAID' || selectedStatus === 'UNPAID') {
-                    const statusInMonth = (customer[selectedMonth] || '').trim().toUpperCase();
-                    return statusInMonth === selectedStatus;
-                } 
-                // Derived status logic for PRA NPC and CTO
-                else if (selectedStatus === 'PRA NPC') {
-                    const now = new Date();
-                    const sortedBillingHeaders = billingHeaders
-                        .filter(header => _parseHeaderDate(header) <= now)
-                        .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
-
-                    if (sortedBillingHeaders.length < 2) return false;
-                    
-                    const lastTwoMonthsHeaders = sortedBillingHeaders.slice(-2);
-                    const isUnpaidLastMonth = (customer[lastTwoMonthsHeaders[1]] || '').trim().toUpperCase() === 'UNPAID';
-                    const isUnpaidTwoMonthsAgo = (customer[lastTwoMonthsHeaders[0]] || '').trim().toUpperCase() === 'UNPAID';
-                    return isUnpaidLastMonth && isUnpaidTwoMonthsAgo;
-
-                } else if (selectedStatus === 'CTO') {
-                    const sortedBillingHeaders = billingHeaders.sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
-                    if (sortedBillingHeaders.length < 2) return false;
-
-                    for (let i = 0; i <= sortedBillingHeaders.length - 2; i++) {
-                        const header1 = sortedBillingHeaders[i];
-                        const header2 = sortedBillingHeaders[i+1];
-                        const isUnpaid1 = (customer[header1] || '').trim().toUpperCase() === 'UNPAID';
-                        const isUnpaid2 = (customer[header2] || '').trim().toUpperCase() === 'UNPAID';
-                        if (isUnpaid1 && isUnpaid2) {
-                            return true; // Found two consecutive unpaid months
+                let matches = false;
+                for (const status of selectedStatuses) {
+                    if (status === 'PAID' || status === 'UNPAID') {
+                        if ((customer[selectedMonth] || '').trim().toUpperCase() === status) {
+                            matches = true; break;
                         }
+                    } else if (status === 'PRA NPC') {
+                        const now = new Date();
+                        const sortedBillingHeaders = billingHeaders.filter(h => _parseHeaderDate(h) <= now).sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
+                        if (sortedBillingHeaders.length >= 2) {
+                            const lastTwo = sortedBillingHeaders.slice(-2);
+                            if ((customer[lastTwo[1]] || '').trim().toUpperCase() === 'UNPAID' && (customer[lastTwo[0]] || '').trim().toUpperCase() === 'UNPAID') {
+                                matches = true; break;
+                            }
+                        }
+                    } else if (status === 'CTO') {
+                        const sortedBillingHeaders = billingHeaders.sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
+                        if (sortedBillingHeaders.length >= 2) {
+                            for (let i = 0; i <= sortedBillingHeaders.length - 2; i++) {
+                                if ((customer[sortedBillingHeaders[i]] || '').trim().toUpperCase() === 'UNPAID' && (customer[sortedBillingHeaders[i+1]] || '').trim().toUpperCase() === 'UNPAID') {
+                                    matches = true; break;
+                                }
+                            }
+                        }
+                        if(matches) break;
                     }
-                    return false;
                 }
-                return false;
+                return matches;
             });
 
             if (matchingCustomers.length > 0) {
                 customersBySales[salesName] = matchingCustomers;
             }
         }
-        renderGeneratedMessages(customersBySales, selectedMonth, selectedStatus, selectedSales);
+        renderGeneratedMessages(customersBySales, selectedMonth, selectedStatuses, selectedSales);
     }
 
-    function renderGeneratedMessages(customersBySales, selectedMonth, selectedStatus, selectedSales) {
+    function renderGeneratedMessages(customersBySales, selectedMonth, selectedStatuses, selectedSales) {
         messageGeneratorOutput.innerHTML = '';
         messageGeneratorOutput.style.display = 'block';
-
         const monthName = selectedMonth ? selectedMonth.replace('Billing ', '').split(' ')[0].toUpperCase() : new Date().toLocaleString('default', { month: 'short' }).toUpperCase();
+        const statusText = selectedStatuses.join(', ');
 
         if (Object.keys(customersBySales).length === 0) {
-            messageGeneratorOutput.innerHTML = `<p>Tidak ada pelanggan dengan status "${selectedStatus}" yang cocok dengan kriteria.</p>`;
+            messageGeneratorOutput.innerHTML = `<p>Tidak ada pelanggan dengan status "${statusText}" yang cocok dengan kriteria.</p>`;
             return;
         }
 
-        const salesTitle = selectedSales === 'all' ? "ALL SALES TELDA" : `Sales: ${selectedSales.toUpperCase()}`;
-
+        const salesTitle = selectedSales === 'all' ? "ALLSALESTELDA" : `Sales: ${selectedSales.toUpperCase()}`;
         for (const salesName in customersBySales) {
             const customers = customersBySales[salesName];
             const messageBlock = document.createElement('div');
             messageBlock.className = 'sales-message-block';
-            
-            let titleMonth = (selectedStatus === 'PAID' || selectedStatus === 'UNPAID') ? `BULAN ${monthName}` : `PERIODE ${new Date().toLocaleString('default', { month: 'short' }).toUpperCase()}`;
-            let messageContent = `*${selectedStatus} ${titleMonth}*\n*${salesTitle}*\n\n`;
+            let titleMonth = (selectedStatuses.includes('PAID') || selectedStatuses.includes('UNPAID')) ? `BULAN ${monthName}` : `PERIODE ${new Date().toLocaleString('default', { month: 'short' }).toUpperCase()}`;
+            let messageContent = `*${statusText} ${titleMonth}*\n*${salesTitle}*\n\n`;
 
             if (selectedSales === 'all') {
                  messageContent += `*Sales: ${salesName.toUpperCase()}*\n`;
@@ -247,8 +212,7 @@ document.addEventListener('DOMContentLoaded', function () {
             customers.forEach((customer, index) => {
                 const name = customer['Nama Pelanggan'] || '';
                 const noInternet = customer['Nomor Internet'] || '';
-                const noTelepon = customer['No Customer'] || ''; // FIX: Corrected key from 'No Telepon'
-
+                const noTelepon = customer['No Customer'] || '';
                 const phonePart = noTelepon ? `, ${noTelepon}` : '';
                 messageContent += `${index + 1}. ${name.toUpperCase()} - ${noInternet}${phonePart}\n`;
             });
@@ -264,7 +228,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // --- Existing Rendering Logic (renderAllSalesView, etc.) ---
     function populateSalesFilter() { const salesNames = Object.keys(salesPerformance).sort(); salesNames.forEach(name => { const option = document.createElement('option'); option.value = name; option.textContent = name; salesFilter.appendChild(option); }); }
     function renderLeaderboardTable(salesData) { const container = document.getElementById('leaderboard-table-container'); if (!container) return; const table = document.createElement('table'); table.className = 'customer-table'; const thead = document.createElement('thead'); const tbody = document.createElement('tbody'); thead.innerHTML = `<tr><th>Rank</th><th>Sales Name</th><th>Total Pelanggan</th></tr>`; salesData.forEach((sales, index) => { const tr = document.createElement('tr'); tr.innerHTML = `<td>${index + 1}</td><td>${sales.name}</td><td>${sales.totalCustomers}</td>`; tbody.appendChild(tr); }); table.appendChild(thead); table.appendChild(tbody); container.innerHTML = ''; container.appendChild(table); }
     function renderAllSalesView() { const salesNames = Object.keys(salesPerformance); const salesData = salesNames.map(name => ({ name: name, totalCustomers: salesPerformance[name].totalCustomers })).sort((a, b) => b.totalCustomers - a.totalCustomers); const totalSales = salesData.length; const totalPelanggan = salesData.reduce((sum, sales) => sum + sales.totalCustomers, 0); const avgPerSales = totalSales > 0 ? (totalPelanggan / totalSales).toFixed(1) : 0; const topPerformer = totalSales > 0 ? salesData[0].name : '-'; document.getElementById('summary-total-sales').textContent = totalSales; document.getElementById('summary-total-pelanggan').textContent = totalPelanggan; document.getElementById('summary-avg-per-sales').textContent = avgPerSales; document.getElementById('summary-top-performer').textContent = topPerformer; const chartLabels = salesData.map(s => s.name); const chartData = salesData.map(s => s.totalCustomers); const ctx = document.getElementById('allSalesChart').getContext('2d'); if (allSalesChart) allSalesChart.destroy(); const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#d9363e'; const gradient = ctx.createLinearGradient(0, 0, 600, 0); gradient.addColorStop(0, primaryColor); gradient.addColorStop(1, '#ff7e5f'); allSalesChart = new Chart(ctx, { type: 'bar', data: { labels: chartLabels, datasets: [{ label: 'Jumlah Pelanggan', data: chartData, backgroundColor: gradient, borderRadius: 4, borderWidth: 0 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#fff', titleColor: '#333', bodyColor: '#666', borderColor: '#ddd', borderWidth: 1, padding: 10, callbacks: { label: (context) => ` ${context.raw} Pelanggan` } } }, scales: { x: { beginAtZero: true, grid: { drawBorder: false, }, ticks: { font: { family: "'Poppins', sans-serif" } } }, y: { grid: { display: false }, ticks: { font: { family: "'Poppins', sans-serif" } } } } } }); renderLeaderboardTable(salesData); }
@@ -273,15 +236,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const salesData = salesPerformance[salesName];
         if (!salesData) return;
 
-        // --- Card Stats Logic ---
         document.getElementById('total-pelanggan-sales').textContent = salesData.totalCustomers;
         let paidCustomers = 0;
         let unpaidCustomers = 0;
         const billingColumns = Object.keys(salesData.customers[0] || {}).filter(h => h.toLowerCase().startsWith('billing'));
-        
         const sortedBillingColumns = billingColumns.sort((a, b) => {
-            const dateA = _parseHeaderDate(a);
-            const dateB = _parseHeaderDate(b);
+            const dateA = _parseHeaderDate(a); const dateB = _parseHeaderDate(b);
             if (!dateA || !dateB) return 0;
             return dateA - dateB;
         });
@@ -303,10 +263,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('paid-customers-sales').textContent = paidCustomers;
         document.getElementById('unpaid-customers-sales').textContent = unpaidCustomers;
 
-        // --- Chart Logic ---
         const monthlyAcquisitions = {};
         salesData.customers.forEach(customer => {
-            // Find the first month with any status as the acquisition date
             for (const monthColumn of sortedBillingColumns) {
                 const status = (customer[monthColumn] || '').trim();
                 if (status && status.toUpperCase() !== 'N/A') {
@@ -314,25 +272,21 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (acquisitionDate) {
                         const monthYear = `${acquisitionDate.getMonth() + 1}/${acquisitionDate.getFullYear()}`;
                         monthlyAcquisitions[monthYear] = (monthlyAcquisitions[monthYear] || 0) + 1;
-                        break; // Stop after finding the first one
+                        break;
                     }
                 }
             }
         });
 
         const sortedAcquisitionMonths = Object.keys(monthlyAcquisitions).sort((a, b) => {
-            const [m1, y1] = a.split('/');
-            const [m2, y2] = b.split('/');
+            const [m1, y1] = a.split('/'); const [m2, y2] = b.split('/');
             return new Date(y1, m1 - 1) - new Date(y2, m2 - 1);
         });
 
         const chartLabels = sortedAcquisitionMonths;
         const chartData = sortedAcquisitionMonths.map(month => monthlyAcquisitions[month]);
-
         const ctx = document.getElementById('singleSalesChart').getContext('2d');
-        if (singleSalesChart) {
-            singleSalesChart.destroy();
-        }
+        if (singleSalesChart) singleSalesChart.destroy();
         
         const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#d9363e';
         const gradient = ctx.createLinearGradient(0, 0, 0, 300);
@@ -344,41 +298,21 @@ document.addEventListener('DOMContentLoaded', function () {
             data: {
                 labels: chartLabels,
                 datasets: [{
-                    label: 'New Customers',
-                    data: chartData,
-                    backgroundColor: gradient,
-                    borderColor: primaryColor,
-                    borderWidth: 2,
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: primaryColor,
-                    pointHoverRadius: 7,
-                    pointHoverBackgroundColor: primaryColor,
-                    pointHoverBorderColor: '#fff',
-                    fill: true,
-                    tension: 0.4
+                    label: 'New Customers', data: chartData, backgroundColor: gradient, borderColor: primaryColor,
+                    borderWidth: 2, pointBackgroundColor: '#fff', pointBorderColor: primaryColor,
+                    pointHoverRadius: 7, pointHoverBackgroundColor: primaryColor, pointHoverBorderColor: '#fff',
+                    fill: true, tension: 0.4
                 }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1 // Ensure y-axis increments by whole numbers
-                        }
-                    }
-                }
+                responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
             }
         });
     }
 
     function updateView() { const selectedSales = salesFilter.value; if (selectedSales === 'all') { allSalesView.style.display = 'block'; singleSalesView.style.display = 'none'; renderAllSalesView(); } else { allSalesView.style.display = 'none'; singleSalesView.style.display = 'block'; renderSingleSalesView(selectedSales); } }
 
-    // --- Event Listeners ---
     function setupEventListeners() {
         const menuToggle = document.getElementById('menu-toggle');
         const sidebar = document.querySelector('.sidebar');
@@ -389,10 +323,34 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         salesFilter.addEventListener('change', updateView);
 
-        // --- NEW: Message Generator Event Listeners ---
         if (generateMessageBtn) {
             generateMessageBtn.addEventListener('click', generateBillingMessages);
         }
+
+        const statusSelectBox = document.getElementById('status-select-box');
+        const statusCheckboxes = document.getElementById('status-checkboxes');
+        
+        if (statusSelectBox) {
+            statusSelectBox.addEventListener('click', function() {
+                statusCheckboxes.classList.toggle('visible');
+            });
+
+            statusCheckboxes.addEventListener('change', function() {
+                const selected = Array.from(statusCheckboxes.querySelectorAll('input:checked')).map(cb => cb.parentElement.innerText.trim());
+                if (selected.length) {
+                    statusSelectBox.innerHTML = `<span class="selected-items">${selected.map(s => `<span class="selected-item-pill">${s}</span>`).join('')}</span>`;
+                } else {
+                    statusSelectBox.innerHTML = `<span class="placeholder">Pilih status...</span>`;
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!statusSelectBox.contains(e.target) && !statusCheckboxes.contains(e.target)) {
+                    statusCheckboxes.classList.remove('visible');
+                }
+            });
+        }
+
         if (messageGeneratorOutput) {
             messageGeneratorOutput.addEventListener('click', function(e) {
                 if (e.target.classList.contains('copy-button')) {
@@ -422,7 +380,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return `Billing ${month} ${year}`;
     }
 
-    // --- Initial Load ---
     async function init() {
         showSkeletonLoader();
         const success = await loadAndProcessSalesData();
@@ -431,7 +388,6 @@ document.addEventListener('DOMContentLoaded', function () {
             populateSalesFilter();
             populateBillingMonthFilter(); 
             
-            // Set default month to current month
             const currentMonthColumn = getCurrentMonthColumnName();
             if (billingMonthFilter.querySelector(`option[value="${currentMonthColumn}"]`)) {
                 billingMonthFilter.value = currentMonthColumn;
