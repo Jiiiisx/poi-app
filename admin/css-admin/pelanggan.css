@@ -60,6 +60,8 @@ body {
 .billing-monitoring-container .table-responsive {
     overflow-x: auto;
     width: 100%;
+    max-height: 70vh;
+    overflow-y: auto;
 }
 
 .billing-monitoring-container .customer-table {
