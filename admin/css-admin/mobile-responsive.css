@@ -120,13 +120,13 @@
 /* Responsive layout for two-column pages like 'pelanggan.html' */
 @media (max-width: 992px) {
     .two-column-layout {
+        display: flex; /* Override display: grid from pelanggan.css */
         flex-direction: column;
-        gap: 20px; /* Adjust gap for vertical stacking */
+        gap: 20px;
     }
 
     .left-column,
     .right-column {
-        width: 100%;
-        flex-shrink: 1;
+        width: 100%; /* Ensure columns take full width */
     }
 }
