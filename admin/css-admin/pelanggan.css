@@ -52,9 +52,7 @@ body {
 }
 .billing-title h2 { margin: 0; font-size: 1.5rem; }
 .billing-filters { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-.global-search-container { position: relative; }
-.global-search-container i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); }
-#globalSearchInput { width: 300px; padding: 10px 15px 10px 40px; border: 1px solid var(--border-color); border-radius: 20px; font-size: 0.9rem; }
+/* Global search styles are now handled by dashboard.css */
 
 
 .filter-group { display: flex; gap: 10px; align-items: center; }
