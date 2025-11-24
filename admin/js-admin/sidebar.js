@@ -4,15 +4,32 @@ document.addEventListener('DOMContentLoaded', function () {
     const overlay = document.querySelector('.overlay');
     const body = document.body;
 
+    // This function ensures the correct classes are on the body depending on screen width
+    const updateLayout = () => {
+        if (window.innerWidth <= 768) {
+            // On mobile, the desktop collapsed class should be removed to prevent style conflicts
+            if (body.classList.contains('sidebar-collapsed')) {
+                body.classList.remove('sidebar-collapsed');
+            }
+        } else {
+            // On desktop, restore the collapsed state from localStorage if it exists
+            if (localStorage.getItem('sidebar-collapsed') === 'true') {
+                body.classList.add('sidebar-collapsed');
+            } else {
+                body.classList.remove('sidebar-collapsed');
+            }
+        }
+    };
+
+    // This function handles the click on the menu toggle button
     const handleToggle = () => {
-        // This checks if the sidebar is positioned off-screen, which is the mobile state.
-        const isMobile = getComputedStyle(sidebar).transform !== 'none';
+        const isMobile = window.innerWidth <= 768;
 
         if (isMobile) {
-             sidebar.classList.toggle('active');
-        } 
-        // Desktop view
-        else {
+            // On mobile, we toggle the slide-in sidebar
+            sidebar.classList.toggle('active');
+        } else {
+            // On desktop, we toggle the collapsed sidebar
             body.classList.toggle('sidebar-collapsed');
             localStorage.setItem('sidebar-collapsed', body.classList.contains('sidebar-collapsed'));
         }
@@ -22,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
         menuToggle.addEventListener('click', handleToggle);
     }
     
-    // The overlay is only used in mobile view.
+    // The overlay is only for mobile to close the sidebar
     if (overlay) {
         overlay.addEventListener('click', () => {
             if (sidebar.classList.contains('active')) {
@@ -30,4 +47,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    // Set the correct layout on initial page load and on window resize
+    updateLayout();
+    window.addEventListener('resize', updateLayout);
 });
