@@ -1,0 +1,118 @@
+@media (max-width: 768px) {
+    /* --- Header Adjustments --- */
+    .main-header {
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .header-left h1 {
+        font-size: 1.5rem; /* Slightly smaller title on mobile */
+    }
+
+    /* --- Global Search --- */
+    .global-search-container {
+        width: 100%;
+        margin-top: 15px;
+        order: 3; /* Ensure it's the last item in the header flow */
+    }
+
+    #globalSearchInput {
+        padding: 12px 15px 12px 40px;
+        font-size: 1rem;
+    }
+
+    /* --- Stats Cards --- */
+    .stats-cards {
+        gap: 15px;
+    }
+
+    .card > span {
+        font-size: 1.8rem; /* Smaller font for the main stat number */
+    }
+
+    /* --- Main Content Layout --- */
+    .main-content {
+        padding: 20px; /* Reduce padding on mobile */
+    }
+    
+    .dashboard-main-content {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .chart-container,
+    .leaderboard-container,
+    #calon-pelanggan-list-container {
+        padding: 15px;
+    }
+
+    /* --- Filter & Table --- */
+    .filter-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .filter-buttons {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* 2x2 grid for filter buttons */
+        gap: 10px;
+    }
+    
+    .filter-buttons .btn {
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+    }
+
+    .table-title h2 {
+        font-size: 1.25rem;
+    }
+
+    /* Adjust table font size and padding for smaller screens */
+    .customer-table th,
+    .customer-table td {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .pagination-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .pagination-controls button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Further adjustments for very small screens */
+    .header-left h1 {
+        font-size: 1.3rem;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .card > span {
+        font-size: 1.6rem;
+    }
+
+    .filter-buttons {
+        grid-template-columns: 1fr; /* Stack all filter buttons */
+    }
+    
+    .customer-table th:nth-child(3),
+    .customer-table td:nth-child(3), /* Example: Hide 'Alamat' column */
+    .customer-table th:nth-child(5),
+    .customer-table td:nth-child(5) { /* Example: Hide 'Sales' column */
+        display: none; /* This is an option, but horizontal scroll is often better */
+    }
+    
+    .customer-table th,
+    .customer-table td {
+        font-size: 0.8rem;
+    }
+}
