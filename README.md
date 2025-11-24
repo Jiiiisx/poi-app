@@ -1,35 +1,48 @@
 # POI - Sales & Billing Management Dashboard
 
+![Made with Vanilla JS](https://img.shields.io/badge/Made%20with-Vanilla%20JS-F7DF1E?style=for-the-badge&logo=javascript)
+
 ## Overview
 
 POI (Point of Interest) is a web-based dashboard designed for sales teams to monitor customer billing, track sales performance, and manage customer data efficiently. The application features a comprehensive admin panel that visualizes key metrics and provides tools for customer management. The entire front-end is built with vanilla JavaScript, HTML, and CSS, and it dynamically pulls data from Google Sheets, acting as a lightweight database.
 
 ## Key Features
 
-- **Admin Dashboard:** A central hub displaying key metrics like total customers, payment status (paid vs. unpaid), and closing rates. Includes a trend graph for delinquent customers.
-- **Billing Monitoring:** A detailed table view for monitoring customer billing status filtered by sales team members and billing month.
-- **Sales Performance Reports:** Generates reports on sales performance, including a sales leaderboard, customers-per-sales chart, and individual scorecards.
-- **WhatsApp Message Generator:** A utility to quickly generate templated billing reminder messages for WhatsApp.
-- **Global Customer Search:** A persistent search bar in the header to quickly find and navigate to customer profiles.
-- **Customer Profile View:** A dedicated page showing detailed customer information, payment history, and notes.
-- **History & Analytics:** Tracks user activity and web analytics within the admin panel.
+- **📊 Admin Dashboard:** A central hub displaying key metrics like total customers, payment status, and closing rates.
+- **💳 Billing Monitoring:** A detailed table view for monitoring customer billing status, filterable by sales team and month.
+- **📈 Sales Performance Reports:** Generates reports on sales performance with leaderboards and charts.
+- **📱 WhatsApp Message Generator:** A utility to quickly generate templated billing reminder messages.
+- **🔍 Global Customer Search:** A persistent search bar to quickly find customer profiles.
+- **👤 Customer Profile View:** A dedicated page showing detailed customer information, payment history, and notes.
+- **🕰️ History & Analytics:** Tracks user activity and web analytics within the admin panel.
 
 ## Tech Stack
 
-- **Frontend:**
-    - HTML5
-    - CSS3 (with custom properties for theming)
-    - Vanilla JavaScript (ES6+)
-- **Data Source:**
-    - [Google Sheets](https://www.google.com/sheets/about/) (used as a database)
-- **Visualization & Animation:**
-    - [Chart.js](https://www.chartjs.org/)
-    - [ApexCharts](https://apexcharts.com/)
-    - [GSAP (GreenSock Animation Platform)](https://greensock.com/gsap/)
-- **Backend API (Optional):**
-    - A small Node.js/Express API is included in the `/api` directory, which can be deployed as a serverless function (e.g., on Vercel).
-- **Deployment:**
-    - The project is configured for deployment on [Vercel](https://vercel.com/).
+### Frontend
+<p>
+  <img src="https://img.shields.io/badge/HTML5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5">
+  <img src="https://img.shields.io/badge/CSS3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3">
+  <img src="https://img.shields.io/badge/JavaScript-%23F7DF1E.svg?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript">
+</p>
+
+### Data Source
+<p>
+  <img src="https://img.shields.io/badge/Google%20Sheets-34A853?style=for-the-badge&logo=google-sheets&logoColor=white" alt="Google Sheets">
+</p>
+
+### Visualization & Animation
+<p>
+  <img src="https://img.shields.io/badge/Chart.js-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white" alt="Chart.js">
+  <img src="https://img.shields.io/badge/ApexCharts-00E396?style=for-the-badge&logo=apexcharts&logoColor=white" alt="ApexCharts">
+  <img src="https://img.shields.io/badge/GSAP-88CE02?style=for-the-badge&logo=greensock&logoColor=white" alt="GSAP">
+</p>
+
+### Backend & Deployment
+<p>
+  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js">
+  <img src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express.js">
+  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel">
+</p>
 
 ## Project Structure
 
