@@ -22,7 +22,7 @@ body {
 }
 
 .dashboard-container {
-    display: flex;
+    position: relative;
 }
 
 .sidebar {
@@ -32,8 +32,11 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    flex-shrink: 0;
     transition: width 0.3s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1001;
 }
 
 .sidebar-header {
@@ -81,11 +84,10 @@ body {
 }
 
 .main-content {
-    flex-grow: 1;
+    margin-left: 250px;
     padding: 30px;
     box-sizing: border-box;
-    overflow-x: hidden;
-    min-width: 0;
+    transition: margin-left 0.3s ease;
 }
 
 @keyframes fadeIn {
@@ -705,4 +707,8 @@ body.sidebar-collapsed .sidebar-footer a {
 body.sidebar-collapsed .sidebar-header {
     padding-left: 10px;
     padding-right: 10px;
+}
+
+body.sidebar-collapsed .main-content {
+    margin-left: 80px;
 }
