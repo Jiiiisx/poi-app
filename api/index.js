@@ -1,7 +1,5 @@
 // ==================================================================
 // MEGA-FILE: SINGLE API ENDPOINT
-// All backend logic is consolidated into this single file
-// to work around Vercel's Serverless Function limits on the Hobby plan.
 // ==================================================================
 
 // 1. DEPENDENCIES
@@ -25,7 +23,6 @@ try {
     serviceAccountKey = JSON.parse(process.env.SERVICE_ACCOUNT_KEY);
 } catch (error) {
     console.error("CRITICAL: Could not parse SERVICE_ACCOUNT_KEY. Ensure it's a valid JSON string in your environment variables.", error);
-    // In a real scenario, you might want to stop the process if the key is essential for startup.
 }
 const googleAuth = new google.auth.GoogleAuth({
     credentials: {
@@ -102,8 +99,6 @@ async function authenticateGoogleUser(req, res) {
 
 
 // 3. HANDLER LOGIC (formerly separate files)
-// ------------------------------------------------------------------
-
 async function handleLogin(req, res) {
   const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
   const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
@@ -130,9 +125,8 @@ async function handleLogin(req, res) {
 }
 
 async function handleAddCustomer(req, res) {
-    // Otentikasi Pengguna Google terlebih dahulu
     const user = await authenticateGoogleUser(req, res);
-    if (!user) return; // Gagal otentikasi
+    if (!user) return;
 
     if (req.method !== 'POST') return res.status(405).json({ message: 'Only POST requests are allowed' });
     
@@ -142,7 +136,6 @@ async function handleAddCustomer(req, res) {
         return res.status(400).json({ message: 'Request body requires a "values" array with 8 elements.' });
     }
 
-    // 1. Sanitasi: Hapus spasi ekstra dari semua input
     values = values.map(v => typeof v === 'string' ? v.trim() : v);
 
     // 2. Validasi
@@ -166,7 +159,6 @@ async function handleAddCustomer(req, res) {
             resource: { values: [values] },
         });
 
-        // Gunakan email dari token yang sudah terverifikasi untuk log
         await logActivity(user.email, 'ADD_CUSTOMER', { values });
 
         res.status(200).json(response.data);
@@ -370,7 +362,6 @@ async function handleUpdateCustomer(req, res) {
 
 
 // 4. MAIN ROUTER
-// ------------------------------------------------------------------
 module.exports = async (req, res) => {
     const { action } = req.query;
 

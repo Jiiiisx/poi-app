@@ -1,7 +1,4 @@
-html, body {
-    width: 100%;
-    overflow-x: hidden;
-}
+/* Redundant html, body rule removed. Core styles are in dashboard.css and sidebar-layout.css */
 
 /* Existing styles for history.css */
 .filter-controls {
