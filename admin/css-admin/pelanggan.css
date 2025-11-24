@@ -8,16 +8,12 @@
     --font-family: 'Poppins', sans-serif;
 }
 
-/* Redundant html, body rule removed. Core styles are in dashboard.css and sidebar-layout.css */
-
 body {
     font-family: var(--font-family);
     margin: 0;
     background-color: var(--secondary-color);
     color: var(--text-primary);
 }
-
-/* Redundant .dashboard-container rule removed. */
 
 .card {
     background-color: #fff;
@@ -33,7 +29,7 @@ body {
     gap: 20px;
 }
 .left-column { width: 250px; flex-shrink: 0; }
-.right-column { flex-grow: 1; min-width: 0; overflow: hidden; } /* min-width: 0 and overflow:hidden are crucial for flex children */
+.right-column { flex-grow: 1; min-width: 0; overflow: hidden; }
 
 .sales-list-container h3 { font-size: 1.2rem; margin-bottom: 15px; margin-top: 0; }
 #sales-list { list-style: none; padding: 0; margin: 0; }
@@ -52,7 +48,6 @@ body {
 }
 .billing-title h2 { margin: 0; font-size: 1.5rem; }
 .billing-filters { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-/* Global search styles are now handled by dashboard.css */
 
 
 .filter-group { display: flex; gap: 10px; align-items: center; }
@@ -61,64 +56,70 @@ body {
 .status-filters .btn { padding: 8px 16px; border: 1px solid var(--border-color); border-radius: 8px; background-color: #fff; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: all 0.2s ease-in-out; }
 .status-filters .btn.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
 
-/* --- THE CRUCIAL TABLE STYLES --- */
-.table-responsive {
-    overflow-x: auto; /* This enables horizontal scrolling */
+/* --- SPECIFIC TABLE STYLES FOR BILLING MONITORING --- */
+.billing-monitoring-container .table-responsive {
+    overflow-x: auto;
     width: 100%;
 }
 
-.customer-table {
-    border-collapse: collapse; /* Use collapse for clean lines */
+.billing-monitoring-container .customer-table {
+    border-collapse: collapse;
+    width: 100%;
+    /* Unset conflicting styles from dashboard.css */
+    background-color: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    border-spacing: 0;
 }
 
-.customer-table th,
-.customer-table td {
+.billing-monitoring-container .customer-table th,
+.billing-monitoring-container .customer-table td {
     padding: 12px 15px;
     border: 1px solid var(--border-color);
-    white-space: nowrap; /* Prevent text from wrapping */
+    white-space: nowrap;
     text-align: left;
+    color: var(--text-primary); /* Ensure text is readable */
+    background-color: #fff; /* Ensure cells have a background */
 }
 
-.customer-table thead th {
+.billing-monitoring-container .customer-table thead th {
     background-color: #f8f9fa;
     font-weight: 600;
+    color: var(--text-primary); /* KEY FIX: Override text color */
 }
 
-.customer-table tbody tr:hover {
+.billing-monitoring-container .customer-table tbody tr:hover td {
     background-color: #f5f5f5;
 }
 
 /* --- STICKY COLUMN IMPLEMENTATION --- */
-/* 1. Define fixed widths for the columns that will be sticky */
-.customer-table th.sticky-col-1, .customer-table td.sticky-col-1 { width: 150px; }
-.customer-table th.sticky-col-2, .customer-table td.sticky-col-2 { width: 200px; }
-.customer-table th.sticky-col-3, .customer-table td.sticky-col-3 { width: 150px; }
+.billing-monitoring-container .customer-table th.sticky-col-1, .billing-monitoring-container .customer-table td.sticky-col-1 { width: 150px; }
+.billing-monitoring-container .customer-table th.sticky-col-2, .billing-monitoring-container .customer-table td.sticky-col-2 { width: 200px; }
+.billing-monitoring-container .customer-table th.sticky-col-3, .billing-monitoring-container .customer-table td.sticky-col-3 { width: 150px; }
 
-/* 2. Apply sticky positioning */
-.sticky-col-1, .sticky-col-2, .sticky-col-3 {
+.billing-monitoring-container .sticky-col-1,
+.billing-monitoring-container .sticky-col-2,
+.billing-monitoring-container .sticky-col-3 {
     position: -webkit-sticky;
     position: sticky;
-    background-color: white; /* Has to be solid, not transparent */
 }
 
-.customer-table thead .sticky-col-1,
-.customer-table thead .sticky-col-2,
-.customer-table thead .sticky-col-3 {
-    background-color: #f8f9fa; /* Match header background */
+.billing-monitoring-container .customer-table thead .sticky-col-1,
+.billing-monitoring-container .customer-table thead .sticky-col-2,
+.billing-monitoring-container .customer-table thead .sticky-col-3 {
     z-index: 3;
+    background-color: #f8f9fa; /* Match header background */
 }
 
-.customer-table tbody tr:hover .sticky-col-1,
-.customer-table tbody tr:hover .sticky-col-2,
-.customer-table tbody tr:hover .sticky-col-3 {
+.billing-monitoring-container .customer-table tbody tr:hover .sticky-col-1,
+.billing-monitoring-container .customer-table tbody tr:hover .sticky-col-2,
+.billing-monitoring-container .customer-table tbody tr:hover .sticky-col-3 {
     background-color: #f5f5f5; /* Match row hover background */
 }
 
-/* 3. Define the cascade left-offset */
-.sticky-col-1 { left: 0; z-index: 2; }
-.sticky-col-2 { left: 150px; z-index: 2; } /* Must be width of col 1 */
-.sticky-col-3 { left: 350px; z-index: 2; } /* Must be width of col 1 + col 2 */
-
+.billing-monitoring-container .sticky-col-1 { left: 0; z-index: 2; }
+.billing-monitoring-container .sticky-col-2 { left: 150px; z-index: 2; } /* Must be width of col 1 */
+.billing-monitoring-container .sticky-col-3 { left: 350px; z-index: 2; } /* Must be width of col 1 + col 2 */
 
 /* --- Pagination --- */
 .pagination-controls { display: flex; justify-content: center; align-items: center; margin-top: 1.5rem; }
