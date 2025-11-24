@@ -29,7 +29,7 @@ body {
     gap: 20px;
 }
 .left-column { width: 250px; flex-shrink: 0; }
-.right-column { flex-grow: 1; min-width: 0; overflow: hidden; }
+.right-column { flex-grow: 1; min-width: 0; }
 
 .sales-list-container h3 { font-size: 1.2rem; margin-bottom: 15px; margin-top: 0; }
 #sales-list { list-style: none; padding: 0; margin: 0; }
