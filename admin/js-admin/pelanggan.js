@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let monitoringDataHeadersBySales = {};
     let filteredData = [];
     let currentPage = 1;
-    const rowsPerPage = 15;
+    const rowsPerPage = 30;
 
     const urlParams = new URLSearchParams(window.location.search);
     let selectedSales = urlParams.get('sales') || 'Andi';
