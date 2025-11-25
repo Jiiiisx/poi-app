@@ -15,7 +15,7 @@
     width: calc(100% - 250px); /* Reverted to % for correct scrollbar handling */
     padding: 30px;
     box-sizing: border-box;
-    transition: margin-left 0.3s ease, width 0.3s ease;
+    /* transition: margin-left 0.3s ease, width 0.3s ease; */ /* DISABLED TO FIX STICKY BEHAVIOR */
 }
 
 /* --- Sidebar Base --- */
