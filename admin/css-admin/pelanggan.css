@@ -72,6 +72,7 @@ body {
     box-shadow: none;
     border-radius: 0;
     border-spacing: 0;
+    overflow: visible; /* KEY FIX: Override overflow:hidden from other stylesheets */
 }
 
 .billing-monitoring-container .customer-table th,
