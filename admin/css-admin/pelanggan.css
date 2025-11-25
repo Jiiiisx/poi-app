@@ -65,7 +65,7 @@ body {
 }
 
 .billing-monitoring-container .customer-table {
-    border-collapse: collapse;
+    border-collapse: separate;
     width: 100%;
     /* Unset conflicting styles from dashboard.css */
     background-color: transparent;
