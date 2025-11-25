@@ -143,3 +143,20 @@ body {
 
 .customer-link { cursor: pointer; color: var(--primary-color); font-weight: 500; }
 .customer-link:hover { text-decoration: underline; }
+
+/* --- MOBILE RESPONSIVE FOR STICKY --- */
+@media (max-width: 768px) {
+    .billing-monitoring-container .sticky-col-1,
+    .billing-monitoring-container .sticky-col-2,
+    .billing-monitoring-container .sticky-col-3 {
+        position: static; /* Unset sticky positioning */
+        left: auto;
+        z-index: auto;
+    }
+
+    .billing-monitoring-container .customer-table thead .sticky-col-1,
+    .billing-monitoring-container .customer-table thead .sticky-col-2,
+    .billing-monitoring-container .customer-table thead .sticky-col-3 {
+        top: auto; /* Unset vertical sticky positioning */
+    }
+}
