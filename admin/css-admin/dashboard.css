@@ -52,11 +52,14 @@ body {
 .header-right {
     display: flex;
     align-items: center;
+    flex: 1; /* Allow this to grow and shrink */
+    justify-content: flex-end; /* Push content to the right */
 }
 
 .global-search-container {
     position: relative;
-    width: 500px;
+    width: 100%; /* Take up available space */
+    max-width: 500px; /* But not more than 500px */
 }
 
 .global-search-container i {
