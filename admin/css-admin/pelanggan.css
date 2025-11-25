@@ -143,31 +143,20 @@ body {
 }
 
 /* Set positioning and stacking context */
-.billing-monitoring-container .customer-table .sticky-col-1 {
-    left: 0;
-    z-index: 3;
-}
-.billing-monitoring-container .customer-table .sticky-col-2 {
-    left: var(--col-1-width);
-    z-index: 2;
-}
-.billing-monitoring-container .customer-table .sticky-col-3 {
-    /* Use calc() for robustness */
-    left: calc(var(--col-1-width) + var(--col-2-width));
-    z-index: 1;
-}
+/* Body cells */
+.billing-monitoring-container .customer-table tbody .sticky-col-1 { left: 0; z-index: 3; }
+.billing-monitoring-container .customer-table tbody .sticky-col-2 { left: var(--col-1-width); z-index: 2; }
+.billing-monitoring-container .customer-table tbody .sticky-col-3 { left: calc(var(--col-1-width) + var(--col-2-width)); z-index: 1; }
 
-/* Style sticky header cells */
+/* Header cells */
 .billing-monitoring-container .customer-table thead th {
-    position: sticky; /* All header cells are vertically sticky */
+    position: sticky;
     top: 0;
+    z-index: 4; /* Base for non-sticky headers */
 }
-.billing-monitoring-container .customer-table thead th.sticky-col-1,
-.billing-monitoring-container .customer-table thead th.sticky-col-2,
-.billing-monitoring-container .customer-table thead th.sticky-col-3 {
-    /* z-index must be higher than body cells and the normal sticky header */
-    z-index: 5;
-}
+.billing-monitoring-container .customer-table thead .sticky-col-1 { left: 0; z-index: 7; }
+.billing-monitoring-container .customer-table thead .sticky-col-2 { left: var(--col-1-width); z-index: 6; }
+.billing-monitoring-container .customer-table thead .sticky-col-3 { left: calc(var(--col-1-width) + var(--col-2-width)); z-index: 5; }
 
 
 /* Ensure backgrounds are correct to prevent transparency */
