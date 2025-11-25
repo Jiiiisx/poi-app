@@ -1,5 +1,3 @@
-/* dashboard.css */
-
 :root {
     --primary-color: #c93742;
     --secondary-color: #f4f6f9;
@@ -15,10 +13,6 @@ body {
     background-color: var(--secondary-color);
     color: var(--text-primary);
 }
-
-/*
-    Core layout styles are now in sidebar-layout.css
-*/
 
 @keyframes fadeIn {
     from {
