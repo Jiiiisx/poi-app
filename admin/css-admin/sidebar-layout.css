@@ -12,7 +12,7 @@
 
 .main-content {
     margin-left: 250px;
-    width: calc(100vw - 250px); /* Use vw for viewport-based calculation */
+    width: calc(100% - 250px); /* Reverted to % for correct scrollbar handling */
     padding: 30px;
     box-sizing: border-box;
     transition: margin-left 0.3s ease, width 0.3s ease;
@@ -88,7 +88,7 @@ body.sidebar-collapsed .sidebar {
 
 body.sidebar-collapsed .main-content {
     margin-left: 80px;
-    width: calc(100vw - 80px); /* Use vw for viewport-based calculation */
+    width: calc(100% - 80px); /* Reverted to % for correct scrollbar handling */
 }
 
 body.sidebar-collapsed .sidebar-header span,
