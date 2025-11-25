@@ -98,6 +98,7 @@ body {
     color: var(--text-primary); /* Ensure text is readable */
     background-color: #fff; /* Ensure cells have a background */
     transition: background-color 0.2s ease;
+    box-sizing: border-box; /* Crucial for sticky positioning with padding/borders */
 }
 
 .billing-monitoring-container .customer-table thead th {
