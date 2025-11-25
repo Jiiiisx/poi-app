@@ -144,16 +144,15 @@ body {
 }
 
 /* Z-INDEX STACKING ORDER (The crucial fix) */
-/* Headers (Higher z-index) */
-.billing-monitoring-container .customer-table thead .sticky-col-1 { z-index: 5; }
-.billing-monitoring-container .customer-table thead .sticky-col-2 { z-index: 4; }
-.billing-monitoring-container .customer-table thead .sticky-col-3 { z-index: 3; }
+/* Headers (Higher z-index, must be above body) */
+.billing-monitoring-container .customer-table thead .sticky-col-1 { z-index: 6; }
+.billing-monitoring-container .customer-table thead .sticky-col-2 { z-index: 5; }
+.billing-monitoring-container .customer-table thead .sticky-col-3 { z-index: 4; }
 
-/* Body Cells (Lower z-index) */
-.billing-monitoring-container .customer-table tbody .sticky-col-1 { z-index: 2; }
-.billing-monitoring-container .customer-table tbody .sticky-col-2 { z-index: 1; }
-/* .sticky-col-3 in tbody can have z-index: 0 or auto, but let's be explicit */
-.billing-monitoring-container .customer-table tbody .sticky-col-3 { z-index: 0; }
+/* Body Cells (Lower z-index, but > 0) */
+.billing-monitoring-container .customer-table tbody .sticky-col-1 { z-index: 3; }
+.billing-monitoring-container .customer-table tbody .sticky-col-2 { z-index: 2; }
+.billing-monitoring-container .customer-table tbody .sticky-col-3 { z-index: 1; }
 
 
 /* Positioning */
