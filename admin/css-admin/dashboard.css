@@ -369,7 +369,6 @@ body {
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     border-radius: 10px;
-    overflow: hidden;
 }
 
 .customer-table thead tr {
@@ -397,8 +396,6 @@ body {
 
 .customer-table tbody tr:hover {
     background-color: #f9f9f9;
-    transform: scale(1.01);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .customer-table tbody tr:last-of-type td {
