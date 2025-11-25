@@ -98,7 +98,6 @@ body {
     color: var(--text-primary); /* Ensure text is readable */
     background-color: #fff; /* Ensure cells have a background */
     transition: background-color 0.2s ease;
-    box-sizing: border-box; /* Crucial for sticky positioning with padding/borders */
 }
 
 .billing-monitoring-container .customer-table thead th {
@@ -118,56 +117,71 @@ body {
 }
 
 
-/* --- STICKY COLUMN IMPLEMENTATION --- */
-.billing-monitoring-container .customer-table th.sticky-col-1, .billing-monitoring-container .customer-table td.sticky-col-1 { width: 150px; }
-.billing-monitoring-container .customer-table th.sticky-col-2, .billing-monitoring-container .customer-table td.sticky-col-2 { width: 200px; }
-.billing-monitoring-container .customer-table th.sticky-col-3, .billing-monitoring-container .customer-table td.sticky-col-3 { width: 150px; }
-
-/* Base sticky properties */
-.billing-monitoring-container .sticky-col-1,
-.billing-monitoring-container .sticky-col-2,
-.billing-monitoring-container .sticky-col-3 {
-    position: -webkit-sticky;
-    position: sticky;
-    background-color: #fff; /* Base background for body cells */
+/* --- FRESH STICKY COLUMN IMPLEMENTATION V2 --- */
+.billing-monitoring-container .customer-table {
+    --col-1-width: 150px;
+    --col-2-width: 200px;
+    --col-3-width: 150px;
 }
 
-/* Header-specific stickiness */
-.billing-monitoring-container .customer-table thead th {
+.billing-monitoring-container .customer-table th,
+.billing-monitoring-container .customer-table td {
+    /* This is critical for sticky positioning to work as expected with widths */
+    box-sizing: border-box;
+}
+
+/* Apply widths to columns */
+.billing-monitoring-container .customer-table .sticky-col-1 { width: var(--col-1-width); }
+.billing-monitoring-container .customer-table .sticky-col-2 { width: var(--col-2-width); }
+.billing-monitoring-container .customer-table .sticky-col-3 { width: var(--col-3-width); }
+
+/* Define base sticky properties */
+.billing-monitoring-container .customer-table .sticky-col-1,
+.billing-monitoring-container .customer-table .sticky-col-2,
+.billing-monitoring-container .customer-table .sticky-col-3 {
     position: sticky;
+}
+
+/* Set positioning and stacking context */
+.billing-monitoring-container .customer-table .sticky-col-1 {
+    left: 0;
+    z-index: 3;
+}
+.billing-monitoring-container .customer-table .sticky-col-2 {
+    left: var(--col-1-width);
+    z-index: 2;
+}
+.billing-monitoring-container .customer-table .sticky-col-3 {
+    /* Use calc() for robustness */
+    left: calc(var(--col-1-width) + var(--col-2-width));
+    z-index: 1;
+}
+
+/* Style sticky header cells */
+.billing-monitoring-container .customer-table thead th {
+    position: sticky; /* All header cells are vertically sticky */
     top: 0;
 }
-.billing-monitoring-container .customer-table thead .sticky-col-1,
-.billing-monitoring-container .customer-table thead .sticky-col-2,
-.billing-monitoring-container .customer-table thead .sticky-col-3 {
-    background-color: #f8f9fa; /* Header background */
-    top: 0; /* Ensure vertical stickiness */
+.billing-monitoring-container .customer-table thead th.sticky-col-1,
+.billing-monitoring-container .customer-table thead th.sticky-col-2,
+.billing-monitoring-container .customer-table thead th.sticky-col-3 {
+    /* z-index must be higher than body cells and the normal sticky header */
+    z-index: 5;
 }
 
-/* Z-INDEX STACKING ORDER */
-/* Headers (Higher z-index, must be above body) */
-.billing-monitoring-container .customer-table thead .sticky-col-1 { z-index: 6; }
-.billing-monitoring-container .customer-table thead .sticky-col-2 { z-index: 5; }
-.billing-monitoring-container .customer-table thead .sticky-col-3 { z-index: 4; }
 
-/* Body Cells (Lower z-index, but > 0) */
-.billing-monitoring-container .customer-table tbody .sticky-col-1 { z-index: 3; }
-.billing-monitoring-container .customer-table tbody .sticky-col-2 { z-index: 2; }
-.billing-monitoring-container .customer-table tbody .sticky-col-3 { z-index: 1; }
-
-
-/* Positioning */
-.billing-monitoring-container .sticky-col-1 { left: 0; }
-.billing-monitoring-container .sticky-col-2 { left: 150px; } /* Must be width of col 1 */
-.billing-monitoring-container .sticky-col-3 { left: 350px; } /* Must be width of col 1 + col 2 */
-
-
-/* Make sure sticky columns get the hover effect too */
-.billing-monitoring-container .customer-table tbody tr:hover .sticky-col-1,
-.billing-monitoring-container .customer-table tbody tr:hover .sticky-col-2,
-.billing-monitoring-container .customer-table tbody tr:hover .sticky-col-3 {
-    background-color: #f5f5f5;
+/* Ensure backgrounds are correct to prevent transparency */
+.billing-monitoring-container .customer-table tbody td.sticky-col-1,
+.billing-monitoring-container .customer-table tbody td.sticky-col-2,
+.billing-monitoring-container .customer-table tbody td.sticky-col-3 {
+    background-color: #fff;
 }
+.billing-monitoring-container .customer-table tbody tr:hover td.sticky-col-1,
+.billing-monitoring-container .customer-table tbody tr:hover td.sticky-col-2,
+.billing-monitoring-container .customer-table tbody tr:hover td.sticky-col-3 {
+    background-color: #f5f5f5; /* Match hover color */
+}
+
 
 /* --- Pagination --- */
 .pagination-controls { display: flex; justify-content: center; align-items: center; margin-top: 1.5rem; }

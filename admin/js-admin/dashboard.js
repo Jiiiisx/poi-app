@@ -1,12 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // --- START: State and Variables ---
     let allCustomerData = [];
     let filteredCustomerData = [];
     let allGovernmentData = [];
     let filteredGovernmentData = [];
     let currentPage = 1;
     const rowsPerPage = 10;
-    let currentView = 'customer'; // 'customer' or 'government'
+    let currentView = 'customer';
     let governmentTableHeaders = [];
 
     const salesDataRanges = {
@@ -18,13 +17,12 @@ document.addEventListener('DOMContentLoaded', function () {
         'Fini Fadilah Handayani': 'FiniFadilahHandayaniData', 'Hinduntomy Wijaya': 'HinduntomyWijayaData'
     };
 
-    // --- Helper function for authenticated API calls ---
     async function fetchWithAuth(url, options = {}) {
         const token = localStorage.getItem('adminToken');
         if (!token) {
             console.warn('No authentication token found. Redirecting to login.');
             window.location.href = 'login.html';
-            return new Promise(() => {}); // Return a promise that never resolves to stop execution
+            return new Promise(() => {});
         }
     
         const headers = {
@@ -46,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return response;
     }
 
-    // --- DOM Elements ---
     const tableContainer = document.getElementById('customer-table-container');
     const searchInput = document.getElementById('searchInput');
     const prevPageButton = document.getElementById('prevPage');
@@ -57,14 +54,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const btnShowNonSchool = document.getElementById('btnTableShowNonSchool');
     const btnShowGovernment = document.getElementById('btnTableShowGovernment');
 
-    // --- Handle search query from URL ---
     const urlParams = new URLSearchParams(window.location.search);
     const searchQuery = urlParams.get('q');
     if (searchQuery) {
         searchInput.value = decodeURIComponent(searchQuery);
     }
 
-    // --- START: School Filter Logic (Restored) ---
     const schoolKeywords = [
         'SEKOLAH', 'SCHOOL', 'SMA', 'SMK', 'SMP', 'SMPIT', 'SMIT', 'SDN', 'MI', 'MTS', 'MA', 'MAK',
         'UNIVERSITAS', 'UNIV', 'INSTITUT', 'INST', 'POLITEKNIK', 'POLTEK', 'STIKES',
@@ -96,9 +91,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return regex.test(cleanedName);
         });
     }
-    // --- END: School Filter Logic (Restored) ---
-
-    // --- START: Data Fetching and Processing ---
 
     function _parseHeaderDate(header) {
         const monthMap = {
