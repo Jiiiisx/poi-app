@@ -53,7 +53,7 @@ body {
     display: flex;
     align-items: center;
     flex: 1; /* Allow this to grow and shrink */
-    justify-content: flex-end; /* Push content to the right */
+    justify-content: center; /* Push content to the center for debugging */
 }
 
 .global-search-container {
