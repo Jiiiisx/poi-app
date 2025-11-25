@@ -122,29 +122,39 @@ body {
 .billing-monitoring-container .customer-table th.sticky-col-2, .billing-monitoring-container .customer-table td.sticky-col-2 { width: 200px; }
 .billing-monitoring-container .customer-table th.sticky-col-3, .billing-monitoring-container .customer-table td.sticky-col-3 { width: 150px; }
 
+/* Base sticky properties */
 .billing-monitoring-container .sticky-col-1,
 .billing-monitoring-container .sticky-col-2,
 .billing-monitoring-container .sticky-col-3 {
     position: -webkit-sticky;
     position: sticky;
+    background-color: #fff; /* Base background for body cells */
 }
 
-/* Header sticky cells */
+/* Header-specific stickiness */
+.billing-monitoring-container .customer-table thead th {
+    position: sticky;
+    top: 0;
+}
 .billing-monitoring-container .customer-table thead .sticky-col-1,
 .billing-monitoring-container .customer-table thead .sticky-col-2,
 .billing-monitoring-container .customer-table thead .sticky-col-3 {
-    z-index: 3; /* Above body stickies */
-    background-color: #f8f9fa;
-    top: 0;
+    background-color: #f8f9fa; /* Header background */
+    top: 0; /* Ensure vertical stickiness */
 }
 
-/* Body sticky cells */
-.billing-monitoring-container .customer-table tbody .sticky-col-1,
-.billing-monitoring-container .customer-table tbody .sticky-col-2,
-.billing-monitoring-container .customer-table tbody .sticky-col-3 {
-    z-index: 2; /* Above non-sticky cells */
-    background-color: #fff; /* Crucial for preventing transparency */
-}
+/* Z-INDEX STACKING ORDER (The crucial fix) */
+/* Headers (Higher z-index) */
+.billing-monitoring-container .customer-table thead .sticky-col-1 { z-index: 5; }
+.billing-monitoring-container .customer-table thead .sticky-col-2 { z-index: 4; }
+.billing-monitoring-container .customer-table thead .sticky-col-3 { z-index: 3; }
+
+/* Body Cells (Lower z-index) */
+.billing-monitoring-container .customer-table tbody .sticky-col-1 { z-index: 2; }
+.billing-monitoring-container .customer-table tbody .sticky-col-2 { z-index: 1; }
+/* .sticky-col-3 in tbody can have z-index: 0 or auto, but let's be explicit */
+.billing-monitoring-container .customer-table tbody .sticky-col-3 { z-index: 0; }
+
 
 /* Positioning */
 .billing-monitoring-container .sticky-col-1 { left: 0; }
