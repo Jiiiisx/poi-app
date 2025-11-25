@@ -119,6 +119,7 @@ body {
 .billing-monitoring-container .customer-table thead .sticky-col-3 {
     z-index: 3;
     background-color: #f8f9fa; /* Match header background */
+    top: 0; /* Add this for vertical stickiness */
 }
 
 /* Make sure sticky columns get the hover effect too */
