@@ -12,9 +12,10 @@
 
 .main-content {
     margin-left: 250px; /* Default margin for expanded sidebar */
+    width: calc(100% - 250px);
     padding: 30px;
     box-sizing: border-box;
-    transition: margin-left 0.3s ease;
+    transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
 /* --- Sidebar Base --- */
@@ -87,6 +88,7 @@ body.sidebar-collapsed .sidebar {
 
 body.sidebar-collapsed .main-content {
     margin-left: 80px;
+    width: calc(100% - 80px);
 }
 
 body.sidebar-collapsed .sidebar-header span,
@@ -149,6 +151,7 @@ body.sidebar-collapsed .sidebar-header {
 
     .main-content {
         margin-left: 0;
+        width: 100%;
     }
 
     .menu-toggle {
