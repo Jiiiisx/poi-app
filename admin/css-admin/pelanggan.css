@@ -129,13 +129,28 @@ body {
     position: sticky;
 }
 
+/* Header sticky cells */
 .billing-monitoring-container .customer-table thead .sticky-col-1,
 .billing-monitoring-container .customer-table thead .sticky-col-2,
 .billing-monitoring-container .customer-table thead .sticky-col-3 {
-    z-index: 3;
-    background-color: #f8f9fa; /* Match header background */
-    top: 0; /* Add this for vertical stickiness */
+    z-index: 3; /* Above body stickies */
+    background-color: #f8f9fa;
+    top: 0;
 }
+
+/* Body sticky cells */
+.billing-monitoring-container .customer-table tbody .sticky-col-1,
+.billing-monitoring-container .customer-table tbody .sticky-col-2,
+.billing-monitoring-container .customer-table tbody .sticky-col-3 {
+    z-index: 2; /* Above non-sticky cells */
+    background-color: #fff; /* Crucial for preventing transparency */
+}
+
+/* Positioning */
+.billing-monitoring-container .sticky-col-1 { left: 0; }
+.billing-monitoring-container .sticky-col-2 { left: 150px; } /* Must be width of col 1 */
+.billing-monitoring-container .sticky-col-3 { left: 350px; } /* Must be width of col 1 + col 2 */
+
 
 /* Make sure sticky columns get the hover effect too */
 .billing-monitoring-container .customer-table tbody tr:hover .sticky-col-1,
@@ -143,10 +158,6 @@ body {
 .billing-monitoring-container .customer-table tbody tr:hover .sticky-col-3 {
     background-color: #f5f5f5;
 }
-
-.billing-monitoring-container .sticky-col-1 { left: 0; z-index: 2; }
-.billing-monitoring-container .sticky-col-2 { left: 150px; z-index: 2; } /* Must be width of col 1 */
-.billing-monitoring-container .sticky-col-3 { left: 350px; z-index: 2; } /* Must be width of col 1 + col 2 */
 
 /* --- Pagination --- */
 .pagination-controls { display: flex; justify-content: center; align-items: center; margin-top: 1.5rem; }
