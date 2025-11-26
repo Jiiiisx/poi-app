@@ -4,7 +4,6 @@ let salesPerformanceChart = null;
 const ErrorHandler = {
   log: () => {},
   handleError: (error, context) => {
-    console.error(`ERROR in ${context}:`, error);
   }
 };
 
@@ -50,7 +49,6 @@ window.handleCredentialResponse = function(response) {
       throw new Error("No credential in response");
     }
   } catch (error) {
-    console.error('Error in handleCredentialResponse:', error);
     updateSigninStatus(false);
   }
 };
@@ -67,7 +65,6 @@ function getUserEmailFromToken(token) {
         
         return payloadObj; 
     } catch (error) {
-        console.error('Error decoding token:', error);
         return null; 
     }
 }
@@ -107,13 +104,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         if (tokenClient) {
-          console.log('Requesting access token with manual consent...');
           
           tokenClient.callback = (tokenResponse) => {
             if (tokenResponse && tokenResponse.access_token) {
               gapi.client.setToken(tokenResponse);
               currentAccessToken = tokenResponse.access_token;
-              console.log('Manual sign-in successful');
               
               if (authInfo) {
                 authInfo.textContent = 'Sign-in berhasil! Memuat dashboard...';
@@ -124,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.googleSheetsIntegration.setup();
               }
             } else {
-              console.error('Manual sign-in failed:', tokenResponse);
               if (authError) {
                 authError.textContent = 'Sign-in gagal. Silakan coba lagi.';
                 authError.style.display = 'block';
@@ -137,7 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
           };
           
           tokenClient.error_callback = (error) => {
-            console.error('Manual sign-in error:', error);
             if (authError) {
               authError.textContent = 'Sign-in gagal: ' + (error.message || 'Unknown error');
               authError.style.display = 'block';
@@ -150,14 +143,12 @@ document.addEventListener('DOMContentLoaded', () => {
           
           tokenClient.requestAccessToken({});
         } else {
-          console.error('Token client not initialized');
           if (authError) {
             authError.textContent = 'Authentication service not ready. Please refresh the page.';
             authError.style.display = 'block';
           }
         }
       } catch (error) {
-        console.error('Manual sign-in error:', error);
         const authError = document.getElementById('authError');
         if (authError) {
           authError.textContent = 'Sign-in failed. Please try again.';
@@ -172,12 +163,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function handleSignoutClick() {
   try {
-    console.log('handleSignoutClick called');
     if (typeof google !== 'undefined' && typeof google.accounts !== 'undefined' && typeof google.accounts.id !== 'undefined') {
-      console.log('google.accounts.id is defined. Attempting disableAutoSelect.');
       google.accounts.id.disableAutoSelect();
     } else {
-      console.log('google.accounts.id is NOT defined. Skipping disableAutoSelect.');
     }
     currentIdToken = null;
     updateSigninStatus(false);
@@ -236,7 +224,6 @@ function updateSigninStatus(isSignedIn, userName = '', userPicture = '') {
       
       if (window.googleSheetsIntegration) {
           window.googleSheetsIntegration.setup().then(() => {
-            console.log('Dashboard initialized successfully');
             const elapsedTime = Date.now() - startTime;
             const timeToWait = Math.max(0, MIN_LOADING_TIME - elapsedTime);
 
@@ -251,7 +238,6 @@ function updateSigninStatus(isSignedIn, userName = '', userPicture = '') {
                 }
             }, timeToWait);
           }).catch(error => {
-              console.error('Dashboard display error:', error);
               if (skeletonLoader) {
                   skeletonLoader.style.display = 'none';
               }
@@ -282,7 +268,6 @@ function safeRefreshData() {
   if (typeof googleSheetsIntegration !== 'undefined' && googleSheetsIntegration.refreshData) {
     googleSheetsIntegration.refreshData();
   } else {
-    console.warn('googleSheetsIntegration not ready, retrying...');
     setTimeout(safeRefreshData, 500);
   }
 };
@@ -661,7 +646,6 @@ function populateEditModal(customerData, rowIndex) {
 
 window.addEventListener('error', (event) => {
   if (event.message.includes('refreshData') && event.message.includes('undefined')) {
-    console.warn('Caught refreshData undefined error - this is expected during initialization');
     return;
   }
   ErrorHandler.handleError(new Error(event.message), 'Global Error');
@@ -693,16 +677,13 @@ window.addEventListener('unhandledrejection', (event) => {
 });
 
 document.addEventListener('googleSheetsIntegrationReady', () => {
-  console.log('googleSheetsIntegration is now ready');
   safeRefreshData();
 });
 
 function initializeGoogleSheetsIntegration() {
   if (typeof googleSheetsIntegration === 'undefined') {
-    console.log('Waiting for googleSheetsIntegration to load...');
     setTimeout(initializeGoogleSheetsIntegration, 1000);
   } else {
-    console.log('googleSheetsIntegration loaded successfully');
     if (googleSheetsIntegration.isInitialized) {
       safeRefreshData();
     }
@@ -777,7 +758,6 @@ async function handleAddCustomerSubmit(e) {
     const formData = new FormData(e.target);
     const customerData = Object.fromEntries(formData.entries());
 
-    console.log('DEBUG: currentUserEmail during add:', currentUserEmail);
     if (!customerData.nama || !customerData.no_telepon || !customerData.alamat || !customerData.odp_terdekat || !customerData.nama_sales) {
       ModalHandler.show('Error', 'Mohon lengkapi semua field yang wajib diisi');
       return;
@@ -879,7 +859,6 @@ document.addEventListener('DOMContentLoaded', displayCurrentDate);
 
 function renderSalesPerformanceChart() {
     if (typeof googleSheetsIntegration === 'undefined' || !googleSheetsIntegration.monitoringDataBySales) {
-        console.warn('Sales data not available for chart rendering.');
         return;
     }
 
@@ -972,7 +951,6 @@ function renderSingleSalesChart(salesName) {
 
     const headers = googleSheetsIntegration.monitoringDataHeadersBySales[salesName.toLowerCase()];
     if (!headers) {
-        console.error('Headers not available for single sales chart.');
         return;
     }
 

@@ -49,7 +49,6 @@ class GoogleSheetsCRUD {
             return result;
 
         } catch (error) {
-            console.error('Add customer error:', error);
             // ModalHandler sudah menampilkan error di atas, jadi tidak perlu lagi di sini
             throw new Error(`Gagal menambah data: ${error.message}`);
         }

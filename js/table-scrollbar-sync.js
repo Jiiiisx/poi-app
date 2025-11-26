@@ -14,7 +14,6 @@ class TableScrollbarSync {
     this.scrollContent = document.getElementById('tableScrollContent');
     
     if (!this.tableContainer || !this.scrollTop || !this.scrollContent) {
-      console.warn('Table scrollbar elements not found');
       return;
     }
     

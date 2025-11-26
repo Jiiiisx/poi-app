@@ -16,7 +16,6 @@ class SidebarManager {
         if (this.isInitialized) return;
         
         if (!this.validateElements()) {
-            console.error('Required sidebar elements not found');
             return;
         }
 

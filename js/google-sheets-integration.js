@@ -4,7 +4,6 @@ async function waitForGoogleSheetsCRUD(timeout = 5000) {
         await new Promise(resolve => setTimeout(resolve, 100)); // wait 100ms
     }
     if (!window.googleSheetsCRUD) {
-        console.error("GoogleSheetsCRUD did not become available in time.");
         throw new Error("GoogleSheetsCRUD did not become available in time.");
     }
 }
@@ -112,7 +111,6 @@ class GoogleSheetsIntegration {
             };
             localStorage.setItem(key, JSON.stringify(cacheEntry));
         } catch (e) {
-            console.warn("Could not write to localStorage:", e);
         }
     }
 
@@ -129,7 +127,6 @@ class GoogleSheetsIntegration {
 
             return data;
         } catch (e) {
-            console.warn("Could not read from localStorage:", e);
             return null;
         }
     }
@@ -157,7 +154,6 @@ class GoogleSheetsIntegration {
 
     setupUIElements() {
         if (!document.getElementById('customerTable')) {
-            console.error('Customer table not found');
             return false;
         }
         this.createLoadingIndicator();
@@ -279,7 +275,6 @@ class GoogleSheetsIntegration {
             
             const data = await response.json();
             if (!data.values || data.values.length === 0) {
-                console.warn('No data found in main sheet from backend');
                 this.showWarning('Tidak ada data di sheet utama');
                 this.loadFallbackData();
                 return;
@@ -294,7 +289,6 @@ class GoogleSheetsIntegration {
 
             this.isInitialized = true;
         } catch (error) {
-            console.error('Load main data error:', error);
             this.handleLoadError(error);
         } finally {
             this.showLoading(false);
@@ -337,7 +331,6 @@ class GoogleSheetsIntegration {
                 
                 const data = await response.json();
                 if (!data.valueRanges || data.valueRanges.length === 0) {
-                    console.warn('⚠️ No monitoring data found from backend');
                     this.showWarning('Data monitoring tidak ditemukan');
                     return;
                 }
@@ -357,7 +350,6 @@ class GoogleSheetsIntegration {
                 return;
 
             } catch (error) {
-                console.error(`Load monitoring data error (attempt ${attempt + 1}):`, error);
                 attempt++;
                 if (attempt >= MAX_RETRIES) {
                     this.showError('Gagal memuat data monitoring setelah beberapa kali percobaan: ' + error.message);
@@ -375,7 +367,6 @@ class GoogleSheetsIntegration {
         this.monitoringDataHeadersBySales = {};
 
         if (!data.valueRanges || !requestedRanges) {
-            console.warn('processMonitoringData called with invalid data or ranges.');
             return;
         }
 
@@ -391,7 +382,6 @@ class GoogleSheetsIntegration {
             const salesName = rangeToSalesKey[requestedRangeName];
 
             if (!salesName) {
-                console.warn(`Could not find sales name for range: ${requestedRangeName} at index ${index}`);
                 return;
             }
             
@@ -404,7 +394,6 @@ class GoogleSheetsIntegration {
                 const rangeAddress = valueRange.range.split('!')[1];
                 const startRowMatch = rangeAddress ? rangeAddress.match(/(\d+)/) : null;
                 if (!startRowMatch) {
-                    console.error(`Could not parse start row from range: ${valueRange.range}`);
                     return;
                 }
                 const startRow = parseInt(startRowMatch[0]);
@@ -464,7 +453,6 @@ class GoogleSheetsIntegration {
             
             const data = await response.json();
             if (!data.values || data.values.length === 0) {
-                console.warn('⚠️ No data found in government sheet from backend');
                 this.showWarning('Tidak ada data di sheet pemerintah');
                 this.originalGovernmentData = [];
                 this.governmentData = [];
@@ -475,7 +463,6 @@ class GoogleSheetsIntegration {
             this.processGovernmentData(data.values);
 
         } catch (error) {
-            console.error('Load government data error:', error);
             this.showError('Gagal memuat data pemerintah: ' + error.message);
             this.originalGovernmentData = [];
             this.governmentData = [];
@@ -548,7 +535,6 @@ class GoogleSheetsIntegration {
     async updateSheetCell(rowIndex, colHeader, newValue) {
         try {
             if (newValue === undefined || newValue === null) {
-                console.error('updateSheetCell called with undefined or null newValue:', newValue);
                 this.showError('Gagal memperbarui status: nilai status tidak valid.');
                 return;
             }
@@ -564,14 +550,12 @@ class GoogleSheetsIntegration {
             const salesName = this.currentSalesFilter.toLowerCase();
             const headers = this.monitoringDataHeadersBySales[salesName];
             if (!headers) {
-                console.error(`Headers for sales '${salesName}' not found.`);
                 this.showError('Gagal memperbarui: Headers tidak ditemukan.');
                 return;
             }
 
             const colIndex = headers.indexOf(colHeader);
             if (colIndex === -1) {
-                console.error(`Header kolom '${colHeader}' tidak ditemukan.`);
                 this.showError(`Gagal memperbarui status: Header kolom '${colHeader}' tidak ditemukan.`);
                 return;
             }
@@ -604,7 +588,6 @@ class GoogleSheetsIntegration {
 
             this.showMessage('Data berhasil diperbarui!', 'success');
         } catch (error) {
-            console.error('Update cell error:', error);
             this.showError('Gagal memperbarui data: ' + (error.message || 'Terjadi kesalahan.'));
         }
     }
@@ -835,7 +818,7 @@ class GoogleSheetsIntegration {
             const currentMonthColumn = this.getCurrentMonthColumnName();
             if (allHeaders.map(h => h.toUpperCase()).includes(currentMonthColumn.toUpperCase())) {
                  return data.filter(item => {
-                    const billingStatus = (item[currentMonthColumn] || 'n/a').toLowerCase();
+                    const billingStatus = (item[currentBillingColumn] || 'n/a').toLowerCase();
                     return billingStatus === this.currentBillingFilter;
                 });
             } else {
@@ -858,7 +841,6 @@ class GoogleSheetsIntegration {
         const year = parseInt(parts[1], 10);
 
         if (month === undefined || isNaN(year)) {
-            console.warn(`Could not parse date from header: "${header}"`);
             return null;
         }
 
@@ -1139,7 +1121,6 @@ class GoogleSheetsIntegration {
         navigator.clipboard.writeText(text).then(() => {
             this.showMessage('Copied to clipboard!', 'success');
         }).catch(err => {
-            console.error('Failed to copy text: ', err);
             this.showMessage('Failed to copy', 'error');
         });
     }
@@ -1860,7 +1841,6 @@ class GoogleSheetsIntegration {
                 }
             });
         } catch (error) {
-            console.error('Update sales dropdown error:', error);
         }
     }
 
@@ -1983,10 +1963,8 @@ class GoogleSheetsIntegration {
                 img.onerror = () => {
                     retryCount++;
                     if (retryCount < maxRetries) {
-                        console.log(`Retrying image load for ${placeName} (${retryCount}/${maxRetries})...`);
                         setTimeout(loadImage, 1000 * retryCount); // Wait longer each time
                     } else {
-                        console.error(`Failed to load image for ${placeName} after ${maxRetries} attempts.`);
                         imageContainer.innerHTML = '<div class="no-image-placeholder">Gagal memuat</div>';
                     }
                 };
@@ -2005,13 +1983,11 @@ class GoogleSheetsIntegration {
     }
     
     handleLoadError(error) {
-        console.error('Load error details:', error);
         this.showError('Gagal memuat data: ' + error.message);
         this.loadFallbackData();
     }
 
     loadFallbackData() {
-        console.log('Loading fallback data for testing...');
         const fallbackData = [
             ['ODP', 'NAMA', 'ALAMAT', 'NO TELEPON', 'NAMA SALES', 'VISIT', 'STATUS'],
             ['ODP-BDG-001', 'Budi Santoso', 'Jl. Merdeka No.1, Bandung', '081234567890', 'Nandi', 'Visited', 'Diterima'],
@@ -2028,7 +2004,6 @@ class GoogleSheetsIntegration {
     }
 
     editRow(index) {
-        console.log('✏️ Edit row:', index);
         const originalIndex = (typeof index === 'object' && index.originalIndex !== undefined) ? index.originalIndex : index;
         const rowData = this.originalData[originalIndex];
         if (rowData) {
@@ -2093,7 +2068,6 @@ class GoogleSheetsIntegration {
             this.closeEditModal();
             this.refreshData();
         } catch (error) {
-            console.error('Update row error:', error);
             this.showError('Gagal memperbarui data: ' + error.message);
         }
     }
@@ -2108,14 +2082,11 @@ class GoogleSheetsIntegration {
     async deleteRow(originalIndex) {
         try {
             ModalHandler.show('Informasi', 'Fitur ini tidak tersedia di dasbor ini. Penghapusan data hanya dapat dilakukan melalui panel admin.', 'info');
-            console.warn('deleteRow called on public dashboard, but is disabled for security reasons.');
         } catch (error) {
-            console.error('Disabled deleteRow function encountered an error:', error);
         }
     }
 
     async refreshData() {
-        console.log(' Refreshing data...');
         localStorage.removeItem('mainData');
         localStorage.removeItem('governmentData');
         localStorage.removeItem('monitoringData');
@@ -2204,7 +2175,6 @@ class GoogleSheetsIntegration {
             modal.style.display = 'block';
 
         } catch (error) {
-            console.error('Error loading government view history:', error);
             this.showError('Gagal memuat riwayat pemerintah: ' + error.message);
         }
     }
@@ -2286,7 +2256,6 @@ class GoogleSheetsIntegration {
             modal.style.display = 'block';
 
         } catch (error) {
-            console.error('Error loading view history:', error);
             this.showError('Gagal memuat riwayat: ' + error.message);
         }
     }
@@ -2294,12 +2263,10 @@ class GoogleSheetsIntegration {
     async logViewHistory(userEmail, location) {
         try {
             if (!userEmail || !location) {
-                console.warn('User email or location missing for logging view history');
                 return;
             }
             const token = await ensureAuthenticatedGapiClient();
             if (!token || !token.access_token) {
-                console.error('No access token available for logging view history');
                 return;
             }
             const timestamp = new Date().toISOString();
@@ -2321,9 +2288,7 @@ class GoogleSheetsIntegration {
                 throw new Error(errorData.error.message || 'Failed to append view history');
             }
 
-            console.log(' Logged view history');
         } catch (error) {
-            console.error('Error logging view history:', error);
         }
     }
 
@@ -2333,7 +2298,6 @@ class GoogleSheetsIntegration {
             const sheet = sheetInfo.sheets.find(s => s.properties.title === sheetName);
             return sheet ? sheet.properties.sheetId : null;
         } catch (error) {
-            console.error('Get sheet ID error:', error);
             throw error;
         }
     }
@@ -2346,13 +2310,11 @@ class GoogleSheetsIntegration {
             });
             return response.result;
         } catch (error) {
-            console.error('Get sheet ID error:', error);
             throw error;
         }
     }
 
     async refreshData() {
-        console.log('Refreshing data...');
         this.retryCount = 0;
         // Clear cache before refreshing
         localStorage.removeItem('mainData');
@@ -2369,7 +2331,6 @@ class GoogleSheetsIntegration {
 let googleSheetsIntegration;
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, initializing Google Sheets Integration...');
     googleSheetsIntegration = new GoogleSheetsIntegration();
     window.googleSheetsIntegration = googleSheetsIntegration;
     if (window.currentUserEmail) {

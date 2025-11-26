@@ -1,4 +1,3 @@
-
 class SchoolDataFilter {
     constructor(googleSheetsIntegration) {
         this.googleSheets = googleSheetsIntegration;
@@ -22,7 +21,7 @@ class SchoolDataFilter {
             'INSTITUT AGAMA ISLAM', 'INSTITUT TEKNOLOGI', 'INSTITUT SENI', 'ROUDHOTUL', 'GLORIA 2', 'YAYASAN', 'SDIT', 'KINDERGROW', 'SLB', 'KELOMPOK BERMAIN', 'BERKLEE AZRA' ,
             'EDUCATION', 'LEARNING', 'ACADEMI', 'FITSTEP', 'TAHFIDZ', 'DRIVING', 'THERESIA', 'BIMBA', 'ROBOTICS'
         ];
-        this.schoolKeywordRegexes = this.schoolKeywords.map(keyword => new RegExp('\\b' + keyword.toLowerCase() + '\\b', 'i'));
+        this.schoolKeywordRegexes = this.schoolKeywords.map(keyword => new RegExp('\b' + keyword.toLowerCase() + '\b', 'i'));
         
         this.isActive = false;
         this.filteredData = {
@@ -102,7 +101,6 @@ class SchoolDataFilter {
             window.googleSheetsIntegration.currentDataView = 'government';
             window.googleSheetsIntegration.applyCombinedFilters();
         } else {
-            console.warn('googleSheetsIntegration not available');
         }
 
         this.setActiveButton('btnTableShowGoverment');
@@ -111,7 +109,7 @@ class SchoolDataFilter {
     isSchoolData(row) {
         const searchText = `${row.nama || ''}`.toLowerCase();
         
-        const cleanedSearchText = searchText.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g," ").replace(/\s{2,}/g," ");
+        const cleanedSearchText = searchText.replace(/[.,\/#!$%^&*;:{}=\-_`~()]/g," ").replace(/\s{2,}/g," ");
 
         if (cleanedSearchText.includes('.com')) {
             return false;

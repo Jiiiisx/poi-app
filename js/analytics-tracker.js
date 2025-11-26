@@ -15,6 +15,5 @@ document.addEventListener('DOMContentLoaded', () => {
             keepalive: true
         });
     } catch (error) {
-        console.error('Error sending analytics:', error);
     }
 });
