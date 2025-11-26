@@ -11,9 +11,12 @@
 
     /* --- Global Search --- */
     .global-search-container {
-        width: 100%;
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
         margin-top: 15px;
         order: 3; /* Ensure it's the last item in the header flow */
+        max-width: 400px;
     }
 
     #globalSearchInput {
