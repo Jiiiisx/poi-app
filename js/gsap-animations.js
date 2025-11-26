@@ -44,3 +44,33 @@ function playDashboardEntranceAnimation() {
           ease: "power2.out"
       }, "-=0.3");
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Landing Page Animations
+    if (document.querySelector('.hero-section')) {
+        gsap.set('body', { autoAlpha: 1 }); // Make body visible to avoid flash of blank page
+
+        const tl = gsap.timeline({ defaults: { autoAlpha: 1, ease: 'power3.out' } });
+
+        tl.from('.landing-header', { duration: 0.8, y: -30 })
+          .from('.hero-content > *', { duration: 0.7, y: 20, stagger: 0.15 }, "-=0.6");
+
+        // Use a general selector for sections to animate
+        gsap.utils.toArray('.section').forEach(section => {
+            const elems = section.querySelectorAll('.section-title, .feature-card, .flow-step');
+            if (elems.length > 0) {
+                gsap.from(elems, {
+                    scrollTrigger: {
+                        trigger: section,
+                        start: 'top 85%',
+                        toggleActions: 'play none none none',
+                    },
+                    y: 40,
+                    duration: 0.7,
+                    stagger: 0.1,
+                    autoAlpha: 1
+                });
+            }
+        });
+    }
+});
