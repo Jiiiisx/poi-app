@@ -85,7 +85,7 @@ body {
 /* Kiri: Kontainer utama dengan gambar */
 .hero-left {
     flex-basis: 65%;
-    background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1554469384-e58fac177232?q=80&w=2070');
+    background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../assets/Citylights-background.jpeg');
     background-size: cover;
     background-position: center;
     border-radius: var(--border-radius-main);
@@ -147,7 +147,7 @@ body {
 }
 
 .venture-card {
-    background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1600880292203-942bb68b2432?q=80&w=1887');
+    background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('../assets/Citylights-background.jpeg');
     background-size: cover;
     background-position: center;
     color: var(--white);
