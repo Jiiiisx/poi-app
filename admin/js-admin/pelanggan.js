@@ -265,15 +265,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 .filter(header => _parseHeaderDate(header) <= now)
                 .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
 
-            const lastTwoMonthsHeaders = sortedBillingHeaders.slice(-2);
-
-            if (lastTwoMonthsHeaders.length < 2) {
+            if (sortedBillingHeaders.length < 2) {
                 data = [];
             } else {
                 data = data.filter(item => {
-                    const isUnpaidLastMonth = (item[lastTwoMonthsHeaders[1]] || '').toLowerCase() === 'unpaid';
-                    const isUnpaidTwoMonthsAgo = (item[lastTwoMonthsHeaders[0]] || '').toLowerCase() === 'unpaid';
-                    return isUnpaidLastMonth && isUnpaidTwoMonthsAgo;
+                    const lastThree = sortedBillingHeaders.slice(-3);
+                    const lastMonthHeader = lastThree[lastThree.length - 1];
+                    const twoMonthsAgoHeader = lastThree[lastThree.length - 2];
+                    const isUnpaidLastMonth = (item[lastMonthHeader] || '').toLowerCase() === 'unpaid';
+                    const isUnpaidTwoMonthsAgo = (item[twoMonthsAgoHeader] || '').toLowerCase() === 'unpaid';
+
+                    if (isUnpaidLastMonth && isUnpaidTwoMonthsAgo) {
+                        if (lastThree.length === 3) {
+                            const threeMonthsAgoHeader = lastThree[0];
+                            return (item[threeMonthsAgoHeader] || '').toLowerCase() !== 'unpaid';
+                        }
+                        return true; 
+                    }
+                    return false;
                 });
             }
         } else if (selectedStatus === 'ct0') {
@@ -282,20 +291,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 .filter(header => _parseHeaderDate(header) <= now)
                 .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
 
-            if (sortedBillingHeaders.length < 2) {
+            if (sortedBillingHeaders.length < 3) {
                 data = [];
             } else {
                 data = data.filter(item => {
-                    for (let i = 0; i <= sortedBillingHeaders.length - 2; i++) {
-                        const header1 = sortedBillingHeaders[i];
-                        const header2 = sortedBillingHeaders[i+1];
-                        const isUnpaid1 = (item[header1] || '').toLowerCase() === 'unpaid';
-                        const isUnpaid2 = (item[header2] || '').toLowerCase() === 'unpaid';
-                        if (isUnpaid1 && isUnpaid2) {
-                            return true;
-                        }
-                    }
-                    return false;
+                    const lastThree = sortedBillingHeaders.slice(-3);
+                    if (lastThree.length < 3) return false;
+                    const isUnpaidLastMonth = (item[lastThree[2]] || '').toLowerCase() === 'unpaid';
+                    const isUnpaidTwoMonthsAgo = (item[lastThree[1]] || '').toLowerCase() === 'unpaid';
+                    const isUnpaidThreeMonthsAgo = (item[lastThree[0]] || '').toLowerCase() === 'unpaid';
+                    return isUnpaidLastMonth && isUnpaidTwoMonthsAgo && isUnpaidThreeMonthsAgo;
                 });
             }
         } else if (selectedStatus !== 'all') {

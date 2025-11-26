@@ -769,16 +769,32 @@ class GoogleSheetsIntegration {
                 .filter(header => this._parseHeaderDate(header) <= now)
                 .sort((a, b) => this._parseHeaderDate(a) - this._parseHeaderDate(b));
 
-            const lastTwoMonthsHeaders = sortedBillingHeaders.slice(-2);
-
-            if (lastTwoMonthsHeaders.length < 2) {
-                return [];
+            if (sortedBillingHeaders.length < 2) {
+                return []; // Not enough data for this filter
             }
 
+            const lastThreeHeaders = sortedBillingHeaders.slice(-3);
+            
             return data.filter(item => {
-                const isUnpaidLastMonth = (item[lastTwoMonthsHeaders[1]] || '').toLowerCase() === 'unpaid';
-                const isUnpaidTwoMonthsAgo = (item[lastTwoMonthsHeaders[0]] || '').toLowerCase() === 'unpaid';
-                return isUnpaidLastMonth && isUnpaidTwoMonthsAgo;
+                const lastMonthHeader = lastThreeHeaders[lastThreeHeaders.length - 1];
+                const twoMonthsAgoHeader = lastThreeHeaders[lastThreeHeaders.length - 2];
+
+                const isUnpaidLastMonth = (item[lastMonthHeader] || '').toLowerCase() === 'unpaid';
+                const isUnpaidTwoMonthsAgo = (item[twoMonthsAgoHeader] || '').toLowerCase() === 'unpaid';
+
+                if (!isUnpaidLastMonth || !isUnpaidTwoMonthsAgo) {
+                    return false;
+                }
+
+                // If there are 3 months of history, check the 3rd month was not unpaid.
+                if (lastThreeHeaders.length === 3) {
+                    const threeMonthsAgoHeader = lastThreeHeaders[0];
+                    const wasPaidThreeMonthsAgo = (item[threeMonthsAgoHeader] || '').toLowerCase() !== 'unpaid';
+                    return wasPaidThreeMonthsAgo;
+                }
+
+                // If only 2 months of history exist, and both are unpaid, it's Pra NPC.
+                return true;
             });
         }
 
@@ -788,23 +804,20 @@ class GoogleSheetsIntegration {
                 .filter(header => this._parseHeaderDate(header) <= now)
                 .sort((a, b) => this._parseHeaderDate(a) - this._parseHeaderDate(b));
 
-            if (sortedBillingHeaders.length < 2) {
-                return [];
+            if (sortedBillingHeaders.length < 3) {
+                return []; // Not enough data for this filter
             }
 
+            const lastThreeHeaders = sortedBillingHeaders.slice(-3);
+
             return data.filter(item => {
-                for (let i = 0; i <= sortedBillingHeaders.length - 2; i++) {
-                    const header1 = sortedBillingHeaders[i];
-                    const header2 = sortedBillingHeaders[i+1];
-
-                    const isUnpaid1 = (item[header1] || '').toLowerCase() === 'unpaid';
-                    const isUnpaid2 = (item[header2] || '').toLowerCase() === 'unpaid';
-
-                    if (isUnpaid1 && isUnpaid2) {
-                        return true;
-                    }
-                }
-                return false;
+                if (lastThreeHeaders.length < 3) return false;
+                
+                const isUnpaidLastMonth = (item[lastThreeHeaders[2]] || '').toLowerCase() === 'unpaid';
+                const isUnpaidTwoMonthsAgo = (item[lastThreeHeaders[1]] || '').toLowerCase() === 'unpaid';
+                const isUnpaidThreeMonthsAgo = (item[lastThreeHeaders[0]] || '').toLowerCase() === 'unpaid';
+                
+                return isUnpaidLastMonth && isUnpaidTwoMonthsAgo && isUnpaidThreeMonthsAgo;
             });
         }
 
