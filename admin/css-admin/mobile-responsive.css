@@ -6,12 +6,12 @@
     }
 
     .header-left h1 {
-        font-size: 1.5rem; /* Slightly smaller title on mobile */
+        display: none; /* Hide title on mobile */
     }
 
     /* --- Global Search --- */
     .global-search-container {
-        width: 90%;
+        width: 70%; /* Further reduced width */
         margin-left: auto;
         margin-right: auto;
         margin-top: 15px;
