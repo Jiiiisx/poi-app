@@ -36,6 +36,7 @@
     /* --- Main Content Layout --- */
     .main-content {
         padding: 20px; /* Reduce padding on mobile */
+        overflow-x: hidden; /* Prevent wide tables from breaking the layout */
     }
     
     .dashboard-main-content {
@@ -50,6 +51,15 @@
     }
 
     /* --- Filter & Table --- */
+    .status-filters {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .status-filters .btn {
+        margin-bottom: 5px;
+    }
+
     .filter-controls {
         flex-direction: column;
         align-items: stretch;
