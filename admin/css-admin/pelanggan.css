@@ -184,17 +184,18 @@ body {
 
 /* --- MOBILE RESPONSIVE FOR STICKY --- */
 @media (max-width: 768px) {
-    .billing-monitoring-container .sticky-col-1,
-    .billing-monitoring-container .sticky-col-2,
-    .billing-monitoring-container .sticky-col-3 {
-        position: static; /* Unset sticky positioning */
-        left: auto;
-        z-index: auto;
+    /* More specific selector and !important to guarantee override */
+    .billing-monitoring-container .customer-table .sticky-col-1,
+    .billing-monitoring-container .customer-table .sticky-col-2,
+    .billing-monitoring-container .customer-table .sticky-col-3 {
+        position: static !important;
+        left: auto !important;
+        z-index: auto !important;
     }
 
-    .billing-monitoring-container .customer-table thead .sticky-col-1,
-    .billing-monitoring-container .customer-table thead .sticky-col-2,
-    .billing-monitoring-container .customer-table thead .sticky-col-3 {
-        top: auto; /* Unset vertical sticky positioning */
+    /* Target all header cells for simplicity and robustness */
+    .billing-monitoring-container .customer-table thead th {
+        position: static !important; /* Also unset vertical sticky for the header */
+        top: auto !important;
     }
 }
