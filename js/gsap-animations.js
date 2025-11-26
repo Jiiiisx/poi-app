@@ -48,6 +48,8 @@ function playDashboardEntranceAnimation() {
 document.addEventListener('DOMContentLoaded', () => {
     // Landing Page Animations
     if (document.querySelector('.hero-section')) {
+        gsap.registerPlugin(ScrollTrigger);
+
         gsap.set('body', { autoAlpha: 1 }); // Make body visible to avoid flash of blank page
 
         const tl = gsap.timeline({ defaults: { autoAlpha: 1, ease: 'power3.out' } });
