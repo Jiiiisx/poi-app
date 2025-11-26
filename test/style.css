@@ -1,0 +1,220 @@
+/* Global Styles & Variables */
+:root {
+    --primary-color: #e60012; /* Telkom Red */
+    --dark-blue: #0a2540;
+    --text-color: #333;
+    --background-color: #f8f9fa;
+    --white: #ffffff;
+    --border-radius-main: 24px;
+    --font-family: 'Inter', sans-serif;
+}
+
+body {
+    font-family: var(--font-family);
+    margin: 0;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header */
+.main-header {
+    background-color: var(--white);
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.main-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.main-header nav {
+    display: flex;
+    gap: 30px;
+}
+
+.main-header nav a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.main-header nav a:hover {
+    color: var(--primary-color);
+}
+
+.btn-login {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.btn-login:hover {
+    background-color: #c00010;
+}
+
+/* Hero Section */
+.hero {
+    padding: 40px 0;
+}
+
+.hero-container {
+    display: flex;
+    align-items: stretch; /* Make columns same height */
+}
+
+/* Kiri: Kontainer utama dengan gambar */
+.hero-left {
+    flex-basis: 65%;
+    background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1554469384-e58fac177232?q=80&w=2070');
+    background-size: cover;
+    background-position: center;
+    border-radius: var(--border-radius-main);
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Align text to bottom */
+    position: relative;
+    z-index: 1;
+    color: var(--white);
+}
+
+.hero-text .hashtag {
+    font-weight: 700;
+    color: var(--primary-color);
+    display: block;
+    margin-bottom: 8px;
+}
+
+.hero-text h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1.1;
+}
+
+.hero-text p {
+    font-size: 1.1rem;
+    max-width: 80%;
+    margin-top: 20px;
+    line-height: 1.6;
+}
+
+.btn-explore {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 15px 30px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 30px;
+    transition: background-color 0.3s;
+}
+
+.btn-explore:hover {
+    background-color: #c00010;
+}
+
+/* Kanan: Kontainer yang "memotong" */
+.hero-right {
+    flex-basis: 35%;
+    /* PENTING: Margin kiri negatif untuk menimpa kolom kiri */
+    margin-left: -50px;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.venture-card {
+    background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1600880292203-942bb68b2432?q=80&w=1887');
+    background-size: cover;
+    background-position: center;
+    color: var(--white);
+    padding: 30px;
+    
+    /* PENTING: Radius di pojok kiri atas untuk membuat ilusi lengkungan */
+    border-top-left-radius: var(--border-radius-main);
+    position: relative;
+    z-index: 2;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.venture-text h3 {
+    font-size: 1.8rem;
+    margin: 0;
+    font-weight: 700;
+}
+
+.discover-links {
+    background-color: var(--white);
+    padding: 30px;
+    /* PENTING: Radius di pojok kiri bawah untuk melanjutkan ilusi */
+    border-bottom-left-radius: var(--border-radius-main);
+}
+
+.discover-links h4 {
+    margin-top: 0;
+    font-size: 1.2rem;
+}
+
+.discover-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.discover-links li {
+    margin-bottom: 15px;
+}
+
+.discover-links a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.discover-links a:hover {
+    color: var(--primary-color);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .hero-container {
+        flex-direction: column;
+    }
+    .hero-right {
+        margin-left: 0;
+        margin-top: 20px;
+    }
+    .venture-card, .discover-links {
+        border-radius: var(--border-radius-main);
+    }
+    .hero-text h1 {
+        font-size: 2.5rem;
+    }
+}
