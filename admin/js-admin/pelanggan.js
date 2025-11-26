@@ -159,6 +159,23 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function updateStickyColumns() {
+        const table = tableContainer.querySelector('.customer-table');
+        if (!table) return;
+
+        const headerCells = table.querySelectorAll('thead th');
+        if (headerCells.length < 2) return;
+
+        // Use rAF to ensure layout is calculated before we measure.
+        requestAnimationFrame(() => {
+            const col1Width = headerCells[0].offsetWidth;
+            const col2Width = headerCells[1].offsetWidth;
+    
+            table.style.setProperty('--col-1-width', `${col1Width}px`);
+            table.style.setProperty('--col-2-width', `${col2Width}px`);
+        });
+    }
+
     function renderBillingTable() {
         const start = (currentPage - 1) * rowsPerPage;
         const end = start + rowsPerPage;
@@ -223,6 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
         tableContainer.appendChild(table);
 
         updatePagination();
+        updateStickyColumns();
     }
 
     // --- Filtering Logic ---
