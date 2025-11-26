@@ -21,7 +21,7 @@ class SchoolDataFilter {
             'INSTITUT AGAMA ISLAM', 'INSTITUT TEKNOLOGI', 'INSTITUT SENI', 'ROUDHOTUL', 'GLORIA 2', 'YAYASAN', 'SDIT', 'KINDERGROW', 'SLB', 'KELOMPOK BERMAIN', 'BERKLEE AZRA' ,
             'EDUCATION', 'LEARNING', 'ACADEMI', 'FITSTEP', 'TAHFIDZ', 'DRIVING', 'THERESIA', 'BIMBA', 'ROBOTICS'
         ];
-        this.schoolKeywordRegexes = this.schoolKeywords.map(keyword => new RegExp('\b' + keyword.toLowerCase() + '\b', 'i'));
+        this.schoolKeywordRegexes = this.schoolKeywords.map(keyword => new RegExp('(^|[^a-zA-Z0-9])' + keyword.toLowerCase() + '([^a-zA-Z0-9]|$)', 'i'));
         
         this.isActive = false;
         this.filteredData = {
