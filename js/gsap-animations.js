@@ -50,14 +50,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('.hero-section')) {
         gsap.registerPlugin(ScrollTrigger);
 
-        gsap.set('body', { autoAlpha: 1 }); // Make body visible to avoid flash of blank page
+        // Helper function for clean animations
+        const animateFrom = (elem, vars) => {
+            gsap.from(elem, {
+                autoAlpha: 0, // Start invisible
+                ...vars,
+                ease: 'power3.out',
+            });
+        };
 
-        const tl = gsap.timeline({ defaults: { autoAlpha: 1, ease: 'power3.out' } });
+        // Animate the main hero section
+        animateFrom('.landing-header', { y: -30, duration: 0.8 });
+        animateFrom('.hero-content > *', { y: 20, duration: 0.7, stagger: 0.15, delay: 0.2 });
 
-        tl.from('.landing-header', { duration: 0.8, y: -30 })
-          .from('.hero-content > *', { duration: 0.7, y: 20, stagger: 0.15 }, "-=0.6");
-
-        // Use a general selector for sections to animate
+        // Animate other sections on scroll
         gsap.utils.toArray('.section').forEach(section => {
             const elems = section.querySelectorAll('.section-title, .feature-card, .flow-step');
             if (elems.length > 0) {
@@ -70,7 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     y: 40,
                     duration: 0.7,
                     stagger: 0.1,
-                    autoAlpha: 1
+                    autoAlpha: 0,
+                    ease: 'power3.out'
                 });
             }
         });
