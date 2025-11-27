@@ -3,7 +3,7 @@
     --primary-color: #e60012; /* Telkom Red */
     --dark-blue: #0a2540;
     --text-color: #333;
-    --background-color: #f8f9fa;
+    --background-color: #f0f2f5; /* A slightly softer background */
     --white: #ffffff;
     --border-radius-main: 24px;
     --font-family: 'Inter', sans-serif;
@@ -26,7 +26,10 @@ body {
 .main-header {
     background-color: var(--white);
     padding: 15px 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #e0e0e0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .main-header .container {
@@ -72,27 +75,39 @@ body {
     background-color: #c00010;
 }
 
+/* General Section Styling */
+.section {
+    padding: 80px 0;
+}
+.section h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+
 /* Hero Section */
 .hero {
-    padding: 40px 0;
+    padding-top: 40px;
 }
 
 .hero-container {
     display: flex;
-    align-items: stretch; /* Make columns same height */
+    align-items: center;
 }
 
-/* Kiri: Kontainer utama dengan gambar */
 .hero-left {
-    flex-basis: 65%;
-    background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../assets/Citylights-background.jpeg');
+    flex: 0 0 65%;
+    min-height: 500px;
+    background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('../assets/Citylights-background.jpeg');
     background-size: cover;
     background-position: center;
     border-radius: var(--border-radius-main);
-    padding: 60px;
+    padding: 50px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* Align text to bottom */
+    justify-content: flex-end;
     position: relative;
     z-index: 1;
     color: var(--white);
@@ -135,32 +150,33 @@ body {
     background-color: #c00010;
 }
 
-/* Kanan: Kontainer yang "memotong" */
 .hero-right {
-    flex-basis: 35%;
-    /* PENTING: Margin kiri negatif untuk menimpa kolom kiri */
-    margin-left: -50px;
-    
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    flex-grow: 1;
+    margin-left: -60px;
+    position: relative;
+    z-index: 2;
+}
+
+.hero-right-content {
+    background-color: var(--white);
+    border-top-left-radius: var(--border-radius-main);
+    border-bottom-left-radius: var(--border-radius-main);
+    padding: 20px;
+    box-shadow: -10px 10px 30px rgba(0,0,0,0.08);
 }
 
 .venture-card {
     background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('../assets/Citylights-background.jpeg');
     background-size: cover;
-    background-position: center;
+    background-position: center 30%;
     color: var(--white);
     padding: 30px;
-    
-    /* PENTING: Radius di pojok kiri atas untuk membuat ilusi lengkungan */
-    border-top-left-radius: var(--border-radius-main);
-    position: relative;
-    z-index: 2;
-    flex-grow: 1;
+    border-radius: 18px;
+    margin-bottom: 20px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    min-height: 180px;
 }
 
 .venture-text h3 {
@@ -169,15 +185,9 @@ body {
     font-weight: 700;
 }
 
-.discover-links {
-    background-color: var(--white);
-    padding: 30px;
-    /* PENTING: Radius di pojok kiri bawah untuk melanjutkan ilusi */
-    border-bottom-left-radius: var(--border-radius-main);
-}
-
 .discover-links h4 {
     margin-top: 0;
+    margin-bottom: 20px;
     font-size: 1.2rem;
 }
 
@@ -202,19 +212,195 @@ body {
     color: var(--primary-color);
 }
 
+/* Section 2: Horizontal Gallery */
+.horizontal-gallery-section {
+    padding: 80px 0;
+    overflow-x: clip; /* Prevents bleed */
+}
+.horizontal-gallery-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 40px;
+}
+.gallery-container {
+    width: 100%;
+    overflow: hidden; /* Hide the overflowing track */
+    perspective: 800px; /* Add 3D perspective for child elements */
+}
+.gallery-track {
+    display: flex;
+    gap: 30px;
+    height: 400px;
+    align-items: center;
+    width: max-content; /* Make track wide enough for all items */
+}
+.gallery-item {
+    flex: 0 0 350px;
+    height: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    will-change: transform, opacity; /* Optimize for animations */
+}
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Section 3: Services */
+.services-section {
+    padding: 80px 0;
+    background-color: var(--white);
+}
+.services-container {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr; /* Switched to grid for more robust layout */
+    gap: 80px;
+    align-items: flex-start;
+    min-height: 150vh; /* Make section taller to allow for scroll animations */
+}
+.service-content-panel {
+    position: sticky;
+    top: 120px; /* Stick to the top while scrolling through the section */
+}
+.service-image-panel {
+    display: grid; /* Use grid to stack images */
+    grid-template-areas: "stack";
+    position: sticky;
+    top: 120px;
+    height: 600px;
+    border-radius: var(--border-radius-main);
+    overflow: hidden; /* Important for containing the images */
+}
+
+.service-image {
+    grid-area: stack; /* All images occupy the same space */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    border-radius: var(--border-radius-main);
+}
+.service-image:first-of-type {
+    opacity: 1; /* First image is visible by default */
+}
+
+
+.service-content-panel h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    text-align: left;
+}
+.service-content-panel > p {
+    font-size: 1.1rem;
+    color: #555;
+    line-height: 1.6;
+}
+.service-tabs {
+    margin-top: 30px;
+}
+.service-tab {
+    padding: 25px 20px;
+    border-left: 4px solid #e0e0e0;
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
+}
+.service-tab h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+.service-tab p {
+    margin: 0;
+    color: #666;
+    line-height: 1.5;
+}
+
+.service-tab.active {
+    border-left-color: var(--primary-color);
+    background-color: #fff8f8;
+    transform: translateX(10px);
+}
+
+
+/* Section 4: History */
+.history-section {
+    padding: 80px 0;
+}
+.history-content {
+    max-width: 700px;
+    margin: 0 auto 60px auto;
+    text-align: center;
+}
+.history-content h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+}
+
+/* Footer */
+.main-footer {
+    background-color: var(--dark-blue);
+    color: #a9b3c1;
+    padding: 60px 0 20px 0;
+}
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+.footer-col h3 {
+    color: var(--white);
+    font-size: 1.5rem;
+}
+.footer-col h4 {
+    color: var(--white);
+}
+.footer-col ul {
+    list-style: none;
+    padding: 0;
+}
+.footer-col li {
+    margin-bottom: 10px;
+}
+.footer-col a {
+    color: #a9b3c1;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+.footer-col a:hover {
+    color: var(--white);
+}
+.footer-bottom {
+    border-top: 1px solid #2c4a68;
+    padding-top: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 992px) {
     .hero-container {
         flex-direction: column;
+        align-items: stretch;
     }
     .hero-right {
         margin-left: 0;
         margin-top: 20px;
     }
-    .venture-card, .discover-links {
-        border-radius: var(--border-radius-main);
+    .hero-right-content {
+       border-radius: var(--border-radius-main);
     }
     .hero-text h1 {
         font-size: 2.5rem;
+    }
+    .services-container {
+        grid-template-columns: 1fr;
+    }
+    .footer-grid {
+        grid-template-columns: 1fr;
     }
 }
