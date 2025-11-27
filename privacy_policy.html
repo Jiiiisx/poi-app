@@ -3,167 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kebijakan Privasi - PointOfInterest_AR_KLB</title>
-    <link rel="icon" type="image/png" href="assets/favicon.ico">
-    <link rel="stylesheet" href="css/styles.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <title>Privacy Policy - POI AR KLB</title>
+    <link rel="icon" href="Assets/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="modern-design-system.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <meta name="google-site-verification" content="qnpRH9xhfD37zmmVaWbxUWHyfAs7DVt1aMDfI18qi_I" />
     <style>
-        .privacy-container {
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
             max-width: 800px;
             margin: 0 auto;
-            padding: 2rem;
-            line-height: 1.7;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
         }
-
-        .privacy-header {
+        
+        .header {
             text-align: center;
-            margin-bottom: 3rem;
-            padding: 2rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 40px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
+            border-radius: 10px 10px 0 0;
+            margin: -20px -20px 40px -20px;
         }
-
-        .privacy-header h1 {
-            font-size: 2.5rem;
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
             font-weight: 700;
-            margin-bottom: 0.5rem;
         }
-
-        .privacy-header p {
-            font-size: 1.1rem;
+        
+        .header p {
+            margin: 10px 0 0 0;
             opacity: 0.9;
+            font-size: 1.1em;
         }
-
-        .privacy-section {
-            background: var(--bg-secondary);
-            margin-bottom: 2rem;
-            padding: 2rem;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            border-left: 4px solid var(--primary-color);
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
         }
-
-        .privacy-section h2 {
-            color: var(--primary-color);
-            font-size: 1.5rem;
+        
+        .section h2 {
+            color: #667eea;
+            margin-top: 0;
+            font-size: 1.5em;
             font-weight: 600;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
-
-        .privacy-section h3 {
-            color: var(--text-primary);
-            font-size: 1.25rem;
+        
+        .section h3 {
+            color: #495057;
+            margin-top: 20px;
+            font-size: 1.2em;
             font-weight: 600;
-            margin: 1.5rem 0 1rem;
         }
-
-        .privacy-section p {
-            margin-bottom: 1rem;
-            color: var(--text-secondary);
+        
+        .section p, .section li {
+            color: #6c757d;
+            margin-bottom: 10px;
         }
-
-        .privacy-section ul {
-            margin: 1rem 0;
-            padding-left: 2rem;
+        
+        .section ul {
+            padding-left: 20px;
         }
-
-        .privacy-section li {
-            margin-bottom: 0.5rem;
-            color: var(--text-secondary);
+        
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #ffc107;
+            margin: 15px 0;
         }
-
-        .highlight-box {
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            padding: 1.5rem;
-            border-radius: var(--radius-md);
-            margin: 1.5rem 0;
-        }
-
+        
         .contact-info {
-            background: var(--bg-primary);
-            padding: 1.5rem;
-            border-radius: var(--radius-md);
-            margin: 2rem 0;
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
         }
-
-        .contact-info h3 {
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-secondary);
-        }
-
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--primary-color);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: var(--radius-md);
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin-top: 2rem;
-        }
-
-        .back-button:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
-
+        
         .last-updated {
             text-align: center;
-            margin-top: 3rem;
-            padding: 1.5rem;
-            background: var(--bg-primary);
-            border-radius: var(--radius-md);
-            color: var(--text-muted);
-            font-size: 0.9rem;
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
         }
-
-        @media (max-width: 768px) {
-            .privacy-container {
-                padding: 1rem;
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
             }
             
-            .privacy-header h1 {
-                font-size: 2rem;
+            .header {
+                padding: 20px 0;
             }
             
-            .privacy-section {
-                padding: 1.5rem;
+            .header h1 {
+                font-size: 2em;
             }
         }
     </style>
 </head>
 <body>
-    <div class="privacy-container">
+    <div class="container">
         <!-- Header Section -->
-        <div class="privacy-header">
-            <h1><i class="fas fa-shield-alt"></i> Kebijakan Privasi</h1>
+        <div class="header">
+            <h1><i class="fas fa-user-secret"></i> Kebijakan Privasi</h1>
             <p>PointOfInterest_AR_KLB - Dashboard Monitoring System</p>
-            <small>Terakhir diperbarui: 15 Januari 2024</small>
         </div>
 
         <!-- Introduction -->
-        <div class="privacy-section">
+        <div class="section">
             <h2><i class="fas fa-info-circle"></i> Pendahuluan</h2>
             <p>
                 Selamat datang di Kebijakan Privasi PointOfInterest_AR_KLB. Kami menghargai privasi Anda dan berkomitmen untuk melindungi informasi pribadi Anda. 
@@ -175,168 +158,90 @@
         </div>
 
         <!-- Data Collection -->
-        <div class="privacy-section">
+        <div class="section">
             <h2><i class="fas fa-database"></i> Informasi yang Kami Kumpulkan</h2>
             
-            <h3>1. Informasi yang Anda Berikan</h3>
+            <h3>Informasi yang Anda Berikan</h3>
             <ul>
                 <li><strong>Data Profil:</strong> Nama, email, nomor telepon, dan informasi kontak lainnya</li>
                 <li><strong>Data Bisnis:</strong> Informasi perusahaan, alamat, dan detail bisnis</li>
                 <li><strong>Data Pelanggan:</strong> Informasi calon pelanggan yang Anda input ke sistem</li>
-                <li><strong>Preferensi:</strong> Pengaturan dan preferensi aplikasi yang Anda pilih</li>
             </ul>
 
-            <h3>2. Informasi Otomatis yang Kami Kumpulkan</h3>
+            <h3>Informasi Otomatis</h3>
             <ul>
                 <li><strong>Log Akses:</strong> Waktu akses, durasi penggunaan, dan aktivitas dalam aplikasi</li>
                 <li><strong>Informasi Perangkat:</strong> Jenis perangkat, sistem operasi, dan browser yang digunakan</li>
-                <li><strong>Informasi Lokasi:</strong> Lokasi umum (kota/negara) berdasarkan IP address</li>
             </ul>
 
-            <div class="highlight-box">
-                <strong>Catatan Penting:</strong> Kami tidak mengumpulkan informasi sensitif seperti nomor kartu kredit, informasi kesehatan, atau data pribadi sensitif lainnya.
+            <div class="highlight">
+                <strong>Catatan Penting:</strong> Kami tidak mengumpulkan informasi sensitif seperti nomor kartu kredit atau data pribadi sensitif lainnya.
             </div>
         </div>
 
         <!-- Data Usage -->
-        <div class="privacy-section">
+        <div class="section">
             <h2><i class="fas fa-cogs"></i> Bagaimana Kami Menggunakan Informasi</h2>
-            <p>Kami menggunakan informasi yang kami kumpulkan untuk tujuan berikut:</p>
+            <p>Kami menggunakan informasi yang kami kumpulkan untuk:</p>
             <ul>
-                <li><strong>Operasional Aplikasi:</strong> Untuk menyediakan, mengelola, dan meningkatkan aplikasi dashboard monitoring kami</li>
-                <li><strong>Komunikasi:</strong> Untuk mengirimkan pembaruan, notifikasi, dan informasi penting terkait aplikasi</li>
-                <li><strong>Personalisasi:</strong> Untuk menyesuaikan konten dan fitur aplikasi sesuai dengan preferensi Anda</li>
-                <li><strong>Analisis:</strong> Untuk menganalisis penggunaan aplikasi dan meningkatkan kinerja serta fitur-fitur kami</li>
-                <li><strong>Keamanan:</strong> Untuk mendeteksi, mencegah, dan menanggapi masalah keamanan atau penipuan</li>
+                <li><strong>Operasional Aplikasi:</strong> Untuk menyediakan, mengelola, dan meningkatkan aplikasi dashboard.</li>
+                <li><strong>Komunikasi:</strong> Untuk mengirimkan pembaruan dan informasi penting terkait aplikasi.</li>
+                <li><strong>Analisis:</strong> Untuk menganalisis penggunaan aplikasi dan meningkatkan kinerja.</li>
+                <li><strong>Keamanan:</strong> Untuk mendeteksi dan mencegah masalah keamanan atau penipuan.</li>
             </ul>
         </div>
 
         <!-- Data Sharing -->
-        <div class="privacy-section">
+        <div class="section">
             <h2><i class="fas fa-share-alt"></i> Pembagian Informasi</h2>
-            <p>Kami tidak menjual, memperdagangkan, atau menyewakan informasi pribadi Anda kepada pihak ketiga. Kami hanya membagikan informasi dalam situasi berikut:</p>
-            
-            <h3>1. Pihak Ketiga Terpercaya</h3>
+            <p>Kami tidak menjual atau menyewakan informasi pribadi Anda. Kami hanya membagikan informasi dalam situasi berikut:</p>
             <ul>
-                <li>Penyedia layanan yang membantu kami dalam operasional aplikasi (seperti hosting, analitik, atau layanan email)</li>
-                <li>Pihak ketiga ini terikat oleh kewajiban kerahasiaan dan hanya dapat menggunakan data sesuai instruksi kami</li>
+                <li>Dengan penyedia layanan terpercaya yang membantu operasional aplikasi (misal: hosting, analitik).</li>
+                <li>Jika diwajibkan oleh hukum atau untuk mematuhi proses hukum yang berlaku.</li>
+                <li>Untuk melindungi hak, properti, atau keamanan kami dan pengguna kami.</li>
+                <li>Jika Anda telah memberikan persetujuan eksplisit.</li>
             </ul>
-
-            <h3>2. Kepatuhan Hukum</h3>
-            <ul>
-                <li>Ketika diwajibkan oleh hukum atau untuk mematuhi proses hukum yang berlaku</li>
-                <li>Untuk melindungi hak, properti, atau keamanan kami dan pengguna kami</li>
-            </ul>
-
-            <h3>3. Persetujuan Anda</h3>
-            <p>Kami dapat membagikan informasi dengan pihak ketiga jika Anda telah memberikan persetujuan eksplisit untuk melakukannya.</p>
         </div>
 
         <!-- Data Security -->
-        <div class="privacy-section">
+        <div class="section">
             <h2><i class="fas fa-lock"></i> Keamanan Data</h2>
-            <p>Kami mengambil keamanan data Anda dengan sangat serius dan menerapkan langkah-langkah teknis dan organisasional yang sesuai untuk melindungi informasi Anda:</p>
-            <ul>
-                <li><strong>Enkripsi:</strong> Data sensitif dienkripsi saat disimpan dan saat ditransmisikan</li>
-                <li><strong>Akses Terbatas:</strong> Hanya personel yang berwenang yang memiliki akses ke informasi pribadi</li>
-                <li><strong>Audit Keamanan:</strong> Kami secara berkala meninjau praktik keamanan kami</li>
-                <li><strong>Backup:</strong> Data dibackup secara berkala untuk mencegah kehilangan</li>
-            </ul>
-            <div class="highlight-box">
-                <strong>Peringatan:</strong> Meskipun kami mengambil langkah-langkah keamanan yang wajar, tidak ada metode transmisi atau penyimpanan data yang 100% aman. Kami tidak dapat menjamin keamanan absolut.
+            <p>Kami menerapkan langkah-langkah teknis dan organisasional yang sesuai untuk melindungi informasi Anda, termasuk enkripsi, akses terbatas, dan audit keamanan.</p>
+             <div class="highlight">
+                <strong>Peringatan:</strong> Tidak ada metode transmisi atau penyimpanan data yang 100% aman. Kami tidak dapat menjamin keamanan absolut.
             </div>
         </div>
 
         <!-- User Rights -->
-        <div class="privacy-section">
+        <div class="section">
             <h2><i class="fas fa-user-shield"></i> Hak Privasi Anda</h2>
-            <p>Sebagai pengguna, Anda memiliki hak-hak berikut terkait data pribadi Anda:</p>
-            <ul>
-                <li><strong>Hak Akses:</strong> Anda dapat meminta salinan informasi pribadi yang kami simpan tentang Anda</li>
-                <li><strong>Hak Koreksi:</strong> Anda dapat meminta kami untuk memperbaiki informasi yang tidak akurat atau tidak lengkap</li>
-                <li><strong>Hak Penghapusan:</strong> Anda dapat meminta penghapusan data pribadi Anda dalam situasi tertentu</li>
-                <li><strong>Hak Pembatasan:</strong> Anda dapat meminta pembatasan pemrosesan data Anda</li>
-                <li><strong>Hak Portabilitas:</strong> Anda dapat meminta transfer data Anda ke organisasi lain atau kepada Anda</li>
-                <li><strong>Hak Keberatan:</strong> Anda dapat mengajukan keberatan terhadap pemrosesan data Anda dalam situasi tertentu</li>
-            </ul>
-            <p>Untuk menggunakan hak-hak Anda, silakan hubungi kami melalui informasi kontak yang tersedia di bagian akhir kebijakan ini.</p>
-        </div>
-
-        <!-- Cookies and Tracking -->
-        <div class="privacy-section">
-            <h2><i class="fas fa-cookie-bite"></i> Cookies dan Teknologi Pelacakan</h2>
-            <p>Kami menggunakan cookies dan teknologi pelacakan serupa untuk meningkatkan pengalaman pengguna dan menganalisis penggunaan aplikasi:</p>
-            
-            <h3>Jenis Cookies yang Kami Gunakan:</h3>
-            <ul>
-                <li><strong>Cookies Fungsional:</strong> Untuk mengingat preferensi Anda dan pengaturan aplikasi</li>
-                <li><strong>Cookies Analitik:</strong> Untuk mengumpulkan informasi tentang bagaimana Anda menggunakan aplikasi kami</li>
-                <li><strong>Cookies Keamanan:</strong> Untuk tujuan keamanan dan autentikasi</li>
-            </ul>
-            
-            <p>Anda dapat mengatur browser Anda untuk menolak semua atau beberapa cookies, namun ini dapat memengaruhi fungsionalitas aplikasi.</p>
+            <p>Anda memiliki hak untuk mengakses, mengoreksi, atau meminta penghapusan data pribadi Anda. Untuk menggunakan hak-hak Anda, silakan hubungi kami.</p>
         </div>
 
         <!-- Data Retention -->
-        <div class="privacy-section">
+        <div class="section">
             <h2><i class="fas fa-clock"></i> Penyimpanan Data</h2>
-            <p>Kami menyimpan informasi pribadi Anda hanya selama diperlukan untuk tujuan yang dijelaskan dalam kebijakan ini, kecuali diperlukan lebih lama oleh hukum yang berlaku:</p>
-            <ul>
-                <li>Data akun: Disimpan selama akun Anda aktif</li>
-                <li>Data transaksi: Disimpan sesuai dengan persyaratan hukum pajak dan akuntansi</li>
-                <li>Data komunikasi: Disimpan untuk periode waktu yang wajar untuk tujuan layanan pelanggan</li>
-            </ul>
-            <p>Setelah periode penyimpanan berakhir, kami akan menghapus atau menganonimkan data Anda secara aman.</p>
+            <p>Kami menyimpan informasi pribadi Anda hanya selama diperlukan untuk tujuan yang dijelaskan dalam kebijakan ini, kecuali diperlukan lebih lama oleh hukum yang berlaku.</p>
         </div>
 
         <!-- Contact Information -->
-        <div class="privacy-section">
+        <div class="section">
             <h2><i class="fas fa-envelope"></i> Informasi Kontak</h2>
-            <p>Jika Anda memiliki pertanyaan, kekhawatiran, atau permintaan terkait kebijakan privasi ini atau hak privasi Anda, silakan hubungi kami:</p>
-            
+            <p>Jika Anda memiliki pertanyaan terkait kebijakan privasi ini, silakan hubungi kami melalui:</p>
             <div class="contact-info">
-                <h3>Tim Privasi PointOfInterest_AR_KLB</h3>
-                <div class="contact-item">
-                    <i class="fas fa-envelope"></i>
-                    <span>Email: privacy@pointofinterest-klb.com</span>
-                </div>
-                <div class="contact-item">
-                    <i class="fas fa-phone"></i>
-                    <span>Telepon: +62 21 1234 5678</span>
-                </div>
-                <div class="contact-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>Alamat: Jl. Teknologi No. 123, Jakarta, Indonesia</span>
-                </div>
+                <p><i class="fas fa-envelope"></i> Email: privacy@pointofinterest-klb.com</p>
+                <p><i class="fas fa-phone"></i> Telepon: +62 21 1234 5678</p>
             </div>
-            
-            <p>Jika Anda tidak puas dengan tanggapan kami, Anda berhak mengajukan keluhan kepada otoritas perlindungan data setempat.</p>
         </div>
-
-        <!-- Changes to Policy -->
-        <div class="privacy-section">
-            <h2><i class="fas fa-sync-alt"></i> Perubahan pada Kebijakan Privasi</h2>
-            <p>Kami dapat memperbarui kebijakan privasi ini dari waktu ke waktu. Perubahan akan diberitahukan melalui:</p>
-            <ul>
-                <li>Pembaruan tanggal "Terakhir diperbarui" di bagian atas kebijakan ini</li>
-                <li>Pemberitahuan dalam aplikasi atau melalui email untuk perubahan yang signifikan</li>
-            </ul>
-            <p>Kami mendorong Anda untuk meninjau kebijakan ini secara berkala untuk tetap mendapatkan informasi tentang bagaimana kami melindungi informasi Anda.</p>
-        </div>
-
-        <!-- Navigation -->
-        <div style="text-align: center; margin-top: 3rem;">
-            <a href="index.html" class="back-button">
-                <i class="fas fa-arrow-left"></i>
-                Kembali ke Dashboard
-            </a>
-        </div>
-
-        <!-- Footer -->
+        
         <div class="last-updated">
-            <i class="fas fa-calendar-alt"></i>
-            Kebijakan Privasi ini terakhir diperbarui pada 28 Agustus 2025 dan berlaku efektif sejak tanggal tersebut.
+            <i class="fas fa-calendar-alt"></i> Terakhir diperbarui: 28 Agustus 2025
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i> Kembali ke Halaman Login
+            </a>
         </div>
     </div>
 </body>
-</html>
