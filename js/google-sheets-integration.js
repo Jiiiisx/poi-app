@@ -719,50 +719,34 @@ class GoogleSheetsIntegration {
         const allHeaders = this.monitoringDataHeadersBySales[salesName] || [];
         const billingHeaders = allHeaders.filter(h => h.toLowerCase().startsWith('billing'));
 
-        if (this.currentBillingFilter === 'pra npc') {
+        const countConsecutiveUnpaid = (item, sortedBillingHeaders) => {
+            let consecutiveUnpaid = 0;
+            for (let i = sortedBillingHeaders.length - 1; i >= 0; i--) {
+                const header = sortedBillingHeaders[i];
+                if (this._isNonPayment(item[header])) {
+                    consecutiveUnpaid++;
+                } else {
+                    break; // Streak is broken
+                }
+            }
+            return consecutiveUnpaid;
+        };
+
+        if (this.currentBillingFilter === 'pra npc' || this.currentBillingFilter === 'ct0') {
             const now = new Date();
             const sortedBillingHeaders = billingHeaders
                 .filter(header => this._parseHeaderDate(header) <= now)
                 .sort((a, b) => this._parseHeaderDate(a) - this._parseHeaderDate(b));
 
             return data.filter(item => {
-                const recentHeaders = sortedBillingHeaders.slice(-3);
-                if (recentHeaders.length < 2) return false;
-
-                const isNonPaymentLast = this._isNonPayment(item[recentHeaders[recentHeaders.length - 1]]);
-                const isNonPaymentTwoMonthsAgo = this._isNonPayment(item[recentHeaders[recentHeaders.length - 2]]);
-
-                if (isNonPaymentLast && isNonPaymentTwoMonthsAgo) {
-                    if (recentHeaders.length === 3) {
-                        const isNonPaymentThreeMonthsAgo = this._isNonPayment(item[recentHeaders[0]]);
-                        return !isNonPaymentThreeMonthsAgo;
-                    }
-                    return true;
+                const unpaidCount = countConsecutiveUnpaid(item, sortedBillingHeaders);
+                if (this.currentBillingFilter === 'pra npc') {
+                    return unpaidCount === 2;
                 }
-                return false;
-            });
-        }
-
-        if (this.currentBillingFilter === 'ct0') {
-            const now = new Date();
-            const sortedBillingHeaders = billingHeaders
-                .filter(header => this._parseHeaderDate(header) <= now)
-                .sort((a, b) => this._parseHeaderDate(a) - this._parseHeaderDate(b));
-        
-            return data.filter(item => {
-                let consecutiveUnpaid = 0;
-                // Loop backwards from the most recent billing month
-                for (let i = sortedBillingHeaders.length - 1; i >= 0; i--) {
-                    const header = sortedBillingHeaders[i];
-                    if (this._isNonPayment(item[header])) {
-                        consecutiveUnpaid++;
-                    } else {
-                        // As soon as we find a paid month, the streak is broken
-                        break;
-                    }
+                if (this.currentBillingFilter === 'ct0') {
+                    return unpaidCount >= 3;
                 }
-                // Show customers with 2 or more consecutive unpaid months.
-                return consecutiveUnpaid >= 2;
+                return false; // Should not be reached
             });
         }
 
