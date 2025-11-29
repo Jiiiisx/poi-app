@@ -10,6 +10,9 @@ const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
+const apiCache = new Map();
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
 // 2. HELPER MODULES (formerly separate files)
 // ------------------------------------------------------------------
 
@@ -242,21 +245,44 @@ async function handleFetchHistory(req, res) {
 
 async function handleFetchMonitoring(req, res) {
     if (req.method !== 'GET') return res.status(405).json({ message: 'Only GET requests are allowed' });
+
+    const { ranges } = req.query;
+    if (!ranges) return res.status(400).json({ message: 'Missing ranges in request query string.' });
+
+    const now = Date.now();
+    // Check cache first
+    if (apiCache.has(ranges)) {
+        const { timestamp, data } = apiCache.get(ranges);
+        if (now - timestamp < CACHE_TTL_MS) {
+            res.setHeader('X-Cache', 'HIT');
+            res.setHeader('Cache-Control', 'private, max-age=' + Math.round((CACHE_TTL_MS - (now - timestamp)) / 1000));
+            return res.status(200).json(data);
+        }
+    }
+
     try {
         const sheets = await getSheetsClient();
-        const { ranges } = req.query;
-        if (!ranges) return res.status(400).json({ message: 'Missing ranges in request query string.' });
         const requestedRanges = ranges.split(',');
         if (requestedRanges.length === 0) return res.status(200).json({ valueRanges: [] });
+
         const promises = requestedRanges.map(range => sheets.spreadsheets.values.get({ spreadsheetId: SPREADSHEET_ID, range }));
         const results = await Promise.allSettled(promises);
+
         const valueRanges = results.map((result, index) => {
             if (result.status === 'fulfilled') return result.value.data;
             console.warn(`Failed to fetch range "${requestedRanges[index]}":`, result.reason.message);
             return { range: requestedRanges[index], values: [] };
         });
+
+        const responseData = { valueRanges };
+        
+        // Store successful response in cache
+        apiCache.set(ranges, { timestamp: Date.now(), data: responseData });
+        
+        res.setHeader('X-Cache', 'MISS');
         res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
-        res.status(200).json({ valueRanges });
+        res.status(200).json(responseData);
+
     } catch (error) {
         console.error('Error in fetch-monitoring handler:', error);
         res.status(500).json({ message: 'Failed to fetch monitoring data', error: error.message });
