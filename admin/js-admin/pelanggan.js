@@ -303,40 +303,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     return false;
                 });
             }
-        } else if (selectedStatus === 'ct0') {
-            const now = new Date();
-            const sortedBillingHeaders = billingHeaders
-                .filter(header => _parseHeaderDate(header) <= now)
-                .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
-
-            if (sortedBillingHeaders.length < 3) {
-                data = [];
-            } else {
-                data = data.filter(item => {
-                    const lastThree = sortedBillingHeaders.slice(-3);
-                    if (lastThree.length < 3) return false;
-                    const isUnpaidLastMonth = (item[lastThree[2]] || '').toLowerCase() === 'unpaid';
-                    const isUnpaidTwoMonthsAgo = (item[lastThree[1]] || '').toLowerCase() === 'unpaid';
-                    const isUnpaidThreeMonthsAgo = (item[lastThree[0]] || '').toLowerCase() === 'unpaid';
-                    return isUnpaidLastMonth && isUnpaidTwoMonthsAgo && isUnpaidThreeMonthsAgo;
-                });
-            }
         } else if (selectedStatus !== 'all') {
-             if (selectedMonth !== 'all') {
+            const statusToLookFor = selectedStatus === 'ct0' ? 'zero billing' : selectedStatus;
+
+            if (selectedMonth !== 'all') {
                 // Filter by a specific selected month
-                data = data.filter(item => (item[selectedMonth] || 'n/a').toLowerCase() === selectedStatus);
+                data = data.filter(item => (item[selectedMonth] || 'n/a').toLowerCase() === statusToLookFor);
             } else {
-                // When "All Months" is selected, filter by the CURRENT month's status
-                const currentMonthColumn = getCurrentMonthColumnName();
-                
-                if (allHeaders.map(h => h.toUpperCase()).includes(currentMonthColumn.toUpperCase())) {
-                    data = data.filter(item => {
-                        const billingStatus = (item[currentMonthColumn] || 'n/a').toLowerCase();
-                        return billingStatus === selectedStatus;
-                    });
-                } else {
-                    data = [];
-                }
+                // When "All Months" is selected, check for the status in ANY billing month
+                data = data.filter(item => 
+                    billingHeaders.some(header => (item[header] || 'n/a').toLowerCase() === statusToLookFor)
+                );
             }
         }
 
