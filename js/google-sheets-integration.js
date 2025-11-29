@@ -362,23 +362,11 @@ class GoogleSheetsIntegration {
     }
     
     processMonitoringData(data, requestedRanges) {
-        this.monitoringDataBySales = {};
-        this.monitoringDataHeadersBySales = {};
+        const rangeToSalesKey = Object.fromEntries(Object.entries(this.salesDataRanges).map(([k, v]) => [v, k]));
 
-        if (!data.valueRanges || !requestedRanges) {
-            return;
-        }
-
-        const rangeToSalesKey = {};
-        for (const key in this.salesDataRanges) {
-            rangeToSalesKey[this.salesDataRanges[key]] = key;
-        }
-
-
-
-        data.valueRanges.forEach((valueRange, index) => {
-            const requestedRangeName = requestedRanges[index];
-            const salesName = rangeToSalesKey[requestedRangeName];
+        data.valueRanges.forEach((valueRange) => {
+            const rangeName = valueRange.range.split('!')[0].replace(/'/g, '');
+            const salesName = rangeToSalesKey[rangeName];
 
             if (!salesName) {
                 return;
@@ -388,8 +376,6 @@ class GoogleSheetsIntegration {
                 const rawData = valueRange.values;
                 const headers = rawData[0].map(cell => cell.toString().trim());
 
-
-
                 const rangeAddress = valueRange.range.split('!')[1];
                 const startRowMatch = rangeAddress ? rangeAddress.match(/(\d+)/) : null;
                 if (!startRowMatch) {
@@ -398,29 +384,13 @@ class GoogleSheetsIntegration {
                 const startRow = parseInt(startRowMatch[0]);
                 
                 const nameIndex = headers.findIndex(h => h.toLowerCase() === 'nama pelanggan');
-                const noCustomerIndex = headers.findIndex(h => h.toLowerCase() === 'no customer');
-                const noInternetIndex = headers.findIndex(h => h.toLowerCase() === 'nomor internet');
-                const redamanIndex = headers.findIndex(h => h.toLowerCase() === 'redaman loss');
-                const fupIndex = headers.findIndex(h => h.toLowerCase() === 'fup');
-                const historiIndex = headers.findIndex(h => h.toLowerCase() === 'histori gangguan');
-                const tglBayarIndex = headers.findIndex(h => h.toLowerCase() === 'tanggal pembayaran');
 
                 const tableRows = rawData.slice(1).filter(row => row[nameIndex] && row[nameIndex].trim() !== '').map((row, index) => {
                     const originalRowIndex = startRow + index + 1;
                     const rowData = { originalRowIndex };
 
-                    if (nameIndex !== -1) rowData['Nama Pelanggan'] = this.sanitizeValue(row[nameIndex] || '');
-                    if (noCustomerIndex !== -1) rowData['No Customer'] = this.sanitizeValue(row[noCustomerIndex] || '');
-                    if (noInternetIndex !== -1) rowData['No Internet'] = this.sanitizeValue(row[noInternetIndex] || '');
-                    if (redamanIndex !== -1) rowData['Redaman Loss'] = this.sanitizeValue(row[redamanIndex] || '');
-                    if (fupIndex !== -1) rowData['FUP'] = this.sanitizeValue(row[fupIndex] || '');
-                    if (historiIndex !== -1) rowData['Histori Gangguan'] = this.sanitizeValue(row[historiIndex] || '');
-                    if (tglBayarIndex !== -1) rowData['Tanggal Pembayaran'] = this.sanitizeValue(row[tglBayarIndex] || '');
-
                     headers.forEach((header, idx) => {
-                        if (header.toLowerCase().startsWith('billing')) {
-                            rowData[header] = this.sanitizeValue(row[idx] || '');
-                        }
+                        rowData[header] = this.sanitizeValue(row[idx] || '');
                     });
 
                     return rowData;
@@ -430,7 +400,6 @@ class GoogleSheetsIntegration {
                 this.monitoringDataHeadersBySales[salesName.toLowerCase()] = headers;
             }
         });
-
     }
 
     async loadGovernmentData() {
@@ -803,14 +772,14 @@ class GoogleSheetsIntegration {
                 return billingStatus === this.currentBillingFilter;
             });
         } else {
+            // Fallback for 'paid'/'unpaid' when 'All Months' is selected
             const currentMonthColumn = this.getCurrentMonthColumnName();
             if (allHeaders.map(h => h.toUpperCase()).includes(currentMonthColumn.toUpperCase())) {
                  return data.filter(item => {
-                    const billingStatus = (item[currentBillingColumn] || 'n/a').toLowerCase();
+                    const billingStatus = (item[currentMonthColumn] || 'n/a').toLowerCase();
                     return billingStatus === this.currentBillingFilter;
                 });
             } else {
-                // If the current month's billing column doesn't exist, check against any billing column
                 return data.filter(item =>
                     billingHeaders.some(header => (item[header] || 'n/a').toLowerCase() === this.currentBillingFilter)
                 );
@@ -2011,357 +1980,138 @@ class GoogleSheetsIntegration {
     editRow(index) {
         const originalIndex = (typeof index === 'object' && index.originalIndex !== undefined) ? index.originalIndex : index;
         const rowData = this.originalData[originalIndex];
-        if (rowData) {
-            document.getElementById('editRowIndex').value = originalIndex;
-            document.getElementById('editOdp').value = rowData.odp_terdekat || '';
-            document.getElementById('editNama').value = rowData.nama || '';
-            document.getElementById('editAlamat').value = rowData.alamat || '';
-            document.getElementById('editTelepon').value = rowData.no_telepon || '';
-            document.getElementById('editSales').value = rowData.nama_sales || '';
-            document.getElementById('editVisit').value = rowData.visit || '';
-            document.getElementById('editStatus').value = rowData.status || '';
-            document.getElementById('editKeteranganTambahan').value = rowData.keterangan_tambahan || '';
-            this.updateSalesDropdown();
-            document.getElementById('editModal').style.display = 'block';
-            document.getElementById('editForm').resetWizard();
+        if (!rowData) {
+            this.showError('Gagal menyunting baris: Data tidak ditemukan.');
+            return;
+        }
+
+        document.getElementById('editIndex').value = originalIndex;
+        document.getElementById('editOdp').value = rowData.odp_terdekat;
+        document.getElementById('editNama').value = rowData.nama;
+        document.getElementById('editAlamat').value = rowData.alamat;
+        document.getElementById('editTelepon').value = rowData.no_telepon;
+        document.getElementById('editSales').value = rowData.nama_sales;
+        document.getElementById('editVisit').value = rowData.visit;
+        document.getElementById('editStatus').value = rowData.status;
+        document.getElementById('editKeterangan').value = rowData.keterangan_tambahan;
+
+        const modal = document.getElementById('editModal');
+        if (modal) {
+            modal.style.display = 'flex';
         }
     }
 
     async saveEdit() {
+        const index = document.getElementById('editIndex').value;
+        const newRowData = {
+            odp_terdekat: document.getElementById('editOdp').value,
+            nama: document.getElementById('editNama').value,
+            alamat: document.getElementById('editAlamat').value,
+            no_telepon: document.getElementById('editTelepon').value,
+            nama_sales: document.getElementById('editSales').value,
+            visit: document.getElementById('editVisit').value,
+            status: document.getElementById('editStatus').value,
+            keterangan_tambahan: document.getElementById('editKeterangan').value,
+            tanggal_ditambahkan: this.originalData[index].tanggal_ditambahkan,
+            image_url: this.originalData[index].image_url
+        };
+
         try {
-            const rowIndex = document.getElementById('editRowIndex').value;
-            const values = [
-                document.getElementById('editOdp').value,
-                document.getElementById('editNama').value,
-                document.getElementById('editAlamat').value,
-                document.getElementById('editTelepon').value,
-                document.getElementById('editSales').value,
-                document.getElementById('editVisit').value,
-                document.getElementById('editStatus').value,
-                document.getElementById('editKeteranganTambahan').value
-            ];
-
-            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-            const googleIdToken = userInfo ? userInfo.token : null;
-
-            if (!googleIdToken) {
-                ModalHandler.show('Error', 'Otentikasi pengguna tidak ditemukan. Silakan login ulang.', 'error');
-                throw new Error('User not authenticated');
-            }
-
-            const response = await fetch('/api?action=update-customer', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${googleIdToken}`
-                },
-                body: JSON.stringify({ rowIndex, values }),
-            });
-
-            if (!response.ok) {
-                if (response.status === 400 || response.status === 401) {
-                    const errorData = await response.json();
-                    ModalHandler.show('Oops! Gagal Menyimpan', errorData.message, 'error');
-                } else {
-                    const errorText = await response.text();
-                    ModalHandler.show('Server Error', `Terjadi kesalahan pada server: ${errorText}`, 'error');
-                }
-                throw new Error(`Server returned ${response.status}`);
-            }
-
-            this.showMessage('Data berhasil diperbarui!', 'success');
-            this.closeEditModal();
-            this.refreshData();
+            await window.googleSheetsCRUD.updateRow(parseInt(index) + 2, newRowData);
+            this.originalData[index] = newRowData;
+            this.applyCombinedFilters();
+            document.getElementById('editModal').style.display = 'none';
+            this.showMessage('Data berhasil diperbarui', 'success');
         } catch (error) {
-            this.showError('Gagal memperbarui data: ' + error.message);
+            this.showError('Gagal menyimpan perubahan: ' + error.message);
         }
     }
 
+    async deleteRow(index) {
+        const confirmed = await Swal.fire({
+            title: 'Anda yakin?',
+            text: "Anda tidak akan dapat mengembalikan ini!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, hapus!'
+        });
 
-
-    closeEditModal() {
-        const editModal = document.getElementById('editModal');
-        if (editModal) editModal.style.display = 'none';
-    }
-
-    async deleteRow(originalIndex) {
-        try {
-            ModalHandler.show('Informasi', 'Fitur ini tidak tersedia di dasbor ini. Penghapusan data hanya dapat dilakukan melalui panel admin.', 'info');
-        } catch (error) {
+        if (confirmed.isConfirmed) {
+            try {
+                await window.googleSheetsCRUD.deleteRow(parseInt(index) + 2);
+                this.originalData.splice(index, 1);
+                this.applyCombinedFilters();
+                Swal.fire('Terhapus!', 'Data telah dihapus.', 'success');
+            } catch (error) {
+                this.showError('Gagal menghapus data: ' + error.message);
+            }
         }
-    }
-
-    async refreshData() {
-        localStorage.removeItem('mainData');
-        localStorage.removeItem('governmentData');
-        localStorage.removeItem('monitoringData');
-        await this.setup();
-    }
-
-
-
-
-
-
-
-    async viewGovernmentHistory(index) {
-        try {
-            const rowData = this.originalGovernmentData[index];
-            if (!rowData) {
-                this.showError('Data pemerintah tidak ditemukan untuk riwayat.');
-                return;
-            }
-            const location = rowData.nama_koperasi || '';
-            const modal = document.getElementById('viewHistoryModal');
-            const historyLoading = document.getElementById('historyLoading');
-            const historyContent = document.getElementById('historyContent');
-            const historyError = document.getElementById('historyError');
-            const historyTableBody = document.getElementById('historyTableBody');
-            const historyLocationId = document.getElementById('historyLocationId');
-
-            historyTableBody.innerHTML = '';
-            historyLocationId.textContent = `Riwayat Kunjungan Lokasi: ${location}`;
-            historyLoading.style.display = 'block';
-            historyContent.style.display = 'none';
-            historyError.style.display = 'none';
-
-            await ensureAuthenticatedGapiClient();
-            const range = 'USER VIEW TRACKING!A2:C1000';
-            const response = await gapi.client.sheets.spreadsheets.values.get({
-                spreadsheetId: this.spreadsheetId,
-                range: range
-            });
-            const values = response.result.values || [];
-
-            const threeMonthsAgo = new Date();
-            threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-
-            const filteredHistory = values.filter(row => {
-                const locationMatch = row[1] === location;
-                if (!locationMatch) return false;
-
-                const timestamp = new Date(row[2]);
-                return timestamp >= threeMonthsAgo;
-            });
-
-            const latestHistory = new Map();
-            filteredHistory.forEach(row => {
-                const userEmail = row[0];
-                const timestamp = new Date(row[2]);
-
-                if (!latestHistory.has(userEmail) || timestamp > new Date(latestHistory.get(userEmail)[2])) {
-                    latestHistory.set(userEmail, row);
-                }
-            });
-
-            const finalHistory = Array.from(latestHistory.values());
-
-            if (finalHistory.length === 0) {
-                historyLoading.style.display = 'none';
-                historyContent.style.display = 'none';
-                historyError.style.display = 'block';
-                historyError.querySelector('p').textContent = 'Tidak ada riwayat kunjungan untuk lokasi ini dalam 3 bulan terakhir.';
-                modal.style.display = 'block';
-                return;
-            }
-
-            finalHistory.forEach(row => {
-                const tr = document.createElement('tr');
-                const userEmail = row[0] || '';
-                const timestamp = row[2] || '';
-                tr.innerHTML = `<td>${this.escapeHtml(userEmail)}</td><td>${this.escapeHtml(timestamp)}</td>`;
-                historyTableBody.appendChild(tr);
-            });
-
-            historyLoading.style.display = 'none';
-            historyContent.style.display = 'block';
-            historyError.style.display = 'none';
-
-            modal.style.display = 'block';
-
-        } catch (error) {
-            this.showError('Gagal memuat riwayat pemerintah: ' + error.message);
-        }
-    }
-
-    async viewHistory(rowIndex) {
-        try {
-            const originalIndex = (typeof rowIndex === 'object' && rowIndex.originalIndex !== undefined) ? rowIndex.originalIndex : rowIndex;
-            const rowData = this.originalData[originalIndex];
-            if (!rowData) {
-                this.showError('Data tidak ditemukan untuk riwayat.');
-                return;
-            }
-            const location = rowData.odp_terdekat || rowData.nama || '';
-            const modal = document.getElementById('viewHistoryModal');
-            const historyLoading = document.getElementById('historyLoading');
-            const historyContent = document.getElementById('historyContent');
-            const historyError = document.getElementById('historyError');
-            const historyTableBody = document.getElementById('historyTableBody');
-            const historyLocationId = document.getElementById('historyLocationId');
-
-            historyTableBody.innerHTML = '';
-            historyLocationId.textContent = `Riwayat Kunjungan Lokasi: ${location}`;
-            historyLoading.style.display = 'block';
-            historyContent.style.display = 'none';
-            historyError.style.display = 'none';
-
-            await ensureAuthenticatedGapiClient();
-            const range = 'USER VIEW TRACKING!A2:C1000';
-            const response = await gapi.client.sheets.spreadsheets.values.get({
-                spreadsheetId: this.spreadsheetId,
-                range: range
-            });
-            const values = response.result.values || [];
-
-            const threeMonthsAgo = new Date();
-            threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-
-            const filteredHistory = values.filter(row => {
-                const locationMatch = row[1] === location;
-                if (!locationMatch) return false;
-
-                const timestamp = new Date(row[2]);
-                return timestamp >= threeMonthsAgo;
-            });
-
-            const latestHistory = new Map();
-            filteredHistory.forEach(row => {
-                const userEmail = row[0];
-                const timestamp = new Date(row[2]);
-
-                if (!latestHistory.has(userEmail) || timestamp > new Date(latestHistory.get(userEmail)[2])) {
-                    latestHistory.set(userEmail, row);
-                }
-            });
-
-            const finalHistory = Array.from(latestHistory.values());
-
-            if (finalHistory.length === 0) {
-                historyLoading.style.display = 'none';
-                historyContent.style.display = 'none';
-                historyError.style.display = 'block';
-                historyError.querySelector('p').textContent = 'Tidak ada riwayat kunjungan untuk lokasi ini dalam 3 bulan terakhir.';
-                modal.style.display = 'block';
-                return;
-            }
-
-            finalHistory.forEach(row => {
-                const tr = document.createElement('tr');
-                const userEmail = row[0] || '';
-                const timestamp = row[2] || '';
-                tr.innerHTML = `<td>${this.escapeHtml(userEmail)}</td><td>${this.escapeHtml(timestamp)}</td>`;
-                historyTableBody.appendChild(tr);
-            });
-
-            historyLoading.style.display = 'none';
-            historyContent.style.display = 'block';
-            historyError.style.display = 'none';
-
-            modal.style.display = 'block';
-
-        } catch (error) {
-            this.showError('Gagal memuat riwayat: ' + error.message);
-        }
-    }
-
-    async logViewHistory(userEmail, location) {
-        try {
-            if (!userEmail || !location) {
-                return;
-            }
-            const token = await ensureAuthenticatedGapiClient();
-            if (!token || !token.access_token) {
-                return;
-            }
-            const timestamp = new Date().toISOString();
-            const values = [[userEmail, location, timestamp]];
-            const range = 'USER VIEW TRACKING!A:C';
-
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${this.spreadsheetId}/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token.access_token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ values: values })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error.message || 'Failed to append view history');
-            }
-
-        } catch (error) {
-        }
-    }
-
-    async getSheetIdByName(sheetName) {
-        try {
-            const sheetInfo = await this.getSheetInfo();
-            const sheet = sheetInfo.sheets.find(s => s.properties.title === sheetName);
-            return sheet ? sheet.properties.sheetId : null;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async getSheetInfo() {
-        try {
-            await ensureAuthenticatedGapiClient();
-            const response = await gapi.client.sheets.spreadsheets.get({
-                spreadsheetId: this.spreadsheetId
-            });
-            return response.result;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async refreshData() {
-        this.retryCount = 0;
-        // Clear cache before refreshing
-        localStorage.removeItem('mainData');
-        localStorage.removeItem('monitoringData');
-        localStorage.removeItem('governmentData');
-        
-        await this.loadData();
-        await this.loadMonitoringData();
-        await this.loadGovernmentData();
     }
 }
 
-// Global instance
-let googleSheetsIntegration;
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await waitForGoogleSheetsCRUD();
+        window.googleSheetsIntegration = new GoogleSheetsIntegration();
+        await window.googleSheetsIntegration.setup();
 
-document.addEventListener('DOMContentLoaded', () => {
-    googleSheetsIntegration = new GoogleSheetsIntegration();
-    window.googleSheetsIntegration = googleSheetsIntegration;
-    if (window.currentUserEmail) {
-        googleSheetsIntegration.currentUserEmail = window.currentUserEmail;
+        const salesList = document.querySelector('.sales-list');
+        if (salesList) {
+            salesList.addEventListener('click', function(e) {
+                if (e.target.closest('.sales-item')) {
+                    const item = e.target.closest('.sales-item');
+                    const salesName = item.dataset.salesName;
+                    
+                    if (salesName !== 'Home') {
+                        if (window.switchToTab) {
+                           window.switchToTab('monitoring');
+                        }
+                    } else {
+                        const contentGrid = document.querySelector('.content-grid');
+                        const monitoringSection = document.getElementById('monthlyMonitoringSection');
+                        const salesSummarySection = document.getElementById('salesSummarySection');
+
+                        if(contentGrid) contentGrid.style.display = 'block';
+                        if(monitoringSection) monitoringSection.style.display = 'none';
+                        if(salesSummarySection) salesSummarySection.style.display = 'none';
+                    }
+
+                    window.googleSheetsIntegration.filterBySales(salesName);
+                }
+            });
+        }
+        
+    } catch (error) {
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        if (loadingIndicator) {
+            loadingIndicator.innerHTML = `<p style="color: red;">${error.message}</p>`;
+        }
     }
-    const event = new CustomEvent('googleSheetsIntegrationReady');
-    document.dispatchEvent(event);
 });
 
-function trackLocationView(customerName, odpTerdekat, address) {
-    if (address && (address.startsWith('http://') || address.startsWith('https://'))) {
-        window.open(address, '_blank');
-    } else if (address) {
-        window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(address), '_blank');
-    } else {
-        alert('Alamat tidak tersedia.');
-    }
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
 
-    if (window.googleSheetsIntegration && typeof window.googleSheetsIntegration.logViewHistory === 'function') {
-        const userEmail = currentUserEmail || '';
-        const location = odpTerdekat || customerName || '';
-        window.googleSheetsIntegration.logViewHistory(userEmail, location);
+function assignRowToSales(rowId) {
+    document.getElementById('assignRowId').value = rowId;
+    const modal = document.getElementById('assignModal');
+    if (modal) {
+        modal.style.display = 'flex';
     }
 }
 
-function closeViewHistoryModal() {
-    const modal = document.getElementById('viewHistoryModal');
-    if (modal) modal.style.display = 'none';
+async function saveAssignment() {
+    const rowId = document.getElementById('assignRowId').value;
+    const salesName = document.getElementById('assignedSales').value;
+    if (!salesName) {
+        alert('Silakan pilih sales.');
+        return;
+    }
+    
+    // Implement logic to update Google Sheet with the assigned sales name for the given rowId
+    // This is a placeholder for the actual implementation
+    closeModal('assignModal');
 }
