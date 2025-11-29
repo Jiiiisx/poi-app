@@ -138,9 +138,6 @@ class GoogleSheetsIntegration {
             await this.loadMonitoringData();
             await this.loadGovernmentData();
             
-            if (window.schoolDataFilter) {
-                window.schoolDataFilter.filterData();
-            }
             this.updateStats();
             this.updateUIVisibility();
 
@@ -456,6 +453,7 @@ class GoogleSheetsIntegration {
             };
         });
         this.governmentData = [...this.originalGovernmentData];
+        document.dispatchEvent(new CustomEvent('governmentDataProcessed'));
     }
 
     processData(rawData) {
@@ -488,6 +486,7 @@ class GoogleSheetsIntegration {
         this.renderTable();
         this.updateSalesList();
         this.updateSalesDropdown();
+        document.dispatchEvent(new CustomEvent('mainDataProcessed'));
     }
 
     columnIndexToLetter(index) {

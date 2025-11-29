@@ -34,23 +34,16 @@ class SchoolDataFilter {
 
     init() {
         this.bindEvents();
+        // Listen for data processing events from the main script
+        document.addEventListener('mainDataProcessed', () => this.handleDataProcessed());
+        document.addEventListener('governmentDataProcessed', () => this.handleDataProcessed());
+    }
 
-        const originalRefreshData = this.googleSheets.refreshData.bind(this.googleSheets);
-        this.googleSheets.refreshData = async () => {
-            await originalRefreshData();
-            this.filterData();
-            if (this.isActive) {
-                if (this.activeFilter === 'school') {
-                    this.googleSheets.renderTable(this.filteredData.school);
-                } else if (this.activeFilter === 'nonSchool') {
-                    this.googleSheets.renderTable(this.filteredData.nonSchool);
-                } else {
-                    this.googleSheets.renderTable();
-                }
-            }
-        };
-
+    handleDataProcessed() {
         this.filterData();
+        if (this.googleSheets && typeof this.googleSheets.updateStats === 'function') {
+            this.googleSheets.updateStats();
+        }
     }
 
     bindEvents() {
@@ -60,36 +53,16 @@ class SchoolDataFilter {
         const btnTableShowGoverment = document.getElementById('btnTableShowGoverment');
 
         if (btnTableShowAll) {
-            btnTableShowAll.addEventListener('click', () => {
-                if (window.googleSheetsIntegration) {
-                    window.googleSheetsIntegration.currentDataView = 'customer';
-                    window.googleSheetsIntegration.applyCombinedFilters();
-                }
-                this.showAll();
-            });
+            btnTableShowAll.addEventListener('click', () => this.showAll());
         }
         if (btnTableShowSchool) {
-            btnTableShowSchool.addEventListener('click', () => {
-                if (window.googleSheetsIntegration) {
-                    window.googleSheetsIntegration.currentDataView = 'customer';
-                    window.googleSheetsIntegration.applyCombinedFilters();
-                }
-                this.showSchoolOnly();
-            });
+            btnTableShowSchool.addEventListener('click', () => this.showSchoolOnly());
         }
         if (btnTableShowNonSchool) {
-            btnTableShowNonSchool.addEventListener('click', () => {
-                if (window.googleSheetsIntegration) {
-                    window.googleSheetsIntegration.currentDataView = 'customer';
-                    window.googleSheetsIntegration.applyCombinedFilters();
-                }
-                this.showNonSchoolOnly();
-            });
+            btnTableShowNonSchool.addEventListener('click', () => this.showNonSchoolOnly());
         }
         if (btnTableShowGoverment) {
-            btnTableShowGoverment.addEventListener('click', () => {
-                this.showGovernmentOnly();
-            });
+            btnTableShowGoverment.addEventListener('click', () => this.showGovernmentOnly());
         }
     }
 
