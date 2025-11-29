@@ -303,8 +303,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     return false;
                 });
             }
+        } else if (selectedStatus === 'ct0') {
+            if (selectedMonth !== 'all') {
+                data = data.filter(item => {
+                    const status = (item[selectedMonth] || 'n/a').toLowerCase();
+                    return status === 'ct0' || status === 'zero billing';
+                });
+            } else {
+                data = data.filter(item => 
+                    billingHeaders.some(header => {
+                        const status = (item[header] || 'n/a').toLowerCase();
+                        return status === 'ct0' || status === 'zero billing';
+                    })
+                );
+            }
         } else if (selectedStatus !== 'all') {
-            const statusToLookFor = selectedStatus === 'ct0' ? 'zero billing' : selectedStatus;
+            const statusToLookFor = selectedStatus;
 
             if (selectedMonth !== 'all') {
                 // Filter by a specific selected month
