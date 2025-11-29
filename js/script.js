@@ -181,6 +181,7 @@ function handleSignoutClick() {
 };
 
 function updateSigninStatus(isSignedIn, userName = '', userPicture = '') {
+  console.log('[TRACE] updateSigninStatus called. isSignedIn:', isSignedIn);
   try {
     ErrorHandler.log(`Updating sign-in status: ${isSignedIn}`);
     const signInWrapper = document.querySelector('.sign-in');
@@ -341,6 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isLoggedIn) {
       const userInfo = JSON.parse(localStorage.getItem('userInfo'));
       if (userInfo) {
+        console.log('[TRACE] DOMContentLoaded: User is logged in from localStorage. Calling updateSigninStatus.');
         currentUserEmail = userInfo.email;
         updateSigninStatus(true, userInfo.name, userInfo.picture);
       }
