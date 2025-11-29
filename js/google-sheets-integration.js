@@ -296,63 +296,62 @@ class GoogleSheetsIntegration {
     }
 
     async loadMonitoringData() {
-        const cacheKey = 'monitoringData';
-        const cachedData = this.getCachedData(cacheKey);
+        // This method is intentionally left empty.
+        // Monitoring data is now loaded on-demand by `ensureMonitoringDataForSales`
+        // when a user selects a sales representative.
+        return Promise.resolve();
+    }
 
-        if (cachedData) {
-            this.processMonitoringData(cachedData, Object.values(this.salesDataRanges).filter(range => range !== ''));
-            if (this.loggedInSalesName) {
-                this.filterBySales(this.loggedInSalesName);
-            }
+    async ensureMonitoringDataForSales(salesName) {
+        const normalizedSalesName = salesName.toLowerCase();
+        if (this.monitoringDataBySales[normalizedSalesName]) {
+            return; // Data already loaded.
+        }
+
+        const rangeName = this.salesDataRanges[salesName];
+        if (!rangeName) {
+            this.showError(`Data range for sales '${salesName}' not found.`);
             return;
         }
 
-        const MAX_RETRIES = 3;
+        const cacheKey = `monitoringData_${normalizedSalesName}`;
+        const cachedData = this.getCachedData(cacheKey);
+
+        if (cachedData) {
+            this.processMonitoringData(cachedData, [rangeName]);
+            return;
+        }
+
+        const MAX_RETRIES = 2;
         let attempt = 0;
         while (attempt < MAX_RETRIES) {
             try {
                 this.showLoading(true);
-                
-                const namedRanges = Object.values(this.salesDataRanges).filter(range => range !== '');
-                const rangesString = namedRanges.join(',');
-                
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 15000);
+                const timeoutId = setTimeout(() => controller.abort(), 30000); // 30-second timeout
 
-                const response = await fetch(`/api?action=fetch-monitoring&ranges=${rangesString}`, {
+                const response = await fetch(`/api?action=fetch-monitoring&ranges=${rangeName}`, {
                     signal: controller.signal
                 });
-
                 clearTimeout(timeoutId);
 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
-                
+
                 const data = await response.json();
                 if (!data.valueRanges || data.valueRanges.length === 0) {
-                    this.showWarning('Data monitoring tidak ditemukan');
-                    return;
-                }
-
-                const hasSomeData = data.valueRanges.some(vr => vr.values && vr.values.length > 0);
-                if (!hasSomeData) {
-                    throw new Error("Monitoring data fetch returned empty values for all ranges.");
-                }
-
-                this.setCachedData(cacheKey, data);
-                this.processMonitoringData(data, namedRanges);
-
-                if (this.loggedInSalesName) {
-                    this.filterBySales(this.loggedInSalesName);
+                    throw new Error("API returned no valueRanges.");
                 }
                 
-                return;
+                this.setCachedData(cacheKey, data);
+                this.processMonitoringData(data, [rangeName]);
+                return; // Success
 
             } catch (error) {
                 attempt++;
                 if (attempt >= MAX_RETRIES) {
-                    this.showError('Gagal memuat data monitoring setelah beberapa kali percobaan: ' + error.message);
+                    this.showError(`Gagal memuat data untuk ${salesName}: ${error.message}`);
                 } else {
                     await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
                 }
@@ -1316,8 +1315,22 @@ class GoogleSheetsIntegration {
         this._applySalesFilter(salesName, isNonTelda);
     }
 
-    _applySalesFilter(salesName, isNonTelda = false) {
+    async _applySalesFilter(salesName, isNonTelda = false) {
         this.currentSalesFilter = salesName;
+
+        // Ensure data is loaded on-demand before proceeding
+        if (salesName && salesName !== 'Home') {
+            try {
+                await this.ensureMonitoringDataForSales(salesName);
+            } catch (error) {
+                // If data loading fails, show an error and clear the view.
+                this.showError(`Gagal memuat data untuk ${salesName}: ${error.message}`);
+                this.filteredMonitoringData = [];
+                this.renderMonitoringView();
+                return;
+            }
+        }
+        
         this.toggleActionsColumn();
         this.applyCombinedFilters();
 
