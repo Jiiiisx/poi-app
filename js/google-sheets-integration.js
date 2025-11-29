@@ -748,16 +748,21 @@ class GoogleSheetsIntegration {
             const sortedBillingHeaders = billingHeaders
                 .filter(header => this._parseHeaderDate(header) <= now)
                 .sort((a, b) => this._parseHeaderDate(a) - this._parseHeaderDate(b));
-
+        
             return data.filter(item => {
-                const recentHeaders = sortedBillingHeaders.slice(-3);
-                if (recentHeaders.length < 3) return false;
-
-                const isNonPaymentLast = this._isNonPayment(item[recentHeaders[2]]);
-                const isNonPaymentTwoMonthsAgo = this._isNonPayment(item[recentHeaders[1]]);
-                const isNonPaymentThreeMonthsAgo = this._isNonPayment(item[recentHeaders[0]]);
-
-                return isNonPaymentLast && isNonPaymentTwoMonthsAgo && isNonPaymentThreeMonthsAgo;
+                let consecutiveUnpaid = 0;
+                // Loop backwards from the most recent billing month
+                for (let i = sortedBillingHeaders.length - 1; i >= 0; i--) {
+                    const header = sortedBillingHeaders[i];
+                    if (this._isNonPayment(item[header])) {
+                        consecutiveUnpaid++;
+                    } else {
+                        // As soon as we find a paid month, the streak is broken
+                        break;
+                    }
+                }
+                // Show customers with 2 or more consecutive unpaid months.
+                return consecutiveUnpaid >= 2;
             });
         }
 
