@@ -711,7 +711,7 @@ class GoogleSheetsIntegration {
 
     _isNonPayment(status) {
         const lowerStatus = (status || '').toLowerCase();
-        return lowerStatus === 'unpaid' || lowerStatus === 'zero billing';
+        return lowerStatus === 'unpaid' || lowerStatus === 'zero billing' || lowerStatus === 'n/a' || lowerStatus === '';
     }
 
     _applyBillingFilter(data) {
