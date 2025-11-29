@@ -364,9 +364,9 @@ class GoogleSheetsIntegration {
     processMonitoringData(data, requestedRanges) {
         const rangeToSalesKey = Object.fromEntries(Object.entries(this.salesDataRanges).map(([k, v]) => [v, k]));
 
-        data.valueRanges.forEach((valueRange) => {
-            const rangeName = valueRange.range.split('!')[0].replace(/'/g, '');
-            const salesName = rangeToSalesKey[rangeName];
+        data.valueRanges.forEach((valueRange, index) => {
+            const requestedRangeName = requestedRanges[index];
+            const salesName = rangeToSalesKey[requestedRangeName];
 
             if (!salesName) {
                 return;
@@ -772,7 +772,6 @@ class GoogleSheetsIntegration {
                 return billingStatus === this.currentBillingFilter;
             });
         } else {
-            // Fallback for 'paid'/'unpaid' when 'All Months' is selected
             const currentMonthColumn = this.getCurrentMonthColumnName();
             if (allHeaders.map(h => h.toUpperCase()).includes(currentMonthColumn.toUpperCase())) {
                  return data.filter(item => {
@@ -1479,9 +1478,13 @@ class GoogleSheetsIntegration {
             }
 
             if (this.currentSchoolFilter === 'school') {
-                filteredData = filteredData.filter(row => window.schoolDataFilter.isSchoolData(row));
+                if (window.schoolDataFilter) {
+                   filteredData = filteredData.filter(row => window.schoolDataFilter.isSchoolData(row));
+                }
             } else if (this.currentSchoolFilter === 'nonSchool') {
-                filteredData = filteredData.filter(row => !window.schoolDataFilter.isSchoolData(row));
+                if (window.schoolDataFilter) {
+                    filteredData = filteredData.filter(row => !window.schoolDataFilter.isSchoolData(row));
+                }
             }
 
             if (this.currentSalesFilter && this.currentSalesFilter !== 'Home') {
