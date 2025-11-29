@@ -122,6 +122,11 @@ document.addEventListener('DOMContentLoaded', function () {
         return new Date(year + 2000, month);
     }
 
+    function _isNonPayment(status) {
+        const lowerStatus = (status || '').toLowerCase();
+        return lowerStatus === 'unpaid' || lowerStatus === 'zero billing' || lowerStatus === 'n/a' || lowerStatus === '';
+    }
+
     function generateBillingMessages() {
         const selectedMonth = billingMonthFilter.value;
         const selectedSales = salesFilter.value;
@@ -139,61 +144,56 @@ document.addEventListener('DOMContentLoaded', function () {
 
         let customersBySales = {};
         const allHeaders = Array.from(Object.values(salesPerformance).reduce((acc, { headers }) => {
-            headers.forEach(h => acc.add(h));
+            (headers || []).forEach(h => acc.add(h));
             return acc;
         }, new Set()));
+        
         const billingHeaders = allHeaders.filter(h => h.toLowerCase().startsWith('billing'));
+        const now = new Date();
+        const sortedBillingHeaders = billingHeaders
+            .filter(header => _parseHeaderDate(header) <= now)
+            .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
+
+        const countConsecutiveUnpaid = (item) => {
+            let consecutiveUnpaid = 0;
+            for (let i = sortedBillingHeaders.length - 1; i >= 0; i--) {
+                const header = sortedBillingHeaders[i];
+                if (_isNonPayment(item[header])) {
+                    consecutiveUnpaid++;
+                } else {
+                    break; // Streak is broken
+                }
+            }
+            return consecutiveUnpaid;
+        };
 
         for (const salesName in salesPerformance) {
             if (selectedSales !== 'all' && salesName !== selectedSales) continue;
 
             const salesData = salesPerformance[salesName];
+            if (!salesData.customers) continue;
+
             const matchingCustomers = salesData.customers.filter(customer => {
-                let matches = false;
+                const unpaidCount = (selectedStatuses.includes('PRA NPC') || selectedStatuses.includes('CTO'))
+                    ? countConsecutiveUnpaid(customer)
+                    : 0;
+
                 for (const status of selectedStatuses) {
                     if (status === 'PAID' || status === 'UNPAID') {
                         if ((customer[selectedMonth] || '').trim().toUpperCase() === status) {
-                            matches = true; break;
+                            return true;
                         }
                     } else if (status === 'PRA NPC') {
-                        const now = new Date();
-                        const sortedBillingHeaders = billingHeaders.filter(h => _parseHeaderDate(h) <= now).sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
-                        if (sortedBillingHeaders.length >= 2) {
-                            const lastThree = sortedBillingHeaders.slice(-3);
-                            const lastMonthHeader = lastThree[lastThree.length - 1];
-                            const twoMonthsAgoHeader = lastThree[lastThree.length - 2];
-                            const isUnpaidLastMonth = (customer[lastMonthHeader] || '').trim().toUpperCase() === 'UNPAID';
-                            const isUnpaidTwoMonthsAgo = (customer[twoMonthsAgoHeader] || '').trim().toUpperCase() === 'UNPAID';
-
-                            if (isUnpaidLastMonth && isUnpaidTwoMonthsAgo) {
-                                let isPraNpc = true;
-                                if (lastThree.length === 3) {
-                                    const threeMonthsAgoHeader = lastThree[0];
-                                    if ((customer[threeMonthsAgoHeader] || '').trim().toUpperCase() === 'UNPAID') {
-                                        isPraNpc = false; // This is a CT0 case
-                                    }
-                                }
-                                if (isPraNpc) {
-                                    matches = true; break;
-                                }
-                            }
+                        if (unpaidCount === 2) {
+                            return true;
                         }
                     } else if (status === 'CTO') {
-                        const now = new Date();
-                        const sortedBillingHeaders = billingHeaders.filter(h => _parseHeaderDate(h) <= now).sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
-                        if (sortedBillingHeaders.length >= 3) {
-                            const lastThree = sortedBillingHeaders.slice(-3);
-                            const isUnpaidLastMonth = (customer[lastThree[2]] || '').trim().toUpperCase() === 'UNPAID';
-                            const isUnpaidTwoMonthsAgo = (customer[lastThree[1]] || '').trim().toUpperCase() === 'UNPAID';
-                            const isUnpaidThreeMonthsAgo = (customer[lastThree[0]] || '').trim().toUpperCase() === 'UNPAID';
-                            if (isUnpaidLastMonth && isUnpaidTwoMonthsAgo && isUnpaidThreeMonthsAgo) {
-                                matches = true; break;
-                            }
+                        if (unpaidCount >= 3) {
+                            return true;
                         }
-                        if(matches) break;
                     }
                 }
-                return matches;
+                return false;
             });
 
             if (matchingCustomers.length > 0) {

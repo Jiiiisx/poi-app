@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function isNonPayment(status) {
         const lowerStatus = (status || '').toLowerCase();
-        return lowerStatus === 'unpaid' || lowerStatus === 'zero billing';
+        return lowerStatus === 'unpaid' || lowerStatus === 'zero billing' || lowerStatus === 'n/a' || lowerStatus === '';
     }
 
     function applyFilters() {
@@ -282,46 +282,31 @@ document.addEventListener('DOMContentLoaded', function () {
         const allHeaders = (monitoringDataHeadersBySales[selectedSales.toLowerCase()] || {}).headers || [];
         const billingHeaders = allHeaders.filter(h => h.toLowerCase().startsWith('billing'));
 
-        if (selectedStatus === 'pra npc') {
+        if (selectedStatus === 'pra npc' || selectedStatus === 'ct0') {
             const now = new Date();
             const sortedBillingHeaders = billingHeaders
                 .filter(header => _parseHeaderDate(header) <= now)
                 .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
 
             data = data.filter(item => {
-                const recentHeaders = sortedBillingHeaders.slice(-3);
-                if (recentHeaders.length < 2) return false;
-
-                const isNonPaymentLast = isNonPayment(item[recentHeaders[recentHeaders.length - 1]]);
-                const isNonPaymentTwoMonthsAgo = isNonPayment(item[recentHeaders[recentHeaders.length - 2]]);
-
-                if (isNonPaymentLast && isNonPaymentTwoMonthsAgo) {
-                    if (recentHeaders.length === 3) {
-                        const isNonPaymentThreeMonthsAgo = isNonPayment(item[recentHeaders[0]]);
-                        return !isNonPaymentThreeMonthsAgo;
+                let consecutiveUnpaid = 0;
+                for (let i = sortedBillingHeaders.length - 1; i >= 0; i--) {
+                    const header = sortedBillingHeaders[i];
+                    if (isNonPayment(item[header])) {
+                        consecutiveUnpaid++;
+                    } else {
+                        break; // Streak is broken
                     }
-                    return true;
+                }
+
+                if (selectedStatus === 'pra npc') {
+                    return consecutiveUnpaid === 2;
+                }
+                if (selectedStatus === 'ct0') {
+                    return consecutiveUnpaid >= 3;
                 }
                 return false;
             });
-
-        } else if (selectedStatus === 'ct0') {
-            const now = new Date();
-            const sortedBillingHeaders = billingHeaders
-                .filter(header => _parseHeaderDate(header) <= now)
-                .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
-
-            data = data.filter(item => {
-                const recentHeaders = sortedBillingHeaders.slice(-3);
-                if (recentHeaders.length < 3) return false;
-
-                const isNonPaymentLast = isNonPayment(item[recentHeaders[2]]);
-                const isNonPaymentTwoMonthsAgo = isNonPayment(item[recentHeaders[1]]);
-                const isNonPaymentThreeMonthsAgo = isNonPayment(item[recentHeaders[0]]);
-
-                return isNonPaymentLast && isNonPaymentTwoMonthsAgo && isNonPaymentThreeMonthsAgo;
-            });
-            
         } else if (selectedStatus !== 'all') {
             const statusToLookFor = selectedStatus;
 
