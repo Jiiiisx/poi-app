@@ -741,6 +741,11 @@ class GoogleSheetsIntegration {
         this.renderMonitoringView();
     }
 
+    _isNonPayment(status) {
+        const lowerStatus = (status || '').toLowerCase();
+        return lowerStatus === 'unpaid' || lowerStatus === 'zero billing';
+    }
+
     _applyBillingFilter(data) {
         const salesName = this.currentSalesFilter.toLowerCase();
         const allHeaders = this.monitoringDataHeadersBySales[salesName] || [];
@@ -752,32 +757,21 @@ class GoogleSheetsIntegration {
                 .filter(header => this._parseHeaderDate(header) <= now)
                 .sort((a, b) => this._parseHeaderDate(a) - this._parseHeaderDate(b));
 
-            if (sortedBillingHeaders.length < 2) {
-                return []; // Not enough data for this filter
-            }
-
-            const lastThreeHeaders = sortedBillingHeaders.slice(-3);
-            
             return data.filter(item => {
-                const lastMonthHeader = lastThreeHeaders[lastThreeHeaders.length - 1];
-                const twoMonthsAgoHeader = lastThreeHeaders[lastThreeHeaders.length - 2];
+                const recentHeaders = sortedBillingHeaders.slice(-3);
+                if (recentHeaders.length < 2) return false;
 
-                const isUnpaidLastMonth = (item[lastMonthHeader] || '').toLowerCase() === 'unpaid';
-                const isUnpaidTwoMonthsAgo = (item[twoMonthsAgoHeader] || '').toLowerCase() === 'unpaid';
+                const isNonPaymentLast = this._isNonPayment(item[recentHeaders[recentHeaders.length - 1]]);
+                const isNonPaymentTwoMonthsAgo = this._isNonPayment(item[recentHeaders[recentHeaders.length - 2]]);
 
-                if (!isUnpaidLastMonth || !isUnpaidTwoMonthsAgo) {
-                    return false;
+                if (isNonPaymentLast && isNonPaymentTwoMonthsAgo) {
+                    if (recentHeaders.length === 3) {
+                        const isNonPaymentThreeMonthsAgo = this._isNonPayment(item[recentHeaders[0]]);
+                        return !isNonPaymentThreeMonthsAgo;
+                    }
+                    return true;
                 }
-
-                // If there are 3 months of history, check the 3rd month was not unpaid.
-                if (lastThreeHeaders.length === 3) {
-                    const threeMonthsAgoHeader = lastThreeHeaders[0];
-                    const wasPaidThreeMonthsAgo = (item[threeMonthsAgoHeader] || '').toLowerCase() !== 'unpaid';
-                    return wasPaidThreeMonthsAgo;
-                }
-
-                // If only 2 months of history exist, and both are unpaid, it's Pra NPC.
-                return true;
+                return false;
             });
         }
 
@@ -787,20 +781,15 @@ class GoogleSheetsIntegration {
                 .filter(header => this._parseHeaderDate(header) <= now)
                 .sort((a, b) => this._parseHeaderDate(a) - this._parseHeaderDate(b));
 
-            if (sortedBillingHeaders.length < 3) {
-                return []; // Not enough data for this filter
-            }
-
-            const lastThreeHeaders = sortedBillingHeaders.slice(-3);
-
             return data.filter(item => {
-                if (lastThreeHeaders.length < 3) return false;
-                
-                const isUnpaidLastMonth = (item[lastThreeHeaders[2]] || '').toLowerCase() === 'unpaid';
-                const isUnpaidTwoMonthsAgo = (item[lastThreeHeaders[1]] || '').toLowerCase() === 'unpaid';
-                const isUnpaidThreeMonthsAgo = (item[lastThreeHeaders[0]] || '').toLowerCase() === 'unpaid';
-                
-                return isUnpaidLastMonth && isUnpaidTwoMonthsAgo && isUnpaidThreeMonthsAgo;
+                const recentHeaders = sortedBillingHeaders.slice(-3);
+                if (recentHeaders.length < 3) return false;
+
+                const isNonPaymentLast = this._isNonPayment(item[recentHeaders[2]]);
+                const isNonPaymentTwoMonthsAgo = this._isNonPayment(item[recentHeaders[1]]);
+                const isNonPaymentThreeMonthsAgo = this._isNonPayment(item[recentHeaders[0]]);
+
+                return isNonPaymentLast && isNonPaymentTwoMonthsAgo && isNonPaymentThreeMonthsAgo;
             });
         }
 
@@ -822,7 +811,10 @@ class GoogleSheetsIntegration {
                     return billingStatus === this.currentBillingFilter;
                 });
             } else {
-                return [];
+                // If the current month's billing column doesn't exist, check against any billing column
+                return data.filter(item =>
+                    billingHeaders.some(header => (item[header] || 'n/a').toLowerCase() === this.currentBillingFilter)
+                );
             }
         }
     }

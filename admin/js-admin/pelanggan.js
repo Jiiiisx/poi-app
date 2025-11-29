@@ -266,6 +266,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function isNonPayment(status) {
+        const lowerStatus = (status || '').toLowerCase();
+        return lowerStatus === 'unpaid' || lowerStatus === 'zero billing';
+    }
+
     function applyFilters() {
         const searchTerm = searchInput.value.toLowerCase();
         let data = monitoringDataBySales[selectedSales.toLowerCase()] || [];
@@ -283,48 +288,46 @@ document.addEventListener('DOMContentLoaded', function () {
                 .filter(header => _parseHeaderDate(header) <= now)
                 .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
 
-            if (sortedBillingHeaders.length < 2) {
-                data = [];
-            } else {
-                data = data.filter(item => {
-                    const lastThree = sortedBillingHeaders.slice(-3);
-                    const lastMonthHeader = lastThree[lastThree.length - 1];
-                    const twoMonthsAgoHeader = lastThree[lastThree.length - 2];
-                    const isUnpaidLastMonth = (item[lastMonthHeader] || '').toLowerCase() === 'unpaid';
-                    const isUnpaidTwoMonthsAgo = (item[twoMonthsAgoHeader] || '').toLowerCase() === 'unpaid';
+            data = data.filter(item => {
+                const recentHeaders = sortedBillingHeaders.slice(-3);
+                if (recentHeaders.length < 2) return false;
 
-                    if (isUnpaidLastMonth && isUnpaidTwoMonthsAgo) {
-                        if (lastThree.length === 3) {
-                            const threeMonthsAgoHeader = lastThree[0];
-                            return (item[threeMonthsAgoHeader] || '').toLowerCase() !== 'unpaid';
-                        }
-                        return true; 
+                const isNonPaymentLast = isNonPayment(item[recentHeaders[recentHeaders.length - 1]]);
+                const isNonPaymentTwoMonthsAgo = isNonPayment(item[recentHeaders[recentHeaders.length - 2]]);
+
+                if (isNonPaymentLast && isNonPaymentTwoMonthsAgo) {
+                    if (recentHeaders.length === 3) {
+                        const isNonPaymentThreeMonthsAgo = isNonPayment(item[recentHeaders[0]]);
+                        return !isNonPaymentThreeMonthsAgo;
                     }
-                    return false;
-                });
-            }
+                    return true;
+                }
+                return false;
+            });
+
         } else if (selectedStatus === 'ct0') {
-            if (selectedMonth !== 'all') {
-                data = data.filter(item => {
-                    const status = (item[selectedMonth] || 'n/a').toLowerCase();
-                    return status === 'ct0' || status === 'zero billing';
-                });
-            } else {
-                data = data.filter(item => 
-                    billingHeaders.some(header => {
-                        const status = (item[header] || 'n/a').toLowerCase();
-                        return status === 'ct0' || status === 'zero billing';
-                    })
-                );
-            }
+            const now = new Date();
+            const sortedBillingHeaders = billingHeaders
+                .filter(header => _parseHeaderDate(header) <= now)
+                .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
+
+            data = data.filter(item => {
+                const recentHeaders = sortedBillingHeaders.slice(-3);
+                if (recentHeaders.length < 3) return false;
+
+                const isNonPaymentLast = isNonPayment(item[recentHeaders[2]]);
+                const isNonPaymentTwoMonthsAgo = isNonPayment(item[recentHeaders[1]]);
+                const isNonPaymentThreeMonthsAgo = isNonPayment(item[recentHeaders[0]]);
+
+                return isNonPaymentLast && isNonPaymentTwoMonthsAgo && isNonPaymentThreeMonthsAgo;
+            });
+            
         } else if (selectedStatus !== 'all') {
             const statusToLookFor = selectedStatus;
 
             if (selectedMonth !== 'all') {
-                // Filter by a specific selected month
                 data = data.filter(item => (item[selectedMonth] || 'n/a').toLowerCase() === statusToLookFor);
             } else {
-                // When "All Months" is selected, check for the status in ANY billing month
                 data = data.filter(item => 
                     billingHeaders.some(header => (item[header] || 'n/a').toLowerCase() === statusToLookFor)
                 );
