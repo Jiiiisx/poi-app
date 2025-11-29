@@ -132,7 +132,9 @@ class GoogleSheetsIntegration {
     }
 
     async setup() {
-        console.log('[TRACE] GoogleSheetsIntegration.setup() called.');
+        if (this.isInitialized) {
+            return;
+        }
         try {
             this.setupUIElements();
             await this.loadData();
@@ -251,7 +253,6 @@ class GoogleSheetsIntegration {
     }
 
     async loadData() {
-        console.log('[TRACE] loadData() called.');
         const cacheKey = 'mainData';
         const cachedData = this.getCachedData(cacheKey);
 
@@ -266,7 +267,6 @@ class GoogleSheetsIntegration {
 
         try {
             this.showLoading(true);
-            console.log('[TRACE] loadData() is about to fetch customer-data.');
             const response = await fetch('/api?action=customer-data');
             
             if (!response.ok) {
@@ -289,7 +289,6 @@ class GoogleSheetsIntegration {
 
             this.isInitialized = true;
         } catch (error) {
-            console.error('[TRACE] Error in loadData():', error);
             this.handleLoadError(error);
         } finally {
             this.showLoading(false);
