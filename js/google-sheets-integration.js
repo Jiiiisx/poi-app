@@ -2049,9 +2049,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         await waitForGoogleSheetsCRUD();
         window.googleSheetsIntegration = new GoogleSheetsIntegration();
-        await window.googleSheetsIntegration.setup();
-
         document.dispatchEvent(new CustomEvent('googleSheetsIntegrationReady'));
+        await window.googleSheetsIntegration.setup();
 
         const salesList = document.querySelector('.sales-list');
         if (salesList) {

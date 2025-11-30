@@ -33,7 +33,7 @@ class SchoolDataFilter {
     }
 
     init() {
-        this.bindEvents();
+        // this.bindEvents();
         // Listen for data processing events from the main script
         document.addEventListener('mainDataProcessed', () => this.handleDataProcessed());
         document.addEventListener('governmentDataProcessed', () => this.handleDataProcessed());
