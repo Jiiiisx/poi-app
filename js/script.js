@@ -858,7 +858,7 @@ function updateWelcomeMessage(userName) {
 document.addEventListener('DOMContentLoaded', displayCurrentDate);
 
 function renderSalesPerformanceChart() {
-    if (typeof googleSheetsIntegration === 'undefined' || !googleSheetsIntegration.monitoringDataBySales) {
+    /* if (typeof googleSheetsIntegration === 'undefined' || !googleSheetsIntegration.monitoringDataBySales) {
         return;
     }
 
@@ -868,11 +868,11 @@ function renderSalesPerformanceChart() {
         renderSingleSalesChart(selectedSales);
     } else {
         renderAllSalesChart();
-    }
+    } */
 }
 
 function renderAllSalesChart() {
-    const chartTitle = document.getElementById('chart-title');
+    /* const chartTitle = document.getElementById('chart-title');
     if (chartTitle) {
         chartTitle.textContent = 'Jumlah Pelanggan Per Sales';
     }
@@ -938,11 +938,11 @@ function renderAllSalesChart() {
             }
         }
     });
-    document.querySelector('.chart-section').style.display = 'block';
+    document.querySelector('.chart-section').style.display = 'block'; */
 }
 
 function renderSingleSalesChart(salesName) {
-    const chartTitle = document.getElementById('chart-title');
+    /* const chartTitle = document.getElementById('chart-title');
     if (chartTitle) {
         chartTitle.textContent = `Akuisisi Pelanggan Bulanan: ${salesName}`;
     }
@@ -1075,7 +1075,7 @@ function renderSingleSalesChart(salesName) {
                 easing: 'easeOutBounce'
             }
         }
-    });
+    }); */
 }
 
 function setupTabNavigation() {
