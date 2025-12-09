@@ -896,7 +896,7 @@ class GoogleSheetsIntegration {
                     </div>
 
                     <div class="card-section">
-                        <div class="card-info-row"><strong>No. Inet:</strong> <span>${this.escapeHtml(item['No Internet'] || 'N/A')}</span></div>
+                        <div class="card-info-row"><strong>No. Inet:</strong> <span>${this.escapeHtml(item['Nomor Internet'] || 'N/A')}</span></div>
                         <div class="card-info-row">
                             <strong>No. Cust:</strong>
                             <span>
@@ -968,7 +968,7 @@ class GoogleSheetsIntegration {
         thead.innerHTML = '';
         tbody.innerHTML = '';
 
-        const staticHeaders = ['Nama Pelanggan', 'No Internet', 'No Customer', 'Redaman Loss', 'FUP', 'Histori Gangguan', 'Tanggal Pembayaran'];
+        const staticHeaders = ['Nama Pelanggan', 'Nomor Internet', 'No Customer', 'Redaman Loss', 'FUP', 'Histori Gangguan', 'Tanggal Pembayaran'];
         const dynamicHeaders = [...staticHeaders, ...visibleBillingHeaders];
         
         if (paginatedData.length === 0) {
@@ -1030,8 +1030,8 @@ class GoogleSheetsIntegration {
             let rowHtml = `
                 <td>${this.escapeHtml(item['Nama Pelanggan'])}</td>
                 <td class="copyable-cell">
-                    ${this.escapeHtml(item['No Internet'])}
-                    <button class="btn-copy" onclick="googleSheetsIntegration.copyToClipboard('${this.escapeHtml(item['No Internet'] || '')}')" title="Copy">
+                    ${this.escapeHtml(item['Nomor Internet'])}
+                    <button class="btn-copy" onclick="googleSheetsIntegration.copyToClipboard('${this.escapeHtml(item['Nomor Internet'] || '')}')" title="Copy">
                         <i class="fa-solid fa-copy"></i>
                     </button>
                 </td>
