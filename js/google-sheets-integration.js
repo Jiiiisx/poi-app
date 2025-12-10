@@ -1805,8 +1805,8 @@ class GoogleSheetsIntegration {
         }
         if (newTeam === 'non-telda') {
             this.updateNonTeldaSalesList();
-            this.filterBySales('TRI SUSANTOHADI', true);
-            this.updateNonTeldaSalesListActiveState('TRI SUSANTOHADI');
+            this.filterBySales('Tri Susantohadi', true);
+            this.updateNonTeldaSalesListActiveState('Tri Susantohadi');
         } else {
             this.updateSalesList();
             this.filterBySales('Home');
