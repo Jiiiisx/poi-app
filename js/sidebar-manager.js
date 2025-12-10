@@ -132,11 +132,20 @@ class SidebarManager {
         if (!this.salesList) return;
 
         this.salesList.innerHTML = '';
-        
-        const allSalesItem = this.createSalesItem('Home', 'all', true);
-        this.salesList.appendChild(allSalesItem);
+    }
 
-        this.loadSalesFromSheets();
+    populateSalesList(salesNames) {
+        if (!this.salesList) return;
+
+        this.salesList.innerHTML = ''; 
+
+        const homeItem = this.createSalesItem('Home', 'all', true);
+        this.salesList.appendChild(homeItem);
+
+        salesNames.forEach(name => {
+            const item = this.createSalesItem(name, name.toLowerCase().replace(/\s+/g, '-'));
+            this.salesList.appendChild(item);
+        });
     }
 
     createSalesItem(name, id, isActive = false) {

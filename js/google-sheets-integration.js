@@ -1701,8 +1701,7 @@ class GoogleSheetsIntegration {
     prevPage() { this.goToPage(this.currentPage - 1); }
 
     updateSalesList() {
-        const salesList = document.querySelector('.sales-list');
-        if (!salesList) return;
+        if (!window.sidebarManager) return;
 
         const salesNamesSet = new Set();
         this.originalData.forEach(row => {
@@ -1711,22 +1710,8 @@ class GoogleSheetsIntegration {
             }
         });
 
-        const salesNames = ['Home', ...Array.from(salesNamesSet).sort()];
-
-        salesList.innerHTML = '';
-        const self = this;
-
-        salesNames.forEach(name => {
-            const li = document.createElement('li');
-            li.className = 'sales-item';
-            if (name === 'Home') li.classList.add('active');
-            li.dataset.salesName = name;
-            li.innerHTML = `<span>${name}</span>`;
-            li.onclick = function() {
-                self.filterBySales(name);
-            };
-            salesList.appendChild(li);
-        });
+        const salesNames = Array.from(salesNamesSet).sort();
+        window.sidebarManager.populateSalesList(salesNames);
     }
 
     updateNonTeldaSalesList() {
