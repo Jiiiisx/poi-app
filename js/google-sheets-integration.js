@@ -257,7 +257,7 @@ class GoogleSheetsIntegration {
         const cachedData = this.getCachedData(cacheKey);
 
         if (cachedData) {
-            this.processData(cachedData);
+            await this.processData(cachedData);
             if (this.loggedInSalesName) {
                 this.filterBySales(this.loggedInSalesName);
             }
@@ -276,12 +276,12 @@ class GoogleSheetsIntegration {
             const data = await response.json();
             if (!data.values || data.values.length === 0) {
                 this.showWarning('Tidak ada data di sheet utama');
-                this.loadFallbackData();
+                await this.loadFallbackData();
                 return;
             }
 
             this.setCachedData(cacheKey, data.values);
-            this.processData(data.values);
+            await this.processData(data.values);
 
             if (this.loggedInSalesName) {
                 this.filterBySales(this.loggedInSalesName);
@@ -459,7 +459,7 @@ class GoogleSheetsIntegration {
         document.dispatchEvent(new CustomEvent('governmentDataProcessed'));
     }
 
-    processData(rawData) {
+    async processData(rawData) {
         this.originalData = rawData.slice(1).map((row, index) => {
             const getVal = (arr, idx) => this.sanitizeValue(arr[idx] || '');
             let tanggalDitambahkanStr = getVal(row, 8);
@@ -487,7 +487,7 @@ class GoogleSheetsIntegration {
         }).filter(row => row.nama || row.no_telepon);
 
         this.renderTable();
-        this.updateSalesList();
+        await this.updateSalesList();
         this.updateSalesDropdown();
         document.dispatchEvent(new CustomEvent('mainDataProcessed'));
     }
@@ -1700,7 +1700,11 @@ class GoogleSheetsIntegration {
     nextPage() { this.goToPage(this.currentPage + 1); }
     prevPage() { this.goToPage(this.currentPage - 1); }
 
-    updateSalesList() {
+    async updateSalesList() {
+        while (!window.sidebarManager) {
+            await new Promise(resolve => setTimeout(resolve, 50));
+        }
+
         if (!window.sidebarManager) return;
 
         const salesNamesSet = new Set();
@@ -1935,17 +1939,17 @@ class GoogleSheetsIntegration {
         if(indicator) indicator.style.display = show ? 'block' : 'none';
     }
     
-    handleLoadError(error) {
+    async handleLoadError(error) {
         this.showError('Gagal memuat data: ' + error.message);
-        this.loadFallbackData();
+        await this.loadFallbackData();
     }
 
-    loadFallbackData() {
+    async loadFallbackData() {
         const fallbackData = [
             ['ODP', 'NAMA', 'ALAMAT', 'NO TELEPON', 'NAMA SALES', 'VISIT', 'STATUS'],
             ['ODP-BDG-001', 'Budi Santoso', 'Jl. Merdeka No.1, Bandung', '081234567890', 'Nandi', 'Visited', 'Diterima'],
         ];
-        this.processData(fallbackData);
+        await this.processData(fallbackData);
         this.showWarning('Menggunakan data demo.');
     }
 
