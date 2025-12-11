@@ -307,26 +307,47 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 return false;
             });
-            } else if (selectedStatus !== 'all') {
-                const statusToLookFor = selectedStatus;
-        
-                if (selectedMonth !== 'all') {
-                    data = data.filter(item => (item[selectedMonth] || 'n/a').toLowerCase() === statusToLookFor);
-                } else {
-                    if (statusToLookFor === 'paid') {
-                        data = data.filter(item => {
-                            const hasPaid = billingHeaders.some(header => (item[header] || 'n/a').toLowerCase() === 'paid');
-                            const hasUnpaid = billingHeaders.some(header => (item[header] || 'n/a').toLowerCase() === 'unpaid');
-                            return hasPaid && !hasUnpaid;
-                        });
+                } else if (selectedStatus !== 'all') {
+                    const statusToLookFor = selectedStatus;
+            
+                    if (selectedMonth !== 'all') {
+                        data = data.filter(item => (item[selectedMonth] || 'n/a').toLowerCase() === statusToLookFor);
                     } else {
-                        data = data.filter(item => 
-                            billingHeaders.some(header => (item[header] || 'n/a').toLowerCase() === statusToLookFor)
-                        );
+                        if (statusToLookFor === 'paid') {
+                            data = data.filter(item => {
+                                const hasPaid = billingHeaders.some(header => (item[header] || 'n/a').toLowerCase() === 'paid');
+                                const hasUnpaid = billingHeaders.some(header => (item[header] || 'n/a').toLowerCase() === 'unpaid');
+                                return hasPaid && !hasUnpaid;
+                            });
+                        } else if (statusToLookFor === 'unpaid') {
+                            const now = new Date();
+                            const sortedBillingHeaders = billingHeaders
+                                .filter(header => _parseHeaderDate(header) <= now)
+                                .sort((a, b) => _parseHeaderDate(a) - _parseHeaderDate(b));
+                            
+                            data = data.filter(item => {
+                                const hasAtLeastOneUnpaid = billingHeaders.some(header => (item[header] || '').toLowerCase() === 'unpaid');
+                                if (!hasAtLeastOneUnpaid) {
+                                    return false;
+                                }
+            
+                                let consecutiveUnpaid = 0;
+                                for (let i = sortedBillingHeaders.length - 1; i >= 0; i--) {
+                                    if (isNonPayment(item[sortedBillingHeaders[i]])) {
+                                        consecutiveUnpaid++;
+                                    } else {
+                                        break;
+                                    }
+                                }
+                                return consecutiveUnpaid < 2;
+                            });
+                        } else {
+                            data = data.filter(item => 
+                                billingHeaders.some(header => (item[header] || 'n/a').toLowerCase() === statusToLookFor)
+                            );
+                        }
                     }
-                }
-            }
-        filteredData = data;
+                }        filteredData = data;
         currentPage = 1;
         renderBillingTable();
     }
