@@ -307,18 +307,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 return false;
             });
-        } else if (selectedStatus !== 'all') {
-            const statusToLookFor = selectedStatus;
-
-            if (selectedMonth !== 'all') {
-                data = data.filter(item => (item[selectedMonth] || 'n/a').toLowerCase() === statusToLookFor);
-            } else {
-                data = data.filter(item => 
-                    billingHeaders.some(header => (item[header] || 'n/a').toLowerCase() === statusToLookFor)
-                );
+            } else if (selectedStatus !== 'all') {
+                const statusToLookFor = selectedStatus;
+        
+                if (selectedMonth !== 'all') {
+                    data = data.filter(item => (item[selectedMonth] || 'n/a').toLowerCase() === statusToLookFor);
+                } else {
+                    if (statusToLookFor === 'paid') {
+                        data = data.filter(item => {
+                            const hasPaid = billingHeaders.some(header => (item[header] || 'n/a').toLowerCase() === 'paid');
+                            const hasUnpaid = billingHeaders.some(header => (item[header] || 'n/a').toLowerCase() === 'unpaid');
+                            return hasPaid && !hasUnpaid;
+                        });
+                    } else {
+                        data = data.filter(item => 
+                            billingHeaders.some(header => (item[header] || 'n/a').toLowerCase() === statusToLookFor)
+                        );
+                    }
+                }
             }
-        }
-
         filteredData = data;
         currentPage = 1;
         renderBillingTable();
